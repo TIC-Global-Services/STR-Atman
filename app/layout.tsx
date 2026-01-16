@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Halfre } from "@/fonts";
 import ScrollProvider from "@/provider/ScrollProvider";
+import Navbar from "@/components/reuseable/navbar";
 
 export const metadata: Metadata = {
   title: "STR Atman",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${Halfre.variable}  antialiased`}>
+        <Navbar />
         <ScrollProvider>{children}</ScrollProvider>
       </body>
     </html>
