@@ -1,8 +1,8 @@
-import AboutHero from "@/components/about/AboutHero";
-import Journey from "@/components/about/Journey";
-import VideoSection from "@/components/about/VideoSection";
-import StackedCards from "@/components/about/StackedCards";
-import CTASection from "@/components/about/CTASection";
+import AboutHero from "@/components/About/AboutHero";
+import Journey from "@/components/About/Journey";
+import VideoSection from "@/components/About/VideoSection";
+import StackedCards from "@/components/About/StackedCards";
+import CTASection from "@/components/About/CTASection";
 
 export default function AboutPage() {
   return (

@@ -6,15 +6,17 @@ import {
   vertexShader,
   fluidFragmentShader,
   displayFragmentShader,
-} from "@/components/utils/shaders";
+} from "@/utils/shaders";
+import ContourBackground from "../Reuseable/ContourBackground";
 const topimage = "/landonorriswithouthelmet.png";
 const bottomimage = "/landonorriswithhelmet.png";
+
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-      const heroRef = useRef<HTMLDivElement>(null);
-      const textParallaxRef1 = useRef<HTMLDivElement>(null);
-      const textParallaxRef2 = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const textParallaxRef1 = useRef<HTMLDivElement>(null);
+  const textParallaxRef2 = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -62,7 +64,11 @@ const Hero = () => {
     };
 
     // Function to load images and set textures
-    const loadImage = (url: string, targetTexture: { value: THREE.Texture }, textureSizeVector: THREE.Vector2) => {
+    const loadImage = (
+      url: string,
+      targetTexture: { value: THREE.Texture },
+      textureSizeVector: THREE.Vector2
+    ) => {
       const img = new Image();
       img.crossOrigin = "Anonymous";
       img.onload = function () {
@@ -119,7 +125,7 @@ const Hero = () => {
         uMouse: { value: mouse },
         uPrevMouse: { value: prevMouse },
         uResolution: { value: new THREE.Vector2(size, size) },
-        uDecay: { value: 0.90 },
+        uDecay: { value: 0.9 },
         uIsMoving: { value: false },
       },
       vertexShader,
@@ -182,7 +188,9 @@ const Hero = () => {
     const onTouchMove = (event: TouchEvent) => {
       if (event.touches.length > 0) {
         event.preventDefault();
-        const canvasRect = (canvas as HTMLCanvasElement).getBoundingClientRect();
+        const canvasRect = (
+          canvas as HTMLCanvasElement
+        ).getBoundingClientRect();
         const touchX = event.touches[0].clientX;
         const touchY = event.touches[0].clientY;
 
@@ -252,8 +260,8 @@ const Hero = () => {
     };
   }, []);
   useEffect(() => {
-    const element = gsap.context(()=>{
-        const tl = gsap.timeline({
+    const element = gsap.context(() => {
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: scrollContainerRef.current,
           start: "top top",
@@ -266,79 +274,101 @@ const Hero = () => {
         filter: "grayscale(1)",
         ease: "none",
       });
-    })
-  return () => element.revert();
-},[]);
+    });
+    return () => element.revert();
+  }, []);
 
- useEffect(() => {
-   const canvasElement = canvasRef.current;
-   const text1Element = textParallaxRef1.current;
-   const text2Element = textParallaxRef2.current;
+  useEffect(() => {
+    const canvasElement = canvasRef.current;
+    const text1Element = textParallaxRef1.current;
+    const text2Element = textParallaxRef2.current;
 
-   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-   if (prefersReducedMotion) return;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
 
-   let isHovering = false;
-   const xSetterCanvas = canvasElement ? gsap.quickTo(canvasElement, "x", { duration: 2.5, ease: "power2.out" }) : null;
-   const ySetterCanvas = canvasElement ? gsap.quickTo(canvasElement, "y", { duration: 2.5, ease: "power2.out" }) : null;
-   const xSetterText1 = text1Element ? gsap.quickTo(text1Element, "x", { duration: 2.5, ease: "power2.out" }) : null;
-   const ySetterText1 = text1Element ? gsap.quickTo(text1Element, "y", { duration: 2.5, ease: "power2.out" }) : null;
-   const xSetterText2 = text2Element ? gsap.quickTo(text2Element, "x", { duration: 2.5, ease: "power2.out" }) : null;
-   const ySetterText2 = text2Element ? gsap.quickTo(text2Element, "y", { duration: 2.5, ease: "power2.out" }) : null;
+    let isHovering = false;
+    const xSetterCanvas = canvasElement
+      ? gsap.quickTo(canvasElement, "x", { duration: 2.5, ease: "power2.out" })
+      : null;
+    const ySetterCanvas = canvasElement
+      ? gsap.quickTo(canvasElement, "y", { duration: 2.5, ease: "power2.out" })
+      : null;
+    const xSetterText1 = text1Element
+      ? gsap.quickTo(text1Element, "x", { duration: 2.5, ease: "power2.out" })
+      : null;
+    const ySetterText1 = text1Element
+      ? gsap.quickTo(text1Element, "y", { duration: 2.5, ease: "power2.out" })
+      : null;
+    const xSetterText2 = text2Element
+      ? gsap.quickTo(text2Element, "x", { duration: 2.5, ease: "power2.out" })
+      : null;
+    const ySetterText2 = text2Element
+      ? gsap.quickTo(text2Element, "y", { duration: 2.5, ease: "power2.out" })
+      : null;
 
-   const handleMouseMove = (e: MouseEvent) => {
-     if (!isHovering) return;
-     const deltaX = (e.clientX / window.innerWidth - 0.5) * 50;
-     const deltaY = (e.clientY / window.innerHeight - 0.5) * 50;
-     if (xSetterCanvas) xSetterCanvas(deltaX);
-     if (ySetterCanvas) ySetterCanvas(deltaY);
-     if (xSetterText1) xSetterText1(deltaX * 0.5);
-     if (ySetterText1) ySetterText1(deltaY * 0.5);
-     if (xSetterText2) xSetterText2(deltaX * 0.5);
-     if (ySetterText2) ySetterText2(deltaY * 0.5);
-   };
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isHovering) return;
+      const deltaX = (e.clientX / window.innerWidth - 0.5) * 50;
+      const deltaY = (e.clientY / window.innerHeight - 0.5) * 50;
+      if (xSetterCanvas) xSetterCanvas(deltaX);
+      if (ySetterCanvas) ySetterCanvas(deltaY);
+      if (xSetterText1) xSetterText1(deltaX * 0.5);
+      if (ySetterText1) ySetterText1(deltaY * 0.5);
+      if (xSetterText2) xSetterText2(deltaX * 0.5);
+      if (ySetterText2) ySetterText2(deltaY * 0.5);
+    };
 
-   const handleMouseEnter = () => {
-     isHovering = true;
-   };
+    const handleMouseEnter = () => {
+      isHovering = true;
+    };
 
-   const handleMouseLeave = () => {
-     isHovering = false;
-     if (xSetterCanvas) xSetterCanvas(0);
-     if (ySetterCanvas) ySetterCanvas(0);
-     if (xSetterText1) xSetterText1(0);
-     if (ySetterText1) ySetterText1(0);
-     if (xSetterText2) xSetterText2(0);
-     if (ySetterText2) ySetterText2(0);
-   };
+    const handleMouseLeave = () => {
+      isHovering = false;
+      if (xSetterCanvas) xSetterCanvas(0);
+      if (ySetterCanvas) ySetterCanvas(0);
+      if (xSetterText1) xSetterText1(0);
+      if (ySetterText1) ySetterText1(0);
+      if (xSetterText2) xSetterText2(0);
+      if (ySetterText2) ySetterText2(0);
+    };
 
-   // Attach to the hero container
-   const heroContainer = scrollContainerRef.current;
-   if (heroContainer) {
-     heroContainer.addEventListener('mousemove', handleMouseMove);
-     heroContainer.addEventListener('mouseenter', handleMouseEnter);
-     heroContainer.addEventListener('mouseleave', handleMouseLeave);
-   }
+    // Attach to the hero container
+    const heroContainer = scrollContainerRef.current;
+    if (heroContainer) {
+      heroContainer.addEventListener("mousemove", handleMouseMove);
+      heroContainer.addEventListener("mouseenter", handleMouseEnter);
+      heroContainer.addEventListener("mouseleave", handleMouseLeave);
+    }
 
-   return () => {
-     if (heroContainer) {
-       heroContainer.removeEventListener('mousemove', handleMouseMove);
-       heroContainer.removeEventListener('mouseenter', handleMouseEnter);
-       heroContainer.removeEventListener('mouseleave', handleMouseLeave);
-     }
-   };
- }, []);
+    return () => {
+      if (heroContainer) {
+        heroContainer.removeEventListener("mousemove", handleMouseMove);
+        heroContainer.removeEventListener("mouseenter", handleMouseEnter);
+        heroContainer.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+  }, []);
 
- return (
-    <section className=" light h-screen w-full sticky top-16" ref={scrollContainerRef}>
-      <div className="h-screen relative overflow-hidden">
+  return (
+    <section
+      className=" light h-screen w-full sticky top-16"
+      ref={scrollContainerRef}
+    >
+      <ContourBackground
+        background="#ffffff"
+        lineColor="#7a825c"
+        speed={0.01}
+      >
+        <div className="h-screen relative overflow-hidden">
           <canvas
-          ref={canvasRef}
-          className="absolute bottom-20 left-0 w-64 h-64  z-1"
-        ></canvas>
-  
-      </div>
-     {/* <div className="overflow-hidden" ref={textParallaxRef1}>
+            ref={canvasRef}
+            className="absolute bottom-20 left-0 w-64 h-64  z-1"
+          ></canvas>
+        </div>
+      </ContourBackground>
+      {/* <div className="overflow-hidden" ref={textParallaxRef1}>
        <div className=" flex items-center justify-center">
         <div className="moving-text text-9xl font-normal text-gray-200 whitespace-nowrap">
           {"Enaku Maths Varadhu ".repeat(30)}
@@ -355,4 +385,3 @@ const Hero = () => {
 };
 
 export default Hero;
-

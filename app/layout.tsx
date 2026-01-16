@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Halfre } from "@/fonts";
 import ScrollProvider from "@/provider/ScrollProvider";
-import Navbar from "@/components/reuseable/NavBar";
+import Navbar from "@/components/Reuseable/NavBar";
 
 export const metadata: Metadata = {
   title: "STR Atman",
