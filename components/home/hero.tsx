@@ -330,7 +330,7 @@ const Hero = () => {
  }, []);
 
  return (
-    <div className="h-screen w-full sticky top-16" ref={scrollContainerRef}>
+    <section className=" light h-screen w-full sticky top-16" ref={scrollContainerRef}>
       <div className="h-screen relative overflow-hidden">
           <canvas
           ref={canvasRef}
@@ -350,7 +350,7 @@ const Hero = () => {
         </div>
       </div>
      </div> */}
-    </div>
+    </section>
   );
 };
 

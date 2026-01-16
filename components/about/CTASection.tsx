@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const CTASection = () => {
   return (
-    <section className="relative w-full overflow-hidden" style={{ padding: '50px' }}>
+    <section className=" light relative w-full overflow-hidden" style={{ padding: '50px' }}>
       <div className="relative w-full h-[400px] lg:h-[500px] overflow-hidden rounded-2xl">
         {/* Background Image */}
         <div className="absolute inset-0">

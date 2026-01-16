@@ -9,7 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-halfre: var(--font-halfre);
-  --primary: #1db954;
+  --color-primary: #1db954;
 }
 
 body {

@@ -6,12 +6,12 @@ import CTASection from "@/components/about/CTASection";
 
 export default function AboutPage() {
   return (
-    <>
+    <div className=" overflow-x-hidden">
       <AboutHero />
       <Journey />
       <VideoSection />
       <StackedCards />
       <CTASection />
-    </>
+    </div>
   );
 }
