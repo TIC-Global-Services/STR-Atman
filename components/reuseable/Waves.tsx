@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, CSSProperties } from 'react';
-import '@/components/home/Waves.css';
+import './Waves.css';
 
 class Grad {
   x: number;
@@ -119,6 +119,7 @@ interface Config {
 }
 
 interface WavesProps {
+  children?: React.ReactNode;
   lineColor?: string;
   backgroundColor?: string;
   waveSpeedX?: number;
@@ -147,7 +148,8 @@ const Waves: React.FC<WavesProps> = ({
   tension = 0.005,
   maxCursorMove = 100,
   style = {},
-  className = ''
+  className = '',
+  children
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -390,25 +392,30 @@ const Waves: React.FC<WavesProps> = ({
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className={`waves ${className}`}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        margin: 0,
-        padding: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        backgroundColor,
-        ...style
-      }}
-    >
-      <canvas ref={canvasRef} className="waves-canvas" />
+  <div
+    ref={containerRef}
+    className={`waves relative ${className}`}
+    style={{
+      width: '100%',
+      height: '100%',
+      overflow: 'hidden',
+      backgroundColor,
+      ...style
+    }}
+  >
+    {/* WAVES BACKGROUND */}
+    <canvas
+      ref={canvasRef}
+      className="waves-canvas absolute inset-0 z-0"
+    />
+
+    {/* CONTENT ABOVE WAVES */}
+    <div className="relative z-10 w-full h-full">
+      {children}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Waves;
