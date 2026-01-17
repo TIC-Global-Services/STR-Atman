@@ -8,7 +8,7 @@ const TopographicTexture = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const settings = [
-    { name: 'contourInterval', value: 2.2 },
+    { name: 'contourInterval', value: 12.0 },
     { name: 'lineThickness', value: 0.012 },
     { name: 'bgColor', value: [0.93, 0.93, 0.93] },
     { name: 'lineColor', value: [0.60, 0.60, 0.60] },

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, CSSProperties } from 'react';
-import '../components/home/Waves.css';
+import '@/components/home/Waves.css';
 
 class Grad {
   x: number;
@@ -211,6 +211,9 @@ const Waves: React.FC<WavesProps> = ({
     const container = containerRef.current;
     if (!canvas || !container) return;
     ctxRef.current = canvas.getContext('2d');
+    
+    // Initialize Noise
+    noiseRef.current = new Noise(Math.random() * 65536);
 
     function setSize() {
       if (!container || !canvas) return;
@@ -284,9 +287,9 @@ const Waves: React.FC<WavesProps> = ({
       });
     }
 
-    function moved(point: Point, withCursor = true): { x: number; y: number } {
-      const x = point.x + point.wave.x + (withCursor ? point.cursor.x : 0);
-      const y = point.y + point.wave.y + (withCursor ? point.cursor.y : 0);
+    function moved(point: Point): { x: number; y: number } {
+      const x = point.x + point.wave.x + point.cursor.x;
+      const y = point.y + point.wave.y + point.cursor.y;
       return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
     }
 
@@ -295,20 +298,31 @@ const Waves: React.FC<WavesProps> = ({
       const ctx = ctxRef.current;
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
-      ctx.beginPath();
       ctx.strokeStyle = configRef.current.lineColor;
+      ctx.lineWidth = 1;
+      
       linesRef.current.forEach(points => {
-        let p1 = moved(points[0], false);
-        ctx.moveTo(p1.x, p1.y);
-        points.forEach((p, idx) => {
-          const isLast = idx === points.length - 1;
-          p1 = moved(p, !isLast);
-          const p2 = moved(points[idx + 1] || points[points.length - 1], !isLast);
-          ctx.lineTo(p1.x, p1.y);
-          if (isLast) ctx.moveTo(p2.x, p2.y);
-        });
+        if (points.length < 2) return;
+        
+        ctx.beginPath();
+        const firstPoint = moved(points[0]);
+        ctx.moveTo(firstPoint.x, firstPoint.y);
+        
+        for (let i = 0; i < points.length - 1; i++) {
+          const p0 = moved(points[i]);
+          const p1 = moved(points[i + 1]);
+          
+          // Use quadratic curves for smooth waves
+          const midX = (p0.x + p1.x) / 2;
+          const midY = (p0.y + p1.y) / 2;
+          ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
+        }
+        
+        // Draw to the last point
+        const lastPoint = moved(points[points.length - 1]);
+        ctx.lineTo(lastPoint.x, lastPoint.y);
+        ctx.stroke();
       });
-      ctx.stroke();
     }
 
     function tick(t: number) {

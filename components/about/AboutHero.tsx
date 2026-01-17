@@ -26,8 +26,11 @@ const AboutHero = () => {
       {/* Fallback background in case image doesn't load */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 z-0"></div>
       
+      {/* Bottom gradient overlay with blur for smooth transition */}
+      {/* <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-black via-black/70 to-transparent z-50 backdrop-blur-md"></div> */}
+      
       {/* Optional: Subtle dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+      <div className="absolute inset-0 bg-transparent bg-opacity-20 z-15"></div>
       
       {/* STR Logo Background (Middle Layer - behind aboutstr) */}
       <div className="absolute inset-0 flex items-center justify-center z-30 translate-y-8">
