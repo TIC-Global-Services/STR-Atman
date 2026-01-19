@@ -7,7 +7,7 @@ import {
   fluidFragmentShader,
   displayFragmentShader,
 } from "@/utils/shaders";
-import ContourBackground from "../Reuseable/ContourBackground";
+import ContourBackground from "../reuseable/ContourBackground";
 const topimage = "/landonorriswithouthelmet.png";
 const bottomimage = "/landonorriswithhelmet.png";
 

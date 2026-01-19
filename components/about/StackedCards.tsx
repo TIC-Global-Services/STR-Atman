@@ -66,7 +66,7 @@ const StackedCards = () => {
   const activeCard = visibleCards[0];
 
   return (
-    <section className="relative w-full min-h-screen bg-transparent flex flex-col items-center justify-center py-20 px-6">
+    <section className="relative light w-full min-h-screen bg-transparent flex flex-col items-center justify-center py-20 px-6">
       {/* Title */}
       <h2 className="text-[80px] lg:text-6xl font-normal text-gray-900 mb-12 text-center">
         Where The Journey Leads

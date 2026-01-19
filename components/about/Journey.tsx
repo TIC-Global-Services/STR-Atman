@@ -97,7 +97,7 @@ const Journey = () => {
         <div ref={statsRef} className="flex-1 flex items-center justify-center pr-4 translate-y-16">
           <div className="space-y-16">
             {/* 1987 */}
-            <div className="text-right">
+            <div className="text-left">
               <div className="text-[110px] lg:text-6xl font-normal text-green-400 mb-2">1987</div>
               <p className="text-white text-lg lg:text-xl max-w-sm">
                 The Year He Stepped Into Cinema As A Child Artist
@@ -105,7 +105,7 @@ const Journey = () => {
             </div>
             
             {/* 25+ */}
-            <div className="text-right">
+            <div className="text-left">
               <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">25+</div>
               <p className="text-white text-lg lg:text-xl max-w-sm">
                 Years Of Experience Across Acting, Direction, Music, And Writing
@@ -113,7 +113,7 @@ const Journey = () => {
             </div>
             
             {/* 40+ */}
-            <div className="text-right">
+            <div className="text-left">
               <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">40+</div>
               <p className="text-white text-lg lg:text-xl max-w-sm">
                 Films That Shaped Pop Culture And Sparked Conversation
@@ -121,7 +121,7 @@ const Journey = () => {
             </div>
             
             {/* 100+ */}
-            <div className="text-right">
+            <div className="text-left">
               <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">100+</div>
               <p className="text-white text-lg lg:text-xl max-w-sm">
                 Songs Written, Sung, Or Influenced By His Creative Vision
@@ -129,7 +129,7 @@ const Journey = () => {
             </div>
             
             {/* 1 */}
-            <div className="text-right">
+            <div className="text-left">
               <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">1</div>
               <p className="text-white text-lg lg:text-xl max-w-sm">
                 An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty

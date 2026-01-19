@@ -43,8 +43,8 @@ const Navbar = () => {
     { title: "About", slug: "/about" },
     { title: "Press Desk", slug: "/press" },
     { title: "Merch Store", slug: "/" },
-    { title: "Membership", slug: "/" },
-    { title: "Musical Journey", slug: "/musical-journey" },
+    { title: "Membership", slug: "/membership" },
+    { title: "Musical Journey", slug: "/music-journey" },
     { title: "Contact", slug: "/contact" },
   ];
 
