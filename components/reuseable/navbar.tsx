@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
+import { forwardRef } from "react";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -148,7 +149,7 @@ const Navbar = () => {
           duration: 0.4,
           ease: "back.out(1.7)",
         },
-        "-=0.1"
+        "-=0.1",
       )
       .to(
         overlayRef.current,
@@ -157,7 +158,7 @@ const Navbar = () => {
           duration: 1,
           ease: "power4.inOut",
         },
-        0
+        0,
       )
       .fromTo(
         imagesRef.current,
@@ -169,7 +170,7 @@ const Navbar = () => {
           duration: 0.6,
           ease: "power3.out",
         },
-        "-=0.4"
+        "-=0.4",
       )
       .fromTo(
         menuItemsRef.current?.children || [],
@@ -181,7 +182,7 @@ const Navbar = () => {
           duration: 0.6,
           ease: "power3.out",
         },
-        "-=0.5"
+        "-=0.5",
       );
   };
 
@@ -228,7 +229,7 @@ const Navbar = () => {
           duration: 0.3,
           ease: "power3.in",
         },
-        "-=0.3"
+        "-=0.3",
       )
 
       .to(
@@ -239,7 +240,7 @@ const Navbar = () => {
           duration: 0.4,
           ease: "back.out(1.7)",
         },
-        "-=0.1"
+        "-=0.1",
       )
 
       .set(overlayRef.current, {
@@ -306,19 +307,20 @@ const Navbar = () => {
     <>
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-999 px-6 py-4 flex justify-between items-center overflow-hidden w-full">
-        <Link href="/">
-          <Image
-            src="/logo/logo.png"
-            alt="STR Logo"
-            width={120}
-            height={50}
-            className={`
-    w-[90px] md:w-[120px]
-    transition-all duration-300
-    ${isLightSection ? "invert" : "invert-0"}
-  `}
-          />
-        </Link>
+
+          <Link href="/">
+            <Image
+              src="/logo/logo.png"
+              alt="STR Logo"
+              width={120}
+              height={50}
+              className={`
+        w-[90px] md:w-[120px]
+        transition-all duration-300
+        ${isLightSection ? "invert" : "invert-0"}
+      `}
+            />
+          </Link>
 
         <audio
           ref={audioRef}
