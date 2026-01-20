@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Halfre } from "@/fonts";
 import ScrollProvider from "@/provider/ScrollProvider";
-import Navbar from "@/components/reuseable/navbar";
-import Footer from "@/components/reuseable/Footer";
+import Navbar from "@/components/Reuseable/navbar";
+import Footer from "@/components/Reuseable/Footer2";
 
 export const metadata: Metadata = {
   title: "STR Atman",

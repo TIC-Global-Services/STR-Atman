@@ -2,7 +2,7 @@
 import { useEffect, useRef, ReactNode } from "react";
 
 interface ContourBackgroundProps {
-  children: ReactNode;
+  children?: ReactNode;
   background?: string;
   lineColor?: string;
   speed?: number;
@@ -11,6 +11,7 @@ interface ContourBackgroundProps {
   lineWidth?: number;
   className?: string;
 }
+
 
 export default function ContourBackground({
   children,
