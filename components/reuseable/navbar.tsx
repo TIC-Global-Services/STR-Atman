@@ -351,8 +351,8 @@ const Navbar = () => {
     transition-all duration-300
     ${
       isPlaying
-        ? "text-green-400 group-hover:text-white"
-        : "text-white group-hover:text-green-400"
+        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
+        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
     }
     group-hover:scale-110
   `}
@@ -392,10 +392,10 @@ const Navbar = () => {
                 className={`
       tracking-wide
       ${
-        isPlaying
-          ? "text-green-400 group-hover:text-white"
-          : "text-white group-hover:text-green-400"
-      }
+      isPlaying
+        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
+        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
+    }
     `}
               >
                 AUDIO
@@ -405,10 +405,10 @@ const Navbar = () => {
                 className={`
       font-bold
       ${
-        isPlaying
-          ? "text-green-400 group-hover:text-white"
-          : "text-white group-hover:text-green-400"
-      }
+      isPlaying
+        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
+        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
+    }
     `}
               >
                 {isPlaying ? "ON" : "OFF"}
