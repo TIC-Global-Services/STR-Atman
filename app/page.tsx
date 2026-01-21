@@ -1,24 +1,29 @@
-import ContainerLayout from "@/layout/ContainerLayout";
-import HorizontalImageGallery from "@/components/Home/HorizontalImageGallery";
-import ContourBackground from "@/components/Reuseable/ContourBackground";
-import MusicHero from "@/components/music/MusicHero";
-import VideoSection from "@/components/Reuseable/VideoSection";
+import HorizontalImageGallery from "@/components/home/HorizontalImageGallery";
+import ContourBackground from "@/components/reuseable/ContourBackground";
+import VideoSection from "@/components/reuseable/VideoSection";
+import STRAbout from "@/components/home/STRAbout";
+import LatestUpdates from "@/components/home/LatestUpdates";
+import Timeline from "@/components/home/Timeline";
+import Stories from "@/components/home/Stories";
+import HomeHero from "@/components/home/HomeHero";
 
 export default function Home() {
   return (
     <div className=" overflow-hidden">
-      <MusicHero />
+      <HomeHero />
+      <STRAbout />
+      <Timeline />
       <ContourBackground
         background="#ffffff"
         lineColor="#7a825c"
-        speed={0.01}
+        speed={0.03}
         className="light"
       >
-      <HorizontalImageGallery />
+        <LatestUpdates />
+        <HorizontalImageGallery />
+        <VideoSection videoId="xkHtjS58Dds" />
+        <Stories />
       </ContourBackground>
-      <VideoSection
-        videoId="xkHtjS58Dds"
-      />
     </div>
   );
 }

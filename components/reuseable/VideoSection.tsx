@@ -49,7 +49,7 @@ const VideoSection = ({ videoId }: VideoProps) => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden bg-black"
+      className="relative w-full h-screen overflow-hidden "
     >
       {/* 🔥 Aspect-ratio cover wrapper */}
       <div className="absolute inset-0 overflow-hidden">
@@ -77,7 +77,7 @@ const VideoSection = ({ videoId }: VideoProps) => {
       {/* 🔊 Custom mute button */}
       <button
         onClick={toggleMute}
-        className="absolute bottom-8 right-8 z-20 bg-black/60 text-white px-4 py-2 rounded-full backdrop-blur-md"
+        className="absolute bottom-8 cursor-pointer right-8 z-20 bg-black/60 text-white px-4 py-2 rounded-full backdrop-blur-md"
       >
         {muted ? "Unmute" : "Mute"}
       </button>

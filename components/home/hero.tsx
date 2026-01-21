@@ -7,7 +7,7 @@ import {
   fluidFragmentShader,
   displayFragmentShader,
 } from "@/utils/shaders";
-import ContourBackground from "../Reuseable/ContourBackground";
+import ContourBackground from "../reuseable/ContourBackground";
 const topimage = "/landonorriswithouthelmet.png";
 const bottomimage = "/landonorriswithhelmet.png";
 
@@ -353,7 +353,7 @@ const Hero = () => {
 
   return (
     <section
-      className=" light h-screen w-full sticky top-16"
+      className=" light h-screen w-full sticky top-22"
       ref={scrollContainerRef}
     >
       <ContourBackground

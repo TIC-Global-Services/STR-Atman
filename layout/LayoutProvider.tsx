@@ -1,8 +1,8 @@
 "use client";
 
-import Footer from "@/components/Reuseable/Footer2";
-import Navbar from "@/components/Reuseable/Navbar";
-import PageLoader from "@/components/Reuseable/PageLoader";
+import Footer from "@/components/reuseable/Footer2";
+import Navbar from "@/components/reuseable/navbar";
+import PageLoader from "@/components/reuseable/PageLoader";
 import ScrollProvider from "@/provider/ScrollProvider";
 import { useRef, useState } from "react";
 

@@ -12,14 +12,13 @@ interface ContourBackgroundProps {
   className?: string;
 }
 
-
 export default function ContourBackground({
   children,
   background = "#eef1e4",
   lineColor = "rgba(120,130,90,0.22)",
   speed = 0.001,
-  resolution = 6,
-  levels = 10,
+  resolution = 8,
+  levels = 8,
   lineWidth = 1,
   className = "",
 }: ContourBackgroundProps) {
@@ -33,26 +32,23 @@ export default function ContourBackground({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d", { alpha: false })!;
     let w = 0;
     let h = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
       w = rect.width;
       h = rect.height;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+      canvas.width = w;
+      canvas.height = h;
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     resize();
     window.addEventListener("resize", resize);
 
-    // 🔹 Pre-allocate scalar field
     const cols = Math.ceil(w / resolution);
     const rows = Math.ceil(h / resolution);
     const field: number[][] = Array.from({ length: rows + 1 }, () =>
@@ -69,8 +65,7 @@ export default function ContourBackground({
     let t = 0;
 
     const draw = (now: number) => {
-      // 🔥 FPS LIMIT (30fps)
-      if (now - lastTimeRef.current < 33) {
+      if (now - lastTimeRef.current < 50) {
         rafRef.current = requestAnimationFrame(draw);
         return;
       }
@@ -83,16 +78,18 @@ export default function ContourBackground({
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
 
-      // 🔹 Update field ONLY ONCE
+      // Update field
       for (let y = 0; y <= rows; y++) {
         for (let x = 0; x <= cols; x++) {
           field[y][x] = noise(x * resolution, y * resolution, t);
         }
       }
 
+      // Single path for all contours
+      ctx.beginPath();
+      
       for (let l = 0; l < levels; l++) {
         const level = interp(-2, 2, l / levels);
-        ctx.beginPath();
 
         for (let y = 0; y < rows; y++) {
           for (let x = 0; x < cols; x++) {
@@ -100,6 +97,11 @@ export default function ContourBackground({
             const b = field[y][x + 1];
             const c = field[y + 1][x + 1];
             const d = field[y + 1][x];
+
+            // Skip cells that don't intersect this level
+            const min = Math.min(a, b, c, d);
+            const max = Math.max(a, b, c, d);
+            if (level < min || level > max) continue;
 
             const px = x * resolution;
             const py = y * resolution;
@@ -161,17 +163,15 @@ export default function ContourBackground({
             }
           }
         }
-
-        ctx.stroke();
       }
 
+      ctx.stroke();
       t += speed;
       rafRef.current = requestAnimationFrame(draw);
     };
 
     rafRef.current = requestAnimationFrame(draw);
 
-    // 🔹 Pause when tab hidden
     const onVisibility = () => {
       if (document.hidden && rafRef.current) {
         cancelAnimationFrame(rafRef.current);
@@ -191,10 +191,10 @@ export default function ContourBackground({
   }, [background, lineColor, speed, resolution, levels, lineWidth]);
 
   return (
-    <section ref={containerRef} className={`relative overflow-hidden  ${className}`}>
+    <section ref={containerRef} className={`relative overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 z-0 pointer-events-none opacity-30"
+        className="absolute inset-0 z-0 pointer-events-none opacity-20"
       />
       <div className="relative z-10 w-full h-full">{children}</div>
     </section>

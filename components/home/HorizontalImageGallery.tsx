@@ -3,8 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ContourBackground from "../Reuseable/ContourBackground";
-import DecayCard from "../Reuseable/DecayCard";
+import DecayCard from "../reuseable/DecayCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -83,12 +82,13 @@ const HorizontalImageGallery = () => {
   }, []);
 
   return (
+    
     <div ref={pinRef} className="h-screen w-full overflow-hidden py-10">
       <div
         ref={gradientRef}
         className="absolute inset-0 pointer-events-none z-0"
         style={{
-          background: "linear-gradient(90deg, #FFFFFF 0%, #5E7C1A 100%)",
+          background: "#5E7C1A",
           opacity: 0,
         }}
       />
