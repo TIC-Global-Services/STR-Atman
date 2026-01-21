@@ -83,7 +83,7 @@ const HorizontalImageGallery = () => {
   }, []);
 
   return (
-    <div ref={pinRef} className="h-screen w-full overflow-hidden">
+    <div ref={pinRef} className="h-screen w-full overflow-hidden py-10">
       <div
         ref={gradientRef}
         className="absolute inset-0 pointer-events-none z-0"

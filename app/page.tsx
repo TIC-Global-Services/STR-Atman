@@ -2,6 +2,7 @@ import ContainerLayout from "@/layout/ContainerLayout";
 import HorizontalImageGallery from "@/components/Home/HorizontalImageGallery";
 import ContourBackground from "@/components/Reuseable/ContourBackground";
 import MusicHero from "@/components/music/MusicHero";
+import VideoSection from "@/components/Reuseable/VideoSection";
 
 export default function Home() {
   return (
@@ -13,8 +14,11 @@ export default function Home() {
         speed={0.01}
         className="light"
       >
-        <HorizontalImageGallery />
+      <HorizontalImageGallery />
       </ContourBackground>
+      <VideoSection
+        videoId="xkHtjS58Dds"
+      />
     </div>
   );
 }

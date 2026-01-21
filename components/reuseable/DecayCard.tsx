@@ -139,7 +139,7 @@ const DecayCard: React.FC<DecayCardProps> = ({
   return (
     <div
       ref={svgRef}
-      className="relative"
+      className="relative rounded-md"
       style={{ width: `${width}px`, height: `${height}px` }}
     >
       <svg
@@ -186,7 +186,7 @@ const DecayCard: React.FC<DecayCardProps> = ({
           />
         </g>
       </svg>
-      <div className=" absolute -bottom-2 left-4 text-2xl mix-blend-difference">
+      <div className=" absolute -bottom-2 left-4 text-2xl mix-blend-difference ">
         {children}
       </div>
     </div>
