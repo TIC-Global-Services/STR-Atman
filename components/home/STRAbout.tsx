@@ -24,7 +24,7 @@ const STRAbout = () => {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=380%",
+          end: "+=240%",
           scrub: true,
           pin: true,
           anticipatePin: 1,
@@ -55,7 +55,7 @@ const STRAbout = () => {
         duration: 1,
       });
 
-      tl.to({}, { duration: 1.4 });
+      tl.to({}, { duration: 2.2 });
     }, sectionRef);
 
     return () => ctx.revert();
