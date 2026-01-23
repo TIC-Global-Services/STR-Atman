@@ -11,14 +11,9 @@ export default function Home() {
   return (
     <div className=" overflow-hidden">
       <HomeHero />
-      <STRAbout />
-      <Timeline />
-      <ContourBackground
-        background="#ffffff"
-        lineColor="#7a825c"
-        speed={0.03}
-        className="light"
-      >
+      <ContourBackground background="#ffffff" lineColor="#7a825c" speed={0.03}>
+        <STRAbout />
+        <Timeline />
         <LatestUpdates />
         <HorizontalImageGallery />
         <VideoSection videoId="xkHtjS58Dds" />

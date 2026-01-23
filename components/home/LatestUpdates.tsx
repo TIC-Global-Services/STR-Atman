@@ -79,7 +79,7 @@ const LatestUpdates = () => {
   }, []);
 
   return (
-    <div ref={sectionRef}>
+    <section ref={sectionRef} className=" light">
       {/* ✅ wrapper div holds the ref */}
       <ContainerLayout className=" lxl:min-h-screen w-full py-20 space-y-10">
         <h1 className="text-5xl">What&apos;s Happening Now</h1>
@@ -105,7 +105,7 @@ const LatestUpdates = () => {
           View More <RightArrow size={22} />
         </Link>
       </ContainerLayout>
-    </div>
+    </section>
   );
 };
 

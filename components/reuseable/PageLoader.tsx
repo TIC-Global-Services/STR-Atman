@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import gsap from "gsap";
+import AnimatedLogo from "./AnimatedLogo";
 
 interface PageLoaderProps {
   onFinish?: () => void;
@@ -12,13 +12,15 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
   const loaderRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+
   const [progress, setProgress] = useState(0);
+  const [done, setDone] = useState(false); // ✅ guard
 
   /* ----------------------------
-     PROGRESS (0 → 100 in 3s)
+     PROGRESS (0 → 100)
   ----------------------------- */
   useEffect(() => {
-    const DURATION = 1500;
+    const DURATION = 5000;
     const start = performance.now();
     let raf: number;
 
@@ -26,7 +28,9 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
       const elapsed = performance.now() - start;
       const pct = Math.min((elapsed / DURATION) * 100, 100);
       setProgress(Math.floor(pct));
+
       if (pct < 100) raf = requestAnimationFrame(tick);
+      else setDone(true); // ✅ mark completed
     };
 
     raf = requestAnimationFrame(tick);
@@ -34,23 +38,21 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
   }, []);
 
   /* ----------------------------
-     OPENING ANIMATION
+     ANIMATE ONLY AFTER 100%
   ----------------------------- */
   useEffect(() => {
-    if (!panelRef.current || !logoRef.current || !loaderRef.current) return;
+    if (!done || !panelRef.current || !logoRef.current || !loaderRef.current)
+      return;
 
-    // Ensure correct origin
     gsap.set(panelRef.current, {
       transformOrigin: "top",
       scaleY: 1,
     });
 
     const tl = gsap.timeline({
-      delay: 1.5, // wait for progress
       defaults: { ease: "power2.inOut" },
     });
 
-    // Logo gently fades/lifts
     tl.to(logoRef.current, {
       y: -20,
       opacity: 0,
@@ -61,46 +63,32 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
       panelRef.current,
       {
         scaleY: 0,
-        duration: 1.2, // slow & smooth
+        duration: 1.2,
         ease: "power3.inOut",
       },
       "-=0.4"
     );
 
-    // Remove loader AFTER animation
-    tl.to(loaderRef.current, {
-      pointerEvents: "none",
-      onComplete: () => {
-        onFinish?.();
-      },
+    tl.call(() => {
+      onFinish?.();
     });
 
-    // ✅ CLEANUP (FIXES TS ERROR)
     return () => {
       tl.kill();
     };
-  }, [onFinish]);
+  }, [done, onFinish]);
 
   return (
     <div
       ref={loaderRef}
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
     >
-      {/* PANEL THAT SHRINKS */}
-      <div
-        ref={panelRef}
-        className="absolute inset-0 bg-primary"
-      />
+      {/* PANEL */}
+      <div ref={panelRef} className="absolute inset-0 bg-primary" />
 
       {/* LOGO */}
       <div ref={logoRef} className="relative z-10">
-        <Image
-          src="/logo/logo.png"
-          alt="Logo"
-          width={140}
-          height={140}
-          priority
-        />
+        <AnimatedLogo />
       </div>
 
       {/* PROGRESS */}

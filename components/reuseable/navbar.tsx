@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { forwardRef } from "react";
+import { AudioWave } from "./AudioWave";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -307,20 +308,19 @@ const Navbar = () => {
     <>
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-999 px-6 py-4 flex justify-between items-center overflow-hidden w-full">
-
-          <Link href="/">
-            <Image
-              src="/logo/logo.png"
-              alt="STR Logo"
-              width={120}
-              height={50}
-              className={`
+        <Link href="/">
+          <Image
+            src="/logo/logo.png"
+            alt="STR Logo"
+            width={120}
+            height={50}
+            className={`
         w-[90px] md:w-[120px]
         transition-all duration-300
         ${isLightSection ? "invert" : "invert-0"}
       `}
-            />
-          </Link>
+          />
+        </Link>
 
         <audio
           ref={audioRef}
@@ -332,89 +332,25 @@ const Navbar = () => {
             setIsPlaying(false);
           }}
         >
-          <source src="/loosu-penne.mp3" type="audio/mpeg" />
-          <source src="/loosu-penne-song.mp3" type="audio/mpeg" />
+          <source src="/Loosu-Penne-song.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
 
         <div className=" flex gap-4 items-center">
           <button
             onClick={toggleAudio}
-            className="group flex flex-col cursor-pointer items-center gap-2 text-xs lg:text-sm transition-all duration-300"
+            className="group flex flex-col items-center gap-2 cursor-pointer"
           >
-            <svg
-              width="30"
-              height="14"
-              viewBox="0 0 30 14"
-              fill="none"
-              className={`
-    transition-all duration-300
-    ${
-      isPlaying
-        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
-        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
-    }
-    group-hover:scale-110
-  `}
-            >
-              <path
-                ref={(el) => {
-                  if (!el) return;
+            <AudioWave isPlaying={isPlaying} isLightSection={isLightSection} />
 
-                  if (isPlaying) {
-                    gsap.to(el, {
-                      attr: {
-                        d: "M2 7 C4 0 6 14 8 7 C10 0 12 14 14 7 C16 0 18 14 20 7 C22 3 24 7 26 7",
-                      },
-                      duration: 0.45,
-                      repeat: -1,
-                      yoyo: true,
-                      ease: "sine.inOut",
-                    });
-                  } else {
-                    gsap.killTweensOf(el);
-                    gsap.set(el, {
-                      attr: {
-                        d: "M2 7 C2 7 4 5 6 7 C8 9 10 5 12 7 C14 9 16 5 18 7 C20 9 22 7 24 7",
-                      },
-                    });
-                  }
-                }}
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-
-            <p className="leading-tight flex items-center gap-1 text-xs md:text-base transition-colors duration-300">
-              <span
-                className={`
-      tracking-wide
-      ${
-      isPlaying
-        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
-        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
-    }
-    `}
-              >
+            <p className="text-xs md:text-base tracking-wide">
+              <span className={isPlaying ? "text-green-500" : "text-white"}>
                 AUDIO
-              </span>
-
-              <span
-                className={`
-      font-bold
-      ${
-      isPlaying
-        ? ` text-green-500  ${isLightSection ? "group-hover:text-black" : "group-hover:text-white"} `
-        : `text-white ${isLightSection ? "invert group-hover:text-pink-400" : "invert-0"} group-hover:text-green-400`
-    }
-    `}
-              >
-                {isPlaying ? "ON" : "OFF"}
-              </span>
+              </span>{" "}
+              <span className={` ${isPlaying ? "text-green-500" : "text-white"} font-bold`}>{isPlaying ? "ON" : "OFF"}</span>
             </p>
           </button>
+
           <button className="bg-green-500 hover:bg-green-600 text-black  py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
             <Image
               src="/shopicon.png"

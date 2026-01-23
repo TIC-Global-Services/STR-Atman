@@ -191,12 +191,12 @@ export default function ContourBackground({
   }, [background, lineColor, speed, resolution, levels, lineWidth]);
 
   return (
-    <section ref={containerRef} className={`relative overflow-hidden ${className}`}>
+    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 z-0 pointer-events-none opacity-20"
       />
       <div className="relative z-10 w-full h-full">{children}</div>
-    </section>
+    </div>
   );
 }

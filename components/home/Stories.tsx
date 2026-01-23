@@ -136,7 +136,7 @@ const Stories = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full md:pt-40">
+    <section className="min-h-screen w-full md:pt-40 light">
       <ContainerLayout className="py-20">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-[10%] justify-between">
           {/* Left Column */}
@@ -236,7 +236,7 @@ const Stories = () => {
               <Link
                 href={"/"}
                 ref={viewMoreRef}
-                className="text-xl font-medium hover:underline transition-all inline-flex items-center gap-2 group text-[#505050]"
+                className="text-xl font-medium hover:underline transition-all inline-flex items-center gap-2 group text-[#505050] pl-2"
               >
                 Know More
                 
@@ -245,7 +245,7 @@ const Stories = () => {
           </div>
         </div>
       </ContainerLayout>
-    </div>
+    </section>
   );
 };
 
