@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import ContourBackground from "./ContourBackground";
 
 const Footer = () => {
   const footerLinks = [
@@ -19,27 +20,29 @@ const Footer = () => {
   ];
 
   return (
-    <div className="px-4 sm:px-8 mx-auto w-full bg-[#B0BD91] pt-16 sm:pt-20 pb-10">
+    <div className="px-4 sm:px-8 mx-auto w-full bg-[#000] pt-16 sm:pt-20 pb-10">
       {/* MASKED FOOTER */}
       <div
         className="
           relative flex justify-center overflow-hidden rounded-2xl
           aspect-[375/680] md:aspect-1688/896
-          bg-[#bbc6a1]
+          bg-[#ffffff]
 
           mask-[url(/footer/mask-mob.svg)]
           mask-contain mask-no-repeat mask-center
-          md:mask-[url(/footer/mask-desk1440-2.svg)]
+          md:mask-[url(/footer/mask-desk.svg)]
         "
       >
-        {/* PATTERN */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/footer/pattern.jpg"
-            alt="Pattern"
-            fill
-            className="object-cover opacity-20 pointer-events-none"
-          />
+
+        {/* PATTERN */}
+        <ContourBackground
+          lineColor="rgba(0,0,0,0.35)"
+          speed={0.05}
+          resolution={9}
+          levels={8}
+          lineWidth={1}
+        />
         </div>
 
         <div className="relative z-10 w-full flex flex-col md:flex-row justify-between">
@@ -98,7 +101,7 @@ const Footer = () => {
             {/* Overlay Text */}
             <div className="z-20 pb-[100%] md:pb-0 md:pt-[10%]">
               <h2 className="text-3xl lg:text-[80px] font-medium uppercase leading-tighter lg:leading-20">
-                <span className="text-white">Stronger</span> than <br />
+                <span className="text-primary">Stronger</span> than <br />
                 Yesterday
               </h2>
             </div>
@@ -122,9 +125,7 @@ const Footer = () => {
 
           {/* ================= DESKTOP RIGHT ================= */}
           <div className="hidden md:block absolute top-1/2 -translate-y-1/2 right-[7%] xl:right-[15%] z-50 text-center">
-            <span className="text-[#474747] text-xs block mb-2">
-              Follow On
-            </span>
+            <span className="text-[#474747] text-xs block mb-2">Follow On</span>
             {socialLinks.map((social, idx) => (
               <div key={idx}>
                 <Link
@@ -140,7 +141,7 @@ const Footer = () => {
       </div>
 
       {/* ================= COPYRIGHT ================= */}
-      <div className="relative z-50 md:-mt-4 xl:-mt-10 mt-6 flex flex-col sm:flex-row gap-2 w-full items-center justify-between text-[clamp(0.75rem,0.6rem+0.4vw,0.95rem)]">
+      <div className="relative z-50 md:-mt-[5%] xl:-mt-[5%] mt-6 flex flex-col sm:flex-row gap-2 w-full md:w-[75%] items-center justify-between ml-[25%] text-[clamp(0.75rem,0.4rem+0.4vw,0.95rem)] text-[#FDFDFD] px-4">
         <p>© {new Date().getFullYear()} Silambarasan TR. All rights reserved</p>
         <p>
           Designed & Developed by{" "}

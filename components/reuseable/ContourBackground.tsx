@@ -32,7 +32,7 @@ export default function ContourBackground({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false })!;
+    const ctx = canvas.getContext("2d")!;
     let w = 0;
     let h = 0;
 
@@ -191,7 +191,7 @@ export default function ContourBackground({
   }, [background, lineColor, speed, resolution, levels, lineWidth]);
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
+    <div ref={containerRef} className={`relative overflow-hidden w-full h-full ${className}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 z-0 pointer-events-none opacity-20"

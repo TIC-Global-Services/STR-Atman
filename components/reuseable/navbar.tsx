@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
-import { forwardRef } from "react";
 import { AudioWave } from "./AudioWave";
+import { MenuIcon } from "./MenuIcon";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ const Navbar = () => {
     "/menu/car.png",
   ];
 
-  /* INITIAL STATE  */
+  // INITIAL STATE
   useEffect(() => {
     if (!overlayRef.current) return;
 
@@ -117,63 +117,29 @@ const Navbar = () => {
     return () => window.removeEventListener("load", handleLoad);
   }, []);
 
-  /*  OPEN  */
-  const openMenu = () => {
+  const toggleMenu = () => {
     if (!menuBtnRef.current || !overlayRef.current) return;
-    setMenuOpen(true);
 
     const rect = menuBtnRef.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
 
-    const tl = gsap.timeline();
+    if (!menuOpen) {
+      setMenuOpen(true);
 
-    // reset clip-path origin every time
-    gsap.set(overlayRef.current, {
-      clipPath: `circle(0px at ${cx}px ${cy}px)`,
-      visibility: "visible",
-      pointerEvents: "auto",
-    });
+      gsap.set(overlayRef.current, {
+        clipPath: `circle(0px at ${cx}px ${cy}px)`,
+        visibility: "visible",
+        pointerEvents: "auto",
+      });
 
-    tl.to(menuBtnRef.current, {
-      scale: 0,
-      rotate: 90,
-      duration: 0.25,
-      ease: "power3.in",
-    })
-      .to(
-        closeBtnRef.current,
-        {
-          scale: 1,
-          rotate: 0,
-          opacity: 1,
-          duration: 0.4,
-          ease: "back.out(1.7)",
-        },
-        "-=0.1",
-      )
-      .to(
-        overlayRef.current,
-        {
-          clipPath: `circle(150vmax at ${cx}px ${cy}px)`,
-          duration: 1,
-          ease: "power4.inOut",
-        },
-        0,
-      )
-      .fromTo(
-        imagesRef.current,
-        { opacity: 0, scale: 0.9 },
-        {
-          opacity: 1,
-          scale: 1,
-          stagger: 0.1,
-          duration: 0.6,
-          ease: "power3.out",
-        },
-        "-=0.4",
-      )
-      .fromTo(
+      gsap.to(overlayRef.current, {
+        clipPath: `circle(150vmax at ${cx}px ${cy}px)`,
+        duration: 1,
+        ease: "power4.inOut",
+      });
+
+      gsap.fromTo(
         menuItemsRef.current?.children || [],
         { y: 40, opacity: 0 },
         {
@@ -182,72 +148,50 @@ const Navbar = () => {
           stagger: 0.08,
           duration: 0.6,
           ease: "power3.out",
-        },
-        "-=0.5",
+          delay: 0.4,
+        }
       );
-  };
 
-  /* ================= CLOSE ================= */
-  const closeMenu = () => {
-    if (!menuBtnRef.current || !overlayRef.current) return;
-    setMenuOpen(false);
+      // Animate close button appearance
+      gsap.to(closeBtnRef.current, {
+        scale: 1,
+        rotate: 0,
+        opacity: 1,
+        duration: 0.5,
+        ease: "back.out(1.7)",
+        delay: 0.3,
+      });
+    } else {
+      setMenuOpen(false);
 
-    const rect = menuBtnRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-
-    const tl = gsap.timeline();
-
-    tl.to(menuItemsRef.current?.children || [], {
-      y: 40,
-      opacity: 0,
-      stagger: 0.05,
-      duration: 0.3,
-      ease: "power3.in",
-    })
-
-      .to(imagesRef.current, {
+      gsap.to(menuItemsRef.current?.children || [], {
+        y: 40,
         opacity: 0,
-        scale: 0.9,
         stagger: 0.05,
-        duration: 0.1,
-      })
+        duration: 0.3,
+        ease: "power3.in",
+      });
 
-      // CIRCLE COLLAPSE
-      .to(overlayRef.current, {
+      gsap.to(overlayRef.current, {
         clipPath: `circle(0px at ${cx}px ${cy}px)`,
         duration: 0.8,
         ease: "power4.inOut",
-      })
-
-      // CLOSE → MENU
-      .to(
-        closeBtnRef.current,
-        {
-          scale: 0,
-          rotate: -90,
-          opacity: 0,
-          duration: 0.3,
-          ease: "power3.in",
+        onComplete: () => {
+          gsap.set(overlayRef.current, {
+            pointerEvents: "none",
+            visibility: "hidden",
+          });
         },
-        "-=0.3",
-      )
-
-      .to(
-        menuBtnRef.current,
-        {
-          scale: 1,
-          rotate: 0,
-          duration: 0.4,
-          ease: "back.out(1.7)",
-        },
-        "-=0.1",
-      )
-
-      .set(overlayRef.current, {
-        pointerEvents: "none",
-        visibility: "hidden",
       });
+
+      // Hide close button
+      gsap.to(closeBtnRef.current, {
+        scale: 0,
+        rotate: -90,
+        opacity: 0,
+        duration: 0.4,
+      });
+    }
   };
 
   useEffect(() => {
@@ -307,7 +251,7 @@ const Navbar = () => {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-999 px-6 py-4 flex justify-between items-center overflow-hidden w-full">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center overflow-hidden w-full">
         <Link href="/">
           <Image
             src="/logo/logo.png"
@@ -315,10 +259,10 @@ const Navbar = () => {
             width={120}
             height={50}
             className={`
-        w-[90px] md:w-[120px]
-        transition-all duration-300
-        ${isLightSection ? "invert" : "invert-0"}
-      `}
+              w-[90px] md:w-[120px]
+              transition-all duration-300
+              ${isLightSection ? "invert" : "invert-0"}
+            `}
           />
         </Link>
 
@@ -328,15 +272,13 @@ const Navbar = () => {
           loop
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-          onError={() => {
-            setIsPlaying(false);
-          }}
+          onError={() => setIsPlaying(false)}
         >
           <source src="/Loosu-Penne-song.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
 
-        <div className=" flex gap-4 items-center">
+        <div className="flex gap-4 items-center">
           <button
             onClick={toggleAudio}
             className="group flex flex-col items-center gap-2 cursor-pointer"
@@ -344,14 +286,18 @@ const Navbar = () => {
             <AudioWave isPlaying={isPlaying} isLightSection={isLightSection} />
 
             <p className="text-xs md:text-base tracking-wide">
-              <span className={isPlaying ? "text-green-500" : "text-white"}>
-                AUDIO
-              </span>{" "}
-              <span className={` ${isPlaying ? "text-green-500" : "text-white"} font-bold`}>{isPlaying ? "ON" : "OFF"}</span>
+              <span className={isPlaying ? "text-green-500" : "text-white"}>AUDIO</span>{" "}
+              <span
+                className={`${
+                  isPlaying ? "text-green-500" : "text-white"
+                } font-bold`}
+              >
+                {isPlaying ? "ON" : "OFF"}
+              </span>
             </p>
           </button>
 
-          <button className="bg-green-500 hover:bg-green-600 text-black  py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
+          <button className="bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
             <Image
               src="/shopicon.png"
               alt="Store"
@@ -361,35 +307,29 @@ const Navbar = () => {
             />
             STORE
           </button>
-          <button
-            ref={menuBtnRef}
-            onClick={openMenu}
-            className=" cursor-pointer"
-          >
-            <Image src="/menuicon.png" alt="Menu" width={32} height={32} />
-          </button>
+
+          <MenuIcon ref={menuBtnRef} isOpen={menuOpen} onClick={toggleMenu} />
         </div>
       </nav>
 
-      {/* OVERLAY  */}
+      {/* OVERLAY */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-9999 bg-primary text-white
-             invisible pointer-events-none"
+        className="fixed inset-0 z-[9999] bg-primary text-white invisible pointer-events-none"
       >
         <button
           ref={closeBtnRef}
-          onClick={closeMenu}
-          className="absolute top-6 right-6 w-10 h-10 rounded-xl bg-white text-black font-bold flex items-center justify-center cursor-pointer"
+          onClick={toggleMenu}
+          className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-white rounded-xl z-100 cursor-pointer"
         >
-          ✕
+          <span className="absolute w-5 h-[2px] bg-black rounded-full rotate-45" />
+          <span className="absolute w-5 h-[2px] bg-black rounded-full -rotate-45" />
         </button>
 
         <div className="flex h-full">
           {/* IMAGES */}
           <div
-            className="hidden md:grid w-full md:w-[45%] xl:w-[45%]
- gap-x-6 grid-cols-2 gap-y-8 overflow-y-hidden mx-auto px-10"
+            className="hidden md:grid w-full md:w-[45%] xl:w-[45%] gap-x-6 grid-cols-2 gap-y-8 overflow-y-hidden mx-auto px-10"
           >
             {menuImages.map((src, i) => {
               const isLeftColumn = i % 2 === 0;
@@ -399,9 +339,7 @@ const Navbar = () => {
                   key={i}
                   ref={(el) => {
                     if (!el) return;
-
                     imagesRef.current[i] = el;
-
                     if (isLeftColumn) {
                       colLeft.current[Math.floor(i / 2)] = el;
                     } else {
@@ -426,13 +364,13 @@ const Navbar = () => {
           <div className="w-full lg:w-1/2 flex items-center justify-center">
             <ul
               ref={menuItemsRef}
-              className="flex flex-col  text-4xl lg:text-5xl 2xl:text-6xl py-6 font-bold text-center"
+              className="flex flex-col text-4xl lg:text-5xl 2xl:text-6xl py-6 font-bold text-center"
             >
               {menuLinks.map((item, i) => (
                 <li key={i}>
                   <Link
                     href={item.slug}
-                    onClick={closeMenu}
+                    onClick={toggleMenu}
                     className="relative inline-block overflow-hidden group uppercase"
                   >
                     <span className="block transition-transform duration-300 group-hover:-translate-y-full">
