@@ -35,11 +35,11 @@ const HomeHero = () => {
       {/* STR Logo Background (Middle Layer - behind aboutstr) */}
       <div className="absolute inset-0 flex items-center justify-center z-30 translate-y-8">
         <Image
-          src="/strlogo.png"
+          src="/logo/logo.png"
           alt="STR Logo Background"
-          width={1200}
+          width={800}
           height={400}
-          className=" object-contain scale-150"
+          className=" object-contain "
           priority
           onError={(e) => {
             console.error('Failed to load strlogo.png:', e);

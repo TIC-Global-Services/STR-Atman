@@ -65,7 +65,7 @@ const VideoSection = ({ videoId }: VideoProps) => {
             top-1/2 left-1/2
             w-[177.77vh] h-[56.25vw]
             min-w-full min-h-full
-            -translate-x-1/2 -translate-y-1/2
+            -translate-x-1/2 -translate-y-1/2 scale-135 md:scale-110
           "
           style={{ pointerEvents: "none" }}
         />

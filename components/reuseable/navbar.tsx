@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
-import { AudioWave } from "./AudioWave";
+import AudioWave  from "./AudioWave";
 import { MenuIcon } from "./MenuIcon";
 
 const Navbar = () => {
@@ -259,7 +259,7 @@ const Navbar = () => {
             width={120}
             height={50}
             className={`
-              w-[90px] md:w-[120px]
+              w-[60px] md:w-[80px]
               transition-all duration-300
               ${isLightSection ? "invert" : "invert-0"}
             `}
@@ -285,7 +285,7 @@ const Navbar = () => {
           >
             <AudioWave isPlaying={isPlaying} isLightSection={isLightSection} />
 
-            <p className="text-xs md:text-base tracking-wide">
+            <p className="text-xs md:text-sm tracking-wide">
               <span className={isPlaying ? "text-green-500" : "text-white"}>AUDIO</span>{" "}
               <span
                 className={`${

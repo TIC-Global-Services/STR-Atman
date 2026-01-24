@@ -157,7 +157,7 @@ const Timeline = () => {
               ref={(el) => {
                 if (el) yearsRef.current[i] = el;
               }}
-              className="opacity-40"
+              className="opacity-40 max-w-[30px] md:max-w-sm text-center"
             >
               {item.year}
             </span>
@@ -184,17 +184,17 @@ const Timeline = () => {
           />
 
           {/* Title */}
-          <h1 className="p-title absolute md:left-[5%] bottom-[75%] md:bottom-[30%] text-3xl md:text-6xl  px-4 md:max-w-md z-20">
+          <h1 className="p-title absolute md:left-[5%] bottom-[75%] md:bottom-[30%] text-2xl md:text-6xl  px-4 md:max-w-md z-20">
             {item.title}
           </h1>
 
           {/* Center Image */}
-          <div className=" p-image absolute bottom-0 left-1/2 -translate-x-1/2 w-full md:w-auto">
-            <Image src={item.strImg} alt="" width={1000} height={500} className="object-cover w-full h-[60dvh] md:h-dvh" />
+          <div className=" p-image absolute bottom-0 left-1/2 -translate-x-1/2 w-full">
+            <Image src={item.strImg} alt="" width={600} height={500} className="object-cover  mx-auto h-[60dvh] md:h-dvh w-auto" />
           </div>
 
           {/* Description */}
-          <p className="p-desc absolute px-4 md:right-[5%] bottom-[63%] md:bottom-[5%] text-sm md:text-2xl  md:max-w-lg text-gray-200">
+          <p className="p-desc absolute px-4 md:right-[5%] bottom-[64%] md:bottom-[5%] text-sm md:text-2xl  md:max-w-lg text-gray-200">
             {item.desc}
           </p>
         </div>
