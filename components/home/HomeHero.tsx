@@ -3,11 +3,19 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import ContourBackground from "../reuseable/ContourBackground";
 import gsap from "gsap";
+import FluidStrCanvas from "./FluidStrCanvas";
 
 const HomeHero = () => {
-  const bgRef = useRef<HTMLDivElement>(null);
   const contourRef = useRef<HTMLDivElement>(null);
-  const strRef = useRef<HTMLDivElement>(null);
+
+  const strImages =[
+    "/Home/Str-01.png",
+    "/Home/Str-02.png",
+    "/Home/Str-03.png",
+    "/Home/Str-05.png",
+    "/Home/Str-06.png",
+    "/Home/Str-07.png",
+  ]
 
   /* ===============================
      MOUSE PARALLAX
@@ -18,26 +26,14 @@ const HomeHero = () => {
       const x = (e.clientX / innerWidth - 0.5) * 2;
       const y = (e.clientY / innerHeight - 0.5) * 2;
 
-      gsap.to(bgRef.current, {
-        x: x * 20,
-        y: y * 20,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-
       gsap.to(contourRef.current, {
-        x: x * 35,
-        y: y * 35,
+        x: x * 5,
+        y: y * 15,
         duration: 0.8,
         ease: "power3.out",
       });
 
-      gsap.to(strRef.current, {
-        x: x * 50,
-        y: y * 20,
-        duration: 0.8,
-        ease: "power3.out",
-      });
+     
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -84,17 +80,9 @@ const HomeHero = () => {
 
       {/* STR LOGO */}
       <div
-        ref={strRef}
-        className="absolute inset-0 z-30 flex items-center justify-center translate-y-12"
+        className="absolute inset-0 z-30 w-full h-screen"
       >
-        <Image
-          src="/aboutstr.png"
-          alt="STR Logo"
-          width={400}
-          height={400}
-          className="object-contain scale-150"
-          priority
-        />
+       <FluidStrCanvas />
       </div>
 
       {/* LIGHTING */}
