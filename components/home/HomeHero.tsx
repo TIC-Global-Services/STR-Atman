@@ -65,12 +65,15 @@ const HomeHero = () => {
 
     if (showStaticStr) {
       // fluid → image
-      tl
-        .to(contentRef.current, {
+      tl.to(
+        contentRef.current,
+        {
           filter: "blur(12px)",
           duration: 1.2,
           ease: "power2.in",
-        }, 0)
+        },
+        0,
+      )
         .fromTo(
           imageRef.current,
           { opacity: 0, scale: 1.08, filter: "blur(14px)" },
@@ -81,29 +84,40 @@ const HomeHero = () => {
             duration: 3.2,
             ease: "power3.inOut",
           },
-          0.4
+          0.4,
         )
         .to(fluidRef.current || {}, { opacity: 0, duration: 1.6 }, 0.4)
-        .to(contentRef.current, {
-          filter: "blur(0px)",
-          duration: 1.4,
-          ease: "power3.out",
-        }, "-=1.8");
+        .to(
+          contentRef.current,
+          {
+            filter: "blur(0px)",
+            duration: 1.4,
+            ease: "power3.out",
+          },
+          "-=1.8",
+        );
     } else {
       // image → fluid
-      tl
-        .to(contentRef.current, {
+      tl.to(
+        contentRef.current,
+        {
           filter: "blur(12px)",
           duration: 1.2,
           ease: "power2.in",
-        }, 0)
-        .to(imageRef.current, {
-          opacity: 0,
-          scale: 1.04,
-          filter: "blur(8px)",
-          duration: 2.4,
-          ease: "power3.inOut",
-        }, 0)
+        },
+        0,
+      )
+        .to(
+          imageRef.current,
+          {
+            opacity: 0,
+            scale: 1.04,
+            filter: "blur(8px)",
+            duration: 2.4,
+            ease: "power3.inOut",
+          },
+          0,
+        )
         .fromTo(
           fluidRef.current || {},
           { opacity: 0 },
@@ -112,20 +126,27 @@ const HomeHero = () => {
             duration: 2.8,
             ease: "power3.out",
           },
-          0.9
+          0.9,
         )
-        .to(contentRef.current, {
-          filter: "blur(0px)",
-          duration: 1.6,
-          ease: "power3.out",
-        }, "-=2.0");
+        .to(
+          contentRef.current,
+          {
+            filter: "blur(0px)",
+            duration: 1.6,
+            ease: "power3.out",
+          },
+          "-=2.0",
+        );
     }
   }, [showStaticStr]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Main content wrapper — we blur this */}
-      <div ref={contentRef} className="absolute inset-0 transition-filter duration-1000">
+      <div
+        ref={contentRef}
+        className="absolute inset-0 transition-filter duration-1000"
+      >
         {/* BACKGROUND IMAGE */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -175,7 +196,9 @@ const HomeHero = () => {
           }`}
         >
           <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-            <span className="text-black text-sm font-medium">Scroll to Explore</span>
+            <span className="text-black text-sm font-medium">
+              Scroll to Explore
+            </span>
           </div>
         </div>
       </div>
@@ -204,6 +227,18 @@ const HomeHero = () => {
             priority
             quality={92}
           />
+        </div>
+
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+                 
+          <div className="bg-white/20 backdrop-blur-sm rounded-full py-2">
+                      
+            <span className="text-black text-sm font-medium">
+              Scroll to Explore
+            </span>
+                    
+          </div>
+                
         </div>
       </div>
     </div>
