@@ -34,7 +34,7 @@ const HomeHero = () => {
 
       gsap.to(strRef.current, {
         x: x * 50,
-        y: y * 50,
+        y: y * 20,
         duration: 0.8,
         ease: "power3.out",
       });
