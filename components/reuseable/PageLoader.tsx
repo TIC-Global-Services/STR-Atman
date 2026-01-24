@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import AnimatedLogo from "./AnimatedLogo";
+import AnimatedLogo2 from "./AnimatedLogo2";
 
 interface PageLoaderProps {
   onFinish?: () => void;
@@ -88,7 +89,7 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
 
       {/* LOGO */}
       <div ref={logoRef} className="relative z-10">
-        <AnimatedLogo />
+        <AnimatedLogo2 />
       </div>
 
       {/* PROGRESS */}
