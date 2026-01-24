@@ -16,23 +16,30 @@ const CONFIG = {
     "/Home/Str-03.png",
     "/Home/Str-05.png",
     "/Home/Str-06.png",
+    "/Home/Str-09.png",
+    "/Home/Str-10.png",
+    "/Home/Str-11.png",
   ],
   
   // Timing
-  IDLE_DELAY: 1500,
-  RETURN_SPEED: 0.88,
-  RESET_CHECK_INTERVAL: 100,
-  RESET_THRESHOLD: 5,
+  IDLE_DELAY: 1000,
+  RETURN_SPEED: 0.68,
+  RESET_CHECK_INTERVAL: 50,
+  RESET_THRESHOLD: 2,
   
   // Fluid behavior
   ACTIVE_DECAY: 0.965,
   TRAIL_WIDTH: 0.08,
-  TRAIL_INTENSITY: 0.6,
-  REVEAL_SMOOTHNESS: 0.02,
-  REVEAL_TRANSITION: 0.12,
+  TRAIL_INTENSITY: 0.8,
+  REVEAL_SMOOTHNESS: 0.35,
+  REVEAL_TRANSITION: 0.38,
   
   // Rendering
   FLUID_RESOLUTION: 512,
+
+  AUTO_REVEAL_AFTER_IDLE_MS: 1000,     // start auto after user is idle this long
+  AUTO_MOVE_DURATION_MS: 5200,         // how long should one full zig-zag take
+  AUTO_MOVE_STEPS: 180,
 };
 
 /* ===============================================================
@@ -119,12 +126,10 @@ void main() {
 =============================================================== */
 function FluidScene() {
   const { gl, size } = useThree();
-  
-  // Load textures
-  const baseTexture = useTexture(CONFIG.BASE_IMAGE);
+
+  const baseTexture   = useTexture(CONFIG.BASE_IMAGE);
   const revealTextures = useTexture(CONFIG.REVEAL_IMAGES);
-  
-  // Render targets for fluid simulation
+
   const renderTargets = useMemo(() => {
     const res = CONFIG.FLUID_RESOLUTION;
     return {
@@ -132,7 +137,7 @@ function FluidScene() {
       rtB: new THREE.WebGLRenderTarget(res, res),
     };
   }, []);
-  
+
   const stateRef = useRef({
     curr: renderTargets.rtA,
     prev: renderTargets.rtB,
@@ -144,170 +149,227 @@ function FluidScene() {
     revealIndex: 0,
     idleTimeout: null as NodeJS.Timeout | null,
   });
-  
-  // Get texture sizes
-  const textureSizes = useMemo(() => {
-    return {
-      baseSize: new THREE.Vector2(
-        (baseTexture.image as HTMLImageElement)?.width || 1920,
-        (baseTexture.image as HTMLImageElement)?.height || 1080
-      ),
-      revealSize: new THREE.Vector2(
-        (revealTextures[0].image as HTMLImageElement)?.width || 1920,
-        (revealTextures[0].image as HTMLImageElement)?.height || 1080
-      ),
-    };
-  }, [baseTexture, revealTextures]);
-  
-  // Fluid material
-  const fluidMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader: fluidFragmentShader,
-      uniforms: {
-        uPrevTrails: { value: stateRef.current.prev.texture },
-        uMouse: { value: stateRef.current.mouse },
-        uPrevMouse: { value: stateRef.current.prevMouse },
-        uDecay: { value: CONFIG.ACTIVE_DECAY },
-        uIdleDecay: { value: CONFIG.RETURN_SPEED },
-        uIsMoving: { value: false },
-        uTrailWidth: { value: CONFIG.TRAIL_WIDTH },
-        uTrailIntensity: { value: CONFIG.TRAIL_INTENSITY },
-      },
-    });
-  }, []);
-  
-  // Display material
-  const displayMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader: displayFragmentShader,
-      uniforms: {
-        uFluid: { value: stateRef.current.curr.texture },
-        uBottomTexture: { value: baseTexture },
-        uTopTexture: { value: revealTextures[0] },
-        uResolution: { value: new THREE.Vector2(size.width, size.height) },
-        uTopTexSize: { value: textureSizes.revealSize },
-        uBottomTexSize: { value: textureSizes.baseSize },
-        uRevealSmooth: { value: CONFIG.REVEAL_SMOOTHNESS },
-        uRevealTransition: { value: CONFIG.REVEAL_TRANSITION },
-      },
-      transparent: true,
-    });
-  }, [baseTexture, revealTextures, size, textureSizes]);
-  
-  // Fluid simulation scene - initialize once
+
+  // Auto reveal control
+  const autoActive      = useRef(false);
+  const autoStartTime   = useRef(0);
+  const autoProgress    = useRef(0);
+  const virtualMousePos = useRef(new THREE.Vector2(0.08, 0.5));
+
+  const startIdleTimerRef = useRef<() => void>(() => {});
+
+  const textureSizes = useMemo(() => ({
+    baseSize: new THREE.Vector2(
+      (baseTexture.image as HTMLImageElement)?.width  ?? 1920,
+      (baseTexture.image as HTMLImageElement)?.height ?? 1080
+    ),
+    revealSize: new THREE.Vector2(
+      (revealTextures[0].image as HTMLImageElement)?.width  ?? 1920,
+      (revealTextures[0].image as HTMLImageElement)?.height ?? 1080
+    ),
+  }), [baseTexture, revealTextures]);
+
+  const fluidMaterial = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader: fluidFragmentShader,
+    uniforms: {
+      uPrevTrails:     { value: null },
+      uMouse:          { value: stateRef.current.mouse },
+      uPrevMouse:      { value: stateRef.current.prevMouse },
+      uDecay:          { value: CONFIG.ACTIVE_DECAY },
+      uIdleDecay:      { value: CONFIG.RETURN_SPEED },
+      uIsMoving:       { value: false },
+      uTrailWidth:     { value: CONFIG.TRAIL_WIDTH },
+      uTrailIntensity: { value: CONFIG.TRAIL_INTENSITY },
+    },
+  }), []);
+
+  const displayMaterial = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader: displayFragmentShader,
+    uniforms: {
+      uFluid:         { value: null },
+      uBottomTexture: { value: baseTexture },
+      uTopTexture:    { value: revealTextures[0] },
+      uResolution:    { value: new THREE.Vector2() },
+      uTopTexSize:    { value: textureSizes.revealSize },
+      uBottomTexSize: { value: textureSizes.baseSize },
+      uRevealSmooth:  { value: CONFIG.REVEAL_SMOOTHNESS },
+      uRevealTransition: { value: CONFIG.REVEAL_TRANSITION },
+    },
+    transparent: true,
+  }), [baseTexture, revealTextures, textureSizes]);
+
   const fluidScene = useMemo(() => {
-    const scene = new THREE.Scene();
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fluidMaterial);
-    scene.add(mesh);
-    return scene;
+    const s = new THREE.Scene();
+    s.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), fluidMaterial));
+    return s;
   }, [fluidMaterial]);
-  
-  const fluidCamera = useMemo(() => {
-    return new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  }, []);
-  
-  // Mouse interaction
+
+  const fluidCamera = useMemo(() =>
+    new THREE.OrthographicCamera(-1,1,1,-1,0,1), []);
+
+  // ─── Interaction + Idle → Auto logic ────────────────────────────────
   useEffect(() => {
     const canvas = gl.domElement;
     const state = stateRef.current;
-    
-    const handleMouseEnter = () => {
-      state.isOverImage = true;
+    let idleTimer: NodeJS.Timeout | null = null;
+
+    const startIdleTimer = () => {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        if (!state.isOverImage || autoActive.current) return;
+
+        autoActive.current = true;
+        autoStartTime.current = performance.now();
+        autoProgress.current = 0;
+        virtualMousePos.current.set(0.08, 0.5);
+
+        const idx = Math.floor(Math.random() * revealTextures.length);
+        displayMaterial.uniforms.uTopTexture.value = revealTextures[idx];
+        state.canSwitchImage = false;
+      }, CONFIG.AUTO_REVEAL_AFTER_IDLE_MS);
     };
-    
-    const handleMouseLeave = () => {
+
+    startIdleTimerRef.current = startIdleTimer;
+
+    const stopAutoIfRunning = () => {
+      if (autoActive.current) {
+        autoActive.current = false;
+        state.isMoving = false;
+        fluidMaterial.uniforms.uIsMoving.value = false;
+      }
+    };
+
+    const onMouseEnter = () => {
+      state.isOverImage = true;
+      startIdleTimer();
+    };
+
+    const onMouseLeave = () => {
       state.isOverImage = false;
       state.isMoving = false;
       fluidMaterial.uniforms.uIsMoving.value = false;
-      if (state.idleTimeout) clearTimeout(state.idleTimeout);
+      if (idleTimer) clearTimeout(idleTimer);
+      stopAutoIfRunning();
     };
-    
-    const handleMouseMove = (e: MouseEvent): void => {
+
+    const onMouseMove = (e: MouseEvent) => {
+      stopAutoIfRunning();
+
       const rect = canvas.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
       const y = 1 - (e.clientY - rect.top) / rect.height;
-      
-      // Update previous mouse before setting new position
+
       state.prevMouse.copy(state.mouse);
       state.mouse.set(x, y);
-      
+
       state.isMoving = true;
       fluidMaterial.uniforms.uIsMoving.value = true;
-      
+
       if (state.idleTimeout) clearTimeout(state.idleTimeout);
-      
-      // Switch image only if allowed
-      if (state.canSwitchImage) {
-        state.revealIndex = Math.floor(Math.random() * revealTextures.length);
-        displayMaterial.uniforms.uTopTexture.value = revealTextures[state.revealIndex];
-        state.canSwitchImage = false;
-      }
-      
       state.idleTimeout = setTimeout(() => {
         state.isMoving = false;
         fluidMaterial.uniforms.uIsMoving.value = false;
       }, CONFIG.IDLE_DELAY);
+
+      if (state.canSwitchImage) {
+        const idx = Math.floor(Math.random() * revealTextures.length);
+        displayMaterial.uniforms.uTopTexture.value = revealTextures[idx];
+        state.canSwitchImage = false;
+      }
+
+      startIdleTimer();
     };
-    
-    canvas.addEventListener("mouseenter", handleMouseEnter);
-    canvas.addEventListener("mouseleave", handleMouseLeave);
-    window.addEventListener("mousemove", handleMouseMove);
-    
-    // Check for reset
-    const checkResetInterval = setInterval(() => {
-      if (!state.isMoving && !fluidMaterial.uniforms.uIsMoving.value) {
-        gl.setRenderTarget(state.curr);
-        const pixels = new Uint8Array(4);
-        gl.readRenderTargetPixels(
-          state.curr,
-          CONFIG.FLUID_RESOLUTION / 2,
-          CONFIG.FLUID_RESOLUTION / 2,
-          1,
-          1,
-          pixels
-        );
-        gl.setRenderTarget(null);
-        
-        if (pixels[0] < CONFIG.RESET_THRESHOLD) {
-          state.canSwitchImage = true;
-        }
+
+    canvas.addEventListener("mouseenter", onMouseEnter);
+    canvas.addEventListener("mouseleave", onMouseLeave);
+    canvas.addEventListener("mousemove", onMouseMove);
+
+    const halfRes = CONFIG.FLUID_RESOLUTION / 2;
+
+    const resetCheck = setInterval(() => {
+      if (state.isMoving || fluidMaterial.uniforms.uIsMoving.value) return;
+
+      gl.setRenderTarget(state.curr);
+      const pixels = new Uint8Array(4);
+      gl.readRenderTargetPixels(
+        state.curr,
+        halfRes,
+        halfRes,
+        1,
+        1,
+        pixels
+      );
+      gl.setRenderTarget(null);
+
+      if (pixels[0] < CONFIG.RESET_THRESHOLD) {
+        state.canSwitchImage = true;
       }
     }, CONFIG.RESET_CHECK_INTERVAL);
-    
+
+    // Assume over image on mount for initial auto start
+    state.isOverImage = true;
+    startIdleTimer();
+
     return () => {
-      canvas.removeEventListener("mouseenter", handleMouseEnter);
-      canvas.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("mousemove", handleMouseMove);
-      clearInterval(checkResetInterval);
+      canvas.removeEventListener("mouseenter", onMouseEnter);
+      canvas.removeEventListener("mouseleave", onMouseLeave);
+      canvas.removeEventListener("mousemove", onMouseMove);
+      clearInterval(resetCheck);
+      if (idleTimer) clearTimeout(idleTimer);
       if (state.idleTimeout) clearTimeout(state.idleTimeout);
     };
   }, [gl, fluidMaterial, displayMaterial, revealTextures]);
-  
-  // Update resolution on resize
+
   useEffect(() => {
     displayMaterial.uniforms.uResolution.value.set(size.width, size.height);
   }, [size, displayMaterial]);
-  
-  // Animation loop
+
+  // ─── Animation loop ─────────────────────────────────────────────────
   useFrame(() => {
     const state = stateRef.current;
-    
-    // Render fluid simulation
+
+    if (autoActive.current && state.isOverImage) {
+      const elapsed = performance.now() - autoStartTime.current;
+      autoProgress.current = Math.min(elapsed / CONFIG.AUTO_MOVE_DURATION_MS, 1);
+
+      if (autoProgress.current >= 1) {
+        autoActive.current = false;
+        state.isMoving = false;
+        fluidMaterial.uniforms.uIsMoving.value = false;
+        // Restart idle timer for next cycle
+        startIdleTimerRef.current();
+      } else {
+        const t = autoProgress.current;
+
+        const x = 0.08 + t * 0.84;
+
+        const waves = 5.5;
+        const triangle = Math.abs((t * waves * 2) % 2 - 1);
+        const y = 0.15 + triangle * 0.7;
+
+        virtualMousePos.current.set(x, y);
+
+        state.prevMouse.copy(state.mouse);
+        state.mouse.copy(virtualMousePos.current);
+
+        state.isMoving = true;
+        fluidMaterial.uniforms.uIsMoving.value = true;
+      }
+    }
+
     fluidMaterial.uniforms.uPrevTrails.value = state.prev.texture;
-    
+
     gl.setRenderTarget(state.curr);
     gl.render(fluidScene, fluidCamera);
     gl.setRenderTarget(null);
-    
-    // Update display
+
     displayMaterial.uniforms.uFluid.value = state.curr.texture;
-    
-    // Swap buffers
+
     [state.curr, state.prev] = [state.prev, state.curr];
   });
-  
+
   return (
     <mesh material={displayMaterial}>
       <planeGeometry args={[2, 2]} />

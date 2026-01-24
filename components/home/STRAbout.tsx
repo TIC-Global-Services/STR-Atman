@@ -91,7 +91,7 @@ const STRAbout = () => {
         "
       >
         <Image
-          src="/STR/str-group.png"
+          src="/STR/str-group-new.png"
           alt="STR Group"
           fill
           priority
@@ -103,7 +103,7 @@ const STRAbout = () => {
       {showText && (
         <div
           className="
-            fixed top-[25%] md:top-[15%]
+            fixed top-[25%] md:top-[10%]
             left-1/2 -translate-x-1/2
             w-[calc(100vw-2rem)] md:max-w-4xl
             px-4 md:px-10
@@ -114,9 +114,9 @@ const STRAbout = () => {
           <BlurText
             text="I'm Silambarasan TR someone who grew up on film sets, learned life through cinema, and evolved with every role I played. From being a child artist to leading films, my journey has never been about playing it safe. It's been about honesty, growth, and staying true to who I am."
             animateBy="words"
-            delay={20}
-            direction="bottom"
-            className="text-[clamp(14px,2vw,24px)] text-black"
+            delay={1}
+            direction="top"
+            className="text-[clamp(14px,2vw,24px)] text-black leading-tight"
           />
         </div>
       )}

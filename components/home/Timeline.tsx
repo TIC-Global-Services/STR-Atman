@@ -189,12 +189,12 @@ const Timeline = () => {
           </h1>
 
           {/* Center Image */}
-          <div className="  absolute bottom-0 left-1/2 -translate-x-1/2 w-full">
-            <Image src={item.strImg} alt="" width={600} height={500} className="object-cover  mx-auto h-[60dvh] md:h-dvh w-auto" />
+          <div className="  absolute bottom-0 left-1/2 -translate-x-1/2 w-full mx-auto">
+            <Image src={item.strImg} alt="" width={600} quality={100} priority height={500} className="object-cover  mx-auto  w-auto" />
           </div>
 
           {/* Description */}
-          <p className="p-desc absolute px-4 md:right-[5%] bottom-[64%] md:bottom-[5%] text-sm md:text-2xl  md:max-w-lg text-gray-200">
+          <p className="p-desc absolute px-4 md:right-[5%] bottom-[64%] md:bottom-[5%] text-sm md:text-xl  md:max-w-md text-gray-200 text-shadow-lg">
             {item.desc}
           </p>
         </div>

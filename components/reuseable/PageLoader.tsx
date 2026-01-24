@@ -21,7 +21,7 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
      PROGRESS (0 → 100)
   ----------------------------- */
   useEffect(() => {
-    const DURATION = 5000;
+    const DURATION = 3500;
     const start = performance.now();
     let raf: number;
 
@@ -88,7 +88,7 @@ export default function PageLoader({ onFinish }: PageLoaderProps) {
       <div ref={panelRef} className="absolute inset-0 bg-primary" />
 
       {/* LOGO */}
-      <div ref={logoRef} className="relative z-10">
+      <div ref={logoRef} className="relative z-10 scale-200">
         <AnimatedLogo2 />
       </div>
 
