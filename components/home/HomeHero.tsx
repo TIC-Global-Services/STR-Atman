@@ -1,54 +1,92 @@
 "use client";
-import React from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef } from "react";
+import Image from "next/image";
+import ContourBackground from "../reuseable/ContourBackground";
+import gsap from "gsap";
 
 const HomeHero = () => {
+  const bgRef = useRef<HTMLDivElement>(null);
+  const contourRef = useRef<HTMLDivElement>(null);
+  const strRef = useRef<HTMLDivElement>(null);
+
+  /* ===============================
+     MOUSE PARALLAX
+  =============================== */
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { innerWidth, innerHeight } = window;
+      const x = (e.clientX / innerWidth - 0.5) * 2;
+      const y = (e.clientY / innerHeight - 0.5) * 2;
+
+      gsap.to(bgRef.current, {
+        x: x * 20,
+        y: y * 20,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+
+      gsap.to(contourRef.current, {
+        x: x * 35,
+        y: y * 35,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+
+      gsap.to(strRef.current, {
+        x: x * 50,
+        y: y * 50,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Background Image - Person Photo (Bottom Layer) */}
-      <div className="absolute inset-0 z-10">
+      {/* BACKGROUND IMAGE */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="/Home/Hero.jpg"
-          alt="About background"
+          alt="Hero background"
           fill
           className="object-cover"
           priority
           sizes="100vw"
-          onError={(e) => {
-            console.error('Failed to load aboutbg.png:', e);
-          }}
-          onLoad={() => {
-            console.log('aboutbg.png loaded successfully');
-          }}
         />
       </div>
-      
-      {/* Fallback background in case image doesn't load */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 z-0"></div>
-      
-      {/* Bottom gradient overlay with blur for smooth transition */}
-      {/* <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-black via-black/70 to-transparent z-50 backdrop-blur-md"></div> */}
-      
-      {/* Optional: Subtle dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-transparent bg-opacity-20 z-15"></div>
-      
-      {/* STR Logo Background (Middle Layer - behind aboutstr) */}
-      <div className="absolute inset-0 flex items-center justify-center z-30 translate-y-8">
-        <Image
-          src="/logo/logo.png"
-          alt="STR Logo Background"
-          width={800}
-          height={400}
-          className=" object-contain "
-          priority
-          onError={(e) => {
-            console.error('Failed to load strlogo.png:', e);
-          }}
+
+      {/* DARK OVERLAY */}
+      <div className="absolute inset-0 bg-black/20 z-10" />
+
+      {/* MASKED CONTOUR */}
+      <div
+        ref={contourRef}
+        className="
+          absolute inset-0 z-20
+          flex items-center justify-center
+          mask-[url(/logo/logo.png)]
+          mask-contain mask-no-repeat mask-center
+          bg-white
+          pointer-events-none
+        "
+      >
+        <ContourBackground
+          lineColor="rgba(0,0,0)"
+          speed={0.06}
+          resolution={8}
+          levels={8}
+          lineWidth={1.4}
         />
       </div>
-      
-      {/* Large STR Logo Foreground (Top Layer - aboutstr) */}
-      <div className="absolute inset-0 flex items-center justify-center z-40 translate-y-12">
+
+      {/* STR LOGO */}
+      <div
+        ref={strRef}
+        className="absolute inset-0 z-30 flex items-center justify-center translate-y-12"
+      >
         <Image
           src="/aboutstr.png"
           alt="STR Logo"
@@ -56,16 +94,13 @@ const HomeHero = () => {
           height={400}
           className="object-contain scale-150"
           priority
-          onError={(e) => {
-            console.error('Failed to load aboutstr.png:', e);
-          }}
         />
       </div>
-      
-      {/* Optional: Add some subtle lighting effects */}
-      <div className="absolute top-0 left-0 w-full h-full z-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 opacity-5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500 opacity-5 rounded-full blur-3xl"></div>
+
+      {/* LIGHTING */}
+      <div className="absolute inset-0 z-40 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 opacity-5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500 opacity-5 rounded-full blur-3xl" />
       </div>
     </div>
   );

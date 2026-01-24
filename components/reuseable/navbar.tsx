@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
-import AudioWave  from "./AudioWave";
+import AudioWave from "./AudioWave";
 import { MenuIcon } from "./MenuIcon";
 
 const Navbar = () => {
@@ -149,7 +149,7 @@ const Navbar = () => {
           duration: 0.6,
           ease: "power3.out",
           delay: 0.4,
-        }
+        },
       );
 
       // Animate close button appearance
@@ -259,7 +259,7 @@ const Navbar = () => {
             width={120}
             height={50}
             className={`
-              w-[60px] md:w-[80px]
+              w-[80px] md:w-[120px]
               transition-all duration-300
               ${isLightSection ? "invert" : "invert-0"}
             `}
@@ -281,16 +281,30 @@ const Navbar = () => {
         <div className="flex gap-4 items-center">
           <button
             onClick={toggleAudio}
-            className="group flex flex-col items-center gap-2 cursor-pointer"
+            className="group flex flex-col items-center justify-center mx-auto gap-2 cursor-pointer"
           >
             <AudioWave isPlaying={isPlaying} isLightSection={isLightSection} />
 
             <p className="text-xs md:text-sm tracking-wide">
-              <span className={isPlaying ? "text-green-500" : "text-white"}>AUDIO</span>{" "}
               <span
-                className={`${
-                  isPlaying ? "text-green-500" : "text-white"
-                } font-bold`}
+                className={
+                  isPlaying
+                    ? "text-primary"
+                    : isLightSection
+                      ? "text-black"
+                      : "text-white"
+                }
+              >
+                AUDIO
+              </span>{" "}
+              <span
+                className={`font-bold ${
+                  isPlaying
+                    ? "text-primary"
+                    : isLightSection
+                      ? "text-black"
+                      : "text-white"
+                }`}
               >
                 {isPlaying ? "ON" : "OFF"}
               </span>
@@ -328,9 +342,7 @@ const Navbar = () => {
 
         <div className="flex h-full">
           {/* IMAGES */}
-          <div
-            className="hidden md:grid w-full md:w-[45%] xl:w-[45%] gap-x-6 grid-cols-2 gap-y-8 overflow-y-hidden mx-auto px-10"
-          >
+          <div className="hidden md:grid w-full md:w-[45%] xl:w-[45%] gap-x-6 grid-cols-2 gap-y-8 overflow-y-hidden mx-auto px-10">
             {menuImages.map((src, i) => {
               const isLeftColumn = i % 2 === 0;
 
@@ -353,7 +365,7 @@ const Navbar = () => {
                     alt=""
                     width={500}
                     height={500}
-                    className="object-cover object-center transition-transform duration-700 ease-out grayscale hover:grayscale-0 hover:scale-105 xl:w-[17dvw] xl:h-[66dvh]"
+                    className="object-cover  transition-transform duration-700 ease-out grayscale hover:grayscale-0 hover:scale-105 xl:w-[17dvw] xl:h-[66dvh]"
                   />
                 </div>
               );

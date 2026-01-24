@@ -89,7 +89,7 @@ const Timeline = () => {
           });
 
           gsap.to(panel.querySelector(".p-image"), {
-            x: x * 70,
+            x: x * 20,
             y: y * 10,
             duration: 0.3,
             ease: "power3.out",
@@ -189,7 +189,7 @@ const Timeline = () => {
           </h1>
 
           {/* Center Image */}
-          <div className=" p-image absolute bottom-0 left-1/2 -translate-x-1/2 w-full">
+          <div className="  absolute bottom-0 left-1/2 -translate-x-1/2 w-full">
             <Image src={item.strImg} alt="" width={600} height={500} className="object-cover  mx-auto h-[60dvh] md:h-dvh w-auto" />
           </div>
 

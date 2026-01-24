@@ -1,109 +1,132 @@
 "use client";
 
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import UpdateCard from "./UpdateCard";
 import ContainerLayout from "@/layout/ContainerLayout";
-import Link from "next/link";
-import { MdOutlineKeyboardArrowRight as RightArrow } from "react-icons/md";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 
-gsap.registerPlugin(ScrollTrigger);
+
+import { IoIosArrowRoundBack as ArrowLeft, IoIosArrowRoundForward  as ArrowRight } from "react-icons/io";
+
+
+import gsap from "gsap";
 
 const updates = [
   {
     img: "/update1.jpg",
     title: "arasan shooting resumes",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    slug: "/",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
   {
     img: "/update2.jpg",
     title: "Living in the process",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    slug: "/",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
   {
     img: "/update3.jpg",
-    title: "Living in the process",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    slug: "/",
+    title: "Creative flow",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  },
+  {
+    img: "/update4.jpg",
+    title: "Behind the scenes",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
 ];
 
+const POSITIONS = {
+  LEFT: { x: -360, scale: 0.85, opacity: 1, z: 1 },
+  CENTER: { x: 0, scale: 1, opacity: 1, z: 5 },
+  RIGHT: { x: 360, scale: 0.85, opacity: 1, z: 1 },
+};
+
 const LatestUpdates = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const [center, setCenter] = useState(1);
+
+  const getIndex = (offset: number) =>
+    (center + offset + updates.length) % updates.length;
+
+  const animate = () => {
+    const left = getIndex(-1);
+    const mid = center;
+    const right = getIndex(1);
+
+    cardsRef.current.forEach((card, i) => {
+      let pos = null;
+
+      if (i === left) pos = POSITIONS.LEFT;
+      if (i === mid) pos = POSITIONS.CENTER;
+      if (i === right) pos = POSITIONS.RIGHT;
+
+      if (!pos) {
+        gsap.set(card, { opacity: 0, scale: 0.7 });
+        return;
+      }
+
+      gsap.to(card, {
+        x: pos.x,
+        scale: pos.scale,
+        opacity: pos.opacity,
+        zIndex: pos.z,
+        duration: 0.6,
+        ease: "power3.out",
+      });
+    });
+  };
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top bottom",
-          end: "top top+=50",
-          scrub: true,
-        },
-      });
-
-      tl.from(sectionRef.current, {
-        opacity: 0,
-        y: 80,
-        ease: "none",
-      });
-
-      tl.from(
-        cardsRef.current,
-        {
-          opacity: 0,
-          y: 60,
-          stagger: 0.15,
-          ease: "none",
-        },
-        "<",
-      );
-
-      tl.from(
-        linkRef.current,
-        {
-          opacity: 0,
-          y: 20,
-          ease: "none",
-        },
-        "<+=0.2",
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    animate();
+  }, [center]);
 
   return (
-    <section ref={sectionRef} className=" light">
-      {/* ✅ wrapper div holds the ref */}
-      <ContainerLayout className=" lxl:min-h-screen w-full py-20 space-y-10">
-        <h1 className="text-5xl">What&apos;s Happening Now</h1>
+    <section className="light py-20 overflow-hidden">
+      <ContainerLayout className="min-h-screen flex flex-col items-center  gap-12">
+        <h1 className="text-4xl md:text-6xl text-center">
+          What&apos;s Happening Now
+        </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {updates.map((update, idx) => (
+        {/* Carousel */}
+        <div className="relative w-full h-[75dvh] flex items-center justify-center ">
+          {updates.map((item, idx) => (
             <div
               key={idx}
               ref={(el) => {
                 if (el) cardsRef.current[idx] = el;
               }}
+              className="absolute w-[320px] md:w-[360px] "
             >
-              <UpdateCard {...update} />
+              <UpdateCard
+                {...item}
+                isActive={idx === center}
+              />
             </div>
           ))}
         </div>
 
-        <Link
-          ref={linkRef}
-          href="#"
-          className="flex items-center gap-2 text-lg text-[#707070]"
-        >
-          View More <RightArrow size={22} />
-        </Link>
+        {/* Arrows */}
+        <div className="flex gap-6 text-primary">
+          <button
+            onClick={() =>
+              setCenter((c) => (c - 1 + updates.length) % updates.length)
+            }
+            className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition cursor-pointer"
+          >
+            <ArrowLeft size={26} />
+          </button>
+
+          <button
+            onClick={() =>
+              setCenter((c) => (c + 1) % updates.length)
+            }
+            className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition cursor-pointer"
+          >
+            <ArrowRight size={26} />
+          </button>
+        </div>
       </ContainerLayout>
     </section>
   );

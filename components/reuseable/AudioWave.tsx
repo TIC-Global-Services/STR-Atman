@@ -15,7 +15,7 @@ const AudioWave = ({ isPlaying, isLightSection }: SineWaveProps) => {
     const width = 200;      // SVG internal width
     const height = 100;     // SVG internal height
     const amplitude = 40;   // Height of the wave peaks
-    const frequency = 0.1; // Tightness of the loops
+    const frequency = 0.14; // Tightness of the loops
     const speed = 0.15;     // Animation speed
     const points = 120;      // Higher = smoother curve
 
@@ -62,10 +62,10 @@ const AudioWave = ({ isPlaying, isLightSection }: SineWaveProps) => {
 
   return (
     <svg
-      viewBox="0 0 120 60"
-      className="w-full h-full"
+      viewBox="0 0 180 100"
+      className="w-full h-full mx-auto"
       style={{ 
-        maxWidth: "20px", 
+        maxWidth: "32px", 
         display: "block",
         overflow: "visible" 
       }}

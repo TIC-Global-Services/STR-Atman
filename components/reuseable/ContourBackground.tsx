@@ -43,7 +43,7 @@ export default function ContourBackground({
     let field: Float32Array;
     let t = 0;
     let lastFrame = 0;
-    const targetFPS = 30;
+    const targetFPS = 24;
     const frameInterval = 1000 / targetFPS;
 
     const resize = () => {
