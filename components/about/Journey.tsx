@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
-import Image from 'next/image';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register ScrollTrigger plugin
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
@@ -15,126 +13,131 @@ const Journey = () => {
   const statsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
     const image = imageRef.current;
     const stats = statsRef.current;
+    if (!image || !stats) return;
 
-    if (!section || !image || !stats) return;
+    const mm = gsap.matchMedia();
 
-    // Create GSAP context for cleanup
-    const ctx = gsap.context(() => {
-      // Animate background image moving up on scroll - triggered by stats visibility
+    // Desktop
+    mm.add("(min-width: 1024px)", () => {
       gsap.to(image, {
-        y: -200,
-        ease: "none",
+        y: -40,
         scrollTrigger: {
           trigger: stats,
           start: "top 80%",
           end: "bottom 20%",
-          scrub: 1,
-        }
+          scrub: true,
+        },
       });
 
-      // Animate stats section moving up on scroll - triggered when stats enter viewport
       gsap.to(stats, {
-        y: -150,
-        ease: "none",
+        y: -220,
         scrollTrigger: {
           trigger: stats,
           start: "top 80%",
           end: "bottom 20%",
-          scrub: 1,
-        }
+          scrub: true,
+        },
       });
-    }, section);
+    });
 
-    return () => ctx.revert();
+    // Tablet & Mobile
+    mm.add("(max-width: 1023px)", () => {
+      gsap.to(image, {
+        y: -60,
+        scrollTrigger: {
+          trigger: stats,
+          start: "top 85%",
+          end: "bottom 30%",
+          scrub: true,
+        },
+      });
+
+      gsap.to(stats, {
+        y: -20,
+        scrollTrigger: {
+          trigger: stats,
+          start: "top 85%",
+          end: "bottom 30%",
+          scrub: true,
+        },
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen w-full overflow-hidden bg-black">
+    <section
+      ref={sectionRef}
+      className="relative xl:min-h-screen w-full overflow-hidden bg-black
+                 px-4 sm:px-6 lg:px-12"
+    >
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 flex justify-center items-end">
         <img
           ref={imageRef}
           src="/journeybg.jpg"
           alt="Journey background"
-          className="absolute object-cover opacity-100"
-          style={{
-            width: '926px',
-            height: '1158px',
-            top: '140px',
-            left: '257px',
-            transform: 'rotate(0deg)'
-          }}
-          onError={(e) => {
-            console.error('Failed to load journeybg.jpg:', e);
-          }}
-          onLoad={() => {
-            console.log('journeybg.jpg loaded successfully');
-          }}
+          className=" object-contain object-bottom
+            translate-y-24 sm:translate-y-32 lg:translate-y-36
+          "
         />
       </div>
-      
-      {/* Fallback background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-gray-900 to-black -z-10"></div>
-      
-      {/* Content Container */}
-      <div className="relative z-10 flex min-h-screen">
-        {/* Left Side - Title (Static) */}
-        <div className="flex-1 flex items-center justify-start pl-4">
-          <div className="text-left">
-            <h1 className="text-[120px] lg:text-7xl xl:text-8xl font-normal font-halfre text-white leading-tight">
-              A Closer<br />
-              Look<br />
-              At The<br />
-              <span className="text-green-400">Journey</span>
-            </h1>
-          </div>
+
+      {/* Fallback */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-gray-900 to-black -z-10" />
+
+      {/* Content */}
+      <div className="relative z-10 flex xl:min-h-screen flex-col lg:flex-row pt-16 lg:pt-24">
+        {/* Title */}
+        <div className=" md:flex-1 flex items-start justify-start">
+          <h1
+            className="
+              text-white font-halfre
+              leading-[1]
+              text-left
+              text-[clamp(28px,6vw,120px)]
+              max-w-[14ch]
+              md:max-w-[10ch]
+            "
+          >
+            A Closer Look At The{" "}
+            <span className="text-green-400">Journey</span>
+          </h1>
         </div>
-        
-        {/* Right Side - Stats (Animated) */}
-        <div ref={statsRef} className="flex-1 flex items-center justify-center pr-4 translate-y-16">
-          <div className="space-y-16">
-            {/* 1987 */}
-            <div className="text-left">
-              <div className="text-[110px] lg:text-6xl font-normal text-green-400 mb-2">1987</div>
-              <p className="text-white text-lg lg:text-xl max-w-sm">
-                The Year He Stepped Into Cinema As A Child Artist
-              </p>
-            </div>
-            
-            {/* 25+ */}
-            <div className="text-left">
-              <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">25+</div>
-              <p className="text-white text-lg lg:text-xl max-w-sm">
-                Years Of Experience Across Acting, Direction, Music, And Writing
-              </p>
-            </div>
-            
-            {/* 40+ */}
-            <div className="text-left">
-              <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">40+</div>
-              <p className="text-white text-lg lg:text-xl max-w-sm">
-                Films That Shaped Pop Culture And Sparked Conversation
-              </p>
-            </div>
-            
-            {/* 100+ */}
-            <div className="text-left">
-              <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">100+</div>
-              <p className="text-white text-lg lg:text-xl max-w-sm">
-                Songs Written, Sung, Or Influenced By His Creative Vision
-              </p>
-            </div>
-            
-            {/* 1 */}
-            <div className="text-left">
-              <div className="text-5xl lg:text-6xl font-normal text-green-400 mb-2">1</div>
-              <p className="text-white text-lg lg:text-xl max-w-sm">
-                An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty
-              </p>
-            </div>
+
+        {/* Stats */}
+        <div
+          ref={statsRef}
+          className="flex-1 flex items-end lg:items-end
+                     justify-start lg:justify-end
+                     py-16 lg:pb-0"
+        >
+          <div className=" w-[80%] md:w-full md:max-w-sm space-y-4 md:space-y-10">
+            {[
+              ["1987", "The Year He Stepped Into Cinema As A Child Artist"],
+              ["25+", "Years Of Experience Across Acting, Direction, Music, And Writing"],
+              ["40+", "Films That Shaped Pop Culture And Sparked Conversation"],
+              ["100+", "Songs Written, Sung, Or Influenced By His Creative Vision"],
+              ["1", "An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty"],
+            ].map(([num, text]) => (
+              <div key={num}>
+                <div
+                  className="
+                    text-green-400 font-normal
+                    text-[clamp(28px,5vw,64px)]
+                    leading-tight
+                  "
+                >
+                  {num}
+                </div>
+                <p className="text-white text-sm sm:text-base lg:text-lg">
+                  {text}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

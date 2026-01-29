@@ -1,15 +1,17 @@
 import AboutHero from "@/components/about/AboutHero";
 import Journey from "@/components/about/Journey";
-import VideoSection from "@/components/about/VideoSection";
+
 import StackedCards from "@/components/about/StackedCards";
 import CTASection from "@/components/about/CTASection";
+import VideoSection from "@/components/reuseable/VideoSection";
 
 export default function AboutPage() {
   return (
     <div className=" overflow-x-hidden">
       <AboutHero />
       <Journey />
-      <VideoSection />
+      <VideoSection videoId="GamaQkWfOdo" />
+
       <StackedCards />
       <CTASection />
     </div>

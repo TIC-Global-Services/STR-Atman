@@ -1,182 +1,159 @@
 "use client";
-import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+
+import Image from "next/image";
+import { useEffect, useRef } from "react";
+import BlurText from "../reuseable/BlurText";
+
+/* ------------------------------------------------------------------ */
+/* DATA */
+/* ------------------------------------------------------------------ */
 
 const filmImages = [
-  '/simbusong1.jpg',
-  '/simbusong2.png',
-  '/simbusong3.jpg',
-  '/simbusong4.jpg',
-  '/simbusong5.png',
-  '/simbusong6.jpg',
+  "/simbusong1.jpg",
+  "/simbusong4.jpg",
+  "/simbusong3.jpg",
+  "/simbusong2.png",
+  "/simbusong6.jpg",
+  "/simbusong5.png",
 ];
 
-const FilmReelSet = ({ images, startIndex = 0 }: { images: string[], startIndex?: number }) => {
-  const positions = [39.12, 298.4, 557.68];
-  
+/* ------------------------------------------------------------------ */
+/* FILM REEL SET */
+/* ------------------------------------------------------------------ */
+
+const FilmReelSet = ({ images }: { images: string[] }) => {
   return (
-    <div style={{ display: 'flex', gap: '0', lineHeight: '0', fontSize: '0' }}>
-      {/* First Film Reel - 3 images */}
-      <div className="relative" style={{ width: '844.8px', height: '528px', flexShrink: 0, display: 'block' }}>
-        <Image
-          src="/filmreel.png"
-          alt="Film reel"
-          width={844.8}
-          height={528}
-          style={{ display: 'block', width: '844.8px', height: '528px', margin: 0, padding: 0 }}
-        />
-        {images.slice(0, 3).map((img, index) => (
-          <div
-            key={`reel1-${startIndex}-${index}`}
-            className="absolute"
-            style={{
-              width: '248px',
-              height: '162px',
-              top: '184.24px',
-              left: `${positions[index]}px`,
-            }}
-          >
-            <Image
-              src={img}
-              alt={`Moment ${index + 1}`}
-              fill
-              className="object-cover"
-            />
+    <div className="flex shrink-0 w-[50dvw]">
+      {[0, 1].map((reelIndex) => (
+        <div
+          key={reelIndex}
+          className="relative w-[80%] md:w-1/2 shrink-0 aspect-[16/10]"
+        >
+          {/* Film Reel Background */}
+          <Image
+            src="/musical/filmreel.png"
+            alt="Film reel"
+            fill
+            className="object-cover"
+            priority
+          />
+
+          {/* Frames */}
+          <div className="absolute inset-0 grid grid-cols-6  py-[8%] w-dvw">
+            {images
+              .slice(reelIndex * 3, reelIndex * 3 + 3)
+              .map((img, index) => (
+                <div
+                  key={`${reelIndex}-${index}`}
+                  className="relative w-full h-full border-x-2 overflow-hidden"
+                >
+                  <Image
+                    src={img}
+                    alt={`Moment ${index + 1}`}
+                    fill
+                    className="object-cover object-right w-full h-full"
+                  />
+                </div>
+              ))}
           </div>
-        ))}
-      </div>
-      
-      {/* Second Film Reel - 3 images */}
-      <div className="relative" style={{ width: '844.8px', height: '528px', flexShrink: 0, display: 'block' }}>
-        <Image
-          src="/filmreel.png"
-          alt="Film reel"
-          width={844.8}
-          height={528}
-          style={{ display: 'block', width: '844.8px', height: '528px', margin: 0, padding: 0 }}
-        />
-        {images.slice(3, 6).map((img, index) => (
-          <div
-            key={`reel2-${startIndex}-${index}`}
-            className="absolute"
-            style={{
-              width: '248px',
-              height: '162px',
-              top: '184.24px',
-              left: `${positions[index]}px`,
-            }}
-          >
-            <Image
-              src={img}
-              alt={`Moment ${index + 4}`}
-              fill
-              className="object-cover"
-            />
-          </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };
 
+/* ------------------------------------------------------------------ */
+/* FILM STRIP */
+/* ------------------------------------------------------------------ */
+
 const FilmStrip = () => {
-  const topScrollRef = useRef<HTMLDivElement>(null);
-  const bottomScrollRef = useRef<HTMLDivElement>(null);
+  const topRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const topScroll = topScrollRef.current;
-    const bottomScroll = bottomScrollRef.current;
-    
-    if (!topScroll || !bottomScroll) return;
+    const top = topRef.current;
+    const bottom = bottomRef.current;
+    if (!top || !bottom) return;
 
-    let topAnimationId: number;
-    let bottomAnimationId: number;
-    let topScrollPosition = 0;
-    let bottomScrollPosition = 0;
+    let topX = 0;
+    let bottomX = 0;
+    const speed = 0.8; // Adjust speed as needed
 
-    const scrollSpeed = 0.5; // pixels per frame
-    const reelSetWidth = 844.8 * 2; // width of one complete set (2 reels)
-
-    const animateTop = () => {
-      topScrollPosition += scrollSpeed;
-      
-      // Reset when we've scrolled past 2 sets (half of the 4 duplicates)
-      if (topScrollPosition >= reelSetWidth * 2) {
-        topScrollPosition = 0;
+    const animate = () => {
+      // Top Strip (Moving Left)
+      topX += speed;
+      // We reset when the first HALF of the content has scrolled past
+      // Since we duplicate the content, scrollWidth / 2 is the exact midpoint
+      if (topX >= top.scrollWidth / 2) {
+        topX = 0;
       }
-      
-      if (topScroll) {
-        topScroll.style.transform = `translateX(-${topScrollPosition}px)`;
+      top.style.transform = `translate3d(-${topX}px, 0, 0)`;
+
+      // Bottom Strip (Moving Right)
+      bottomX += speed;
+      if (bottomX >= bottom.scrollWidth / 2) {
+        bottomX = 0;
       }
-      
-      topAnimationId = requestAnimationFrame(animateTop);
+      // For right movement, we start at -midpoint and move toward 0
+      bottom.style.transform = `translate3d(${-bottom.scrollWidth / 2 + bottomX}px, 0, 0)`;
+
+      requestAnimationFrame(animate);
     };
 
-    const animateBottom = () => {
-      bottomScrollPosition -= scrollSpeed; // scroll in opposite direction
-      
-      // Reset when we've scrolled past 2 sets in reverse
-      if (bottomScrollPosition <= -reelSetWidth * 2) {
-        bottomScrollPosition = 0;
-      }
-      
-      if (bottomScroll) {
-        bottomScroll.style.transform = `translateX(${bottomScrollPosition}px)`;
-      }
-      
-      bottomAnimationId = requestAnimationFrame(animateBottom);
-    };
-
-    topAnimationId = requestAnimationFrame(animateTop);
-    bottomAnimationId = requestAnimationFrame(animateBottom);
-
-    return () => {
-      cancelAnimationFrame(topAnimationId);
-      cancelAnimationFrame(bottomAnimationId);
-    };
+    const raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
-    <section className="relative w-full bg-[#E8E8E8] py-20 overflow-hidden">
-      {/* Top Film Strip - Infinite Scroll */}
-      <div className="relative w-full mb-16 overflow-hidden">
-        <div 
-          ref={topScrollRef}
-          className="relative"
-          style={{ display: 'flex', gap: '0', lineHeight: '0', fontSize: '0', willChange: 'transform' }}
-        >
-          {/* Duplicate the film reel set 4 times for seamless loop */}
-          {[0, 1, 2, 3].map((setIndex) => (
-            <FilmReelSet key={`top-set-${setIndex}`} images={filmImages} startIndex={setIndex} />
+    <section className="relative w-full overflow-hidden py-[8vh] pb-32 space-y-[8vh]">
+      {/* TOP STRIP */}
+      <div className="relative w-full overflow-hidden">
+        {/* Added 'w-max' to ensure the flex container doesn't shrink */}
+        <div ref={topRef} className="flex w-max will-change-transform">
+          {/* Render the set twice to create the loop */}
+          {[0, 1].map((set) => (
+            <div key={`set-top-${set}`} className="flex">
+              {[0, 1, 2].map((i) => (
+                <FilmReelSet key={`top-${i}`} images={filmImages} />
+              ))}
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="max-w-4xl mx-auto text-center px-8 mb-16">
-        <h2 className="text-5xl font-bold text-black mb-6">
-          Moments that resonated
-        </h2>
-        <p className="text-lg text-gray-700 leading-relaxed">
-          This isn&apos;t just a list of songs, it&apos;s a collection of moments that defined STR&apos;s musical journey. 
-          From mass anthems that shook theatres to melodies{' '}
-          <span className="text-gray-500">
-            that hit the heart, every track carries a memory. Relive the phases, the vibes, and the iconic 
-            highs that made Silambarasan TR a true musical force.
-          </span>
-        </p>
+      <div className="max-w-4xl mx-auto text-center px-6">
+        <BlurText
+          text=" Where emotion finds a voice"
+          delay={60}
+          animateBy="words"
+          direction="top"
+          className="text-[clamp(2rem,5vw,3rem)] font-medium mb-4"
+        />
+        <BlurText
+          text="This isn&apos;t just a list of songs — it&apos;s a collection of
+          moments that defined STR&apos;s musical journey. From mass anthems
+          that shook theatres to melodies hit the heart, every track carries a
+          memory. Relive the phases, the vibes, and the iconic highs that made
+          Silambarasan TR a true musical force."
+          delay={5}
+          animateBy="words"
+          direction="top"
+          className=" text-gray-700 text-[clamp(1rem,2vw,1.125rem)] tracking-tight"
+        />
       </div>
 
-      {/* Bottom Film Strip - Infinite Scroll (Reverse Direction) */}
+      {/* BOTTOM STRIP */}
       <div className="relative w-full overflow-hidden">
-        <div 
-          ref={bottomScrollRef}
-          className="relative"
-          style={{ display: 'flex', gap: '0', lineHeight: '0', fontSize: '0', willChange: 'transform' }}
-        >
-          {/* Duplicate the film reel set 4 times for seamless loop */}
-          {[0, 1, 2, 3].map((setIndex) => (
-            <FilmReelSet key={`bottom-set-${setIndex}`} images={[...filmImages].reverse()} startIndex={setIndex} />
+        <div ref={bottomRef} className="flex w-max will-change-transform">
+          {[0, 1].map((set) => (
+            <div key={`set-bottom-${set}`} className="flex">
+              {[0, 1, 2].map((i) => (
+                <FilmReelSet
+                  key={`bottom-${i}`}
+                  images={[...filmImages].reverse()}
+                />
+              ))}
+            </div>
           ))}
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
 const AboutHero = () => {
   return (
@@ -15,58 +15,48 @@ const AboutHero = () => {
           priority
           sizes="100vw"
           onError={(e) => {
-            console.error('Failed to load aboutbg.png:', e);
+            console.error("Failed to load aboutbg.png:", e);
           }}
           onLoad={() => {
-            console.log('aboutbg.png loaded successfully');
+            console.log("aboutbg.png loaded successfully");
           }}
         />
       </div>
-      
+
       {/* Fallback background in case image doesn't load */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 z-0"></div>
-      
-      {/* Bottom gradient overlay with blur for smooth transition */}
-      {/* <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-black via-black/70 to-transparent z-50 backdrop-blur-md"></div> */}
-      
-      {/* Optional: Subtle dark overlay for better contrast */}
-      <div className="absolute inset-0 bg-transparent bg-opacity-20 z-15"></div>
-      
+
       {/* STR Logo Background (Middle Layer - behind aboutstr) */}
-      <div className="absolute inset-0 flex items-center justify-center z-30 translate-y-8">
+      <div className="absolute top-[3%] md:inset-0 flex items-center justify-center z-30 translate-y-8">
         <Image
-          src="/strlogo.png"
+          src="/logo/logo.png"
           alt="STR Logo Background"
           width={1200}
           height={400}
-          className=" object-contain scale-150"
+          className=" object-contain scale-110 w-full"
           priority
           onError={(e) => {
-            console.error('Failed to load strlogo.png:', e);
+            console.error("Failed to load strlogo.png:", e);
           }}
         />
       </div>
-      
+
       {/* Large STR Logo Foreground (Top Layer - aboutstr) */}
       <div className="absolute inset-0 flex items-center justify-center z-40 translate-y-12">
-        <Image
-          src="/aboutstr.png"
-          alt="STR Logo"
-          width={800}
-          height={400}
-          className="opacity- object-contain"
-          priority
-          onError={(e) => {
-            console.error('Failed to load aboutstr.png:', e);
-          }}
-        />
+        <div className="relative w-full md:w-[50%]">
+          <Image
+            src="/aboutstr.png"
+            alt="STR Logo"
+            width={800}
+            height={400}
+            className=" object-cover md:object-contain w-full scale-150 md:scale-100"
+            priority
+          />
+        </div>
       </div>
-      
-      {/* Optional: Add some subtle lighting effects */}
-      <div className="absolute top-0 left-0 w-full h-full z-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 opacity-5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500 opacity-5 rounded-full blur-3xl"></div>
-      </div>
+
+      {/* Bottom black → transparent overlay */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[35vh] z-50 bg-gradient-to-t from-black via-black/70 to-transparent" />
     </div>
   );
 };

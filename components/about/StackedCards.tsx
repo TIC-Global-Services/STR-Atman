@@ -12,133 +12,132 @@ interface Card {
 }
 
 const cards: Card[] = [
-  { 
-    id: 1, 
-    title: "Performance-Driven Project", 
-    description: "A Performance-Driven Project Rooted In Strong Writing And Emotional Depth. Currently In Progress.",
+  {
+    id: 1,
+    title: "Performance-Driven Project",
+    description:
+      "A Performance-Driven Project Rooted In Strong Writing And Emotional Depth. Currently In Progress.",
     date: "2025 Dec",
-    image: "/update1.jpg" 
+    image: "/update1.jpg",
   },
-  { 
-    id: 2, 
-    title: "Creative Vision", 
-    description: "Exploring new dimensions of storytelling through innovative cinematography and compelling narratives.",
+  {
+    id: 2,
+    title: "Creative Vision",
+    description:
+      "Exploring new dimensions of storytelling through innovative cinematography and compelling narratives.",
     date: "2024 Nov",
-    image: "/update2.jpg" 
+    image: "/update2.jpg",
   },
-  { 
-    id: 3, 
-    title: "Artistic Excellence", 
-    description: "Pushing boundaries in visual storytelling with cutting-edge techniques and artistic vision.",
+  {
+    id: 3,
+    title: "Artistic Excellence",
+    description:
+      "Pushing boundaries in visual storytelling with cutting-edge techniques and artistic vision.",
     date: "2024 Oct",
-    image: "/update3.jpg" 
+    image: "/update3.jpg",
   },
-  { 
-    id: 4, 
-    title: "Cultural Impact", 
-    description: "Creating content that resonates with audiences and leaves a lasting cultural impression.",
+  {
+    id: 4,
+    title: "Cultural Impact",
+    description:
+      "Creating content that resonates with audiences and leaves a lasting cultural impression.",
     date: "2024 Sep",
-    image: "/update4.jpg" 
-  }
+    image: "/update4.jpg",
+  },
 ];
 
 const StackedCards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % cards.length);
+    const timer = setInterval(() => {
+      setCurrentIndex((p) => (p + 1) % cards.length);
     }, 4000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(timer);
   }, []);
 
-  const getVisibleCards = () => {
-    const visible = [];
-    for (let i = 0; i < 4; i++) {
-      const index = (currentIndex + i) % cards.length;
-      visible.push({ ...cards[index], stackPosition: i });
-    }
-    return visible;
+  const visibleCards = Array.from({ length: 4 }).map((_, i) => {
+    const index = (currentIndex + i) % cards.length;
+    return { ...cards[index], stackPosition: i };
+  });
+
+  const bringToFront = (id: number) => {
+    const newIndex = cards.findIndex((c) => c.id === id);
+    setCurrentIndex(newIndex);
   };
 
-  const visibleCards = getVisibleCards();
   const activeCard = visibleCards[0];
 
   return (
-    <section className="relative light w-full min-h-screen bg-transparent flex flex-col items-center justify-center py-20 px-6">
-      {/* Title */}
-      <h2 className="text-[80px] lg:text-6xl font-normal text-gray-900 mb-12 text-center">
+    <section className=" light relative min-h-screen w-full flex flex-col items-center justify-center px-4 py-[8vh]">
+      <h2 className="text-center mb-[6vh] text-gray-900 font-normal
+        text-[clamp(2rem,6vw,4rem)]">
         Where The Journey Leads
       </h2>
 
-      {/* Cards and Info Container */}
-      <div className="flex flex-col items-center -ml-140">
-        {/* Stacked Cards */}
-        <div className="relative w-[433px] h-[464px]">
-          <AnimatePresence mode="popLayout">
+      <div className="w-full max-w-[90vw] flex flex-col items-center md:-ml-[35%]">
+        {/* Cards */}
+        <div
+          className="relative w-full max-w-[28rem]"
+          style={{ aspectRatio: "433 / 464" }}
+        >
+          <AnimatePresence>
             {visibleCards.map((card) => {
-              const stackPosition = card.stackPosition;
-              const isActive = stackPosition === 0;
-              
-              // Calculate x offset based on visibility requirements
-              // Card 1 (pos 0): 100% visible, x = 0
-              // Card 2 (pos 1): 50% visible, x = 216.5 (50% of 433px)
-              // Card 3 (pos 2): 50% visible, x = 216.5 + 216.5 (50% of 433px)
-              // Card 4 (pos 3): 50% visible, x = 216.5 + 216.5 + 216.5
-              const xOffsets = [0, 216.5, 433, 649.5];
-              const xPosition = xOffsets[stackPosition] || 0;
+              const pos = card.stackPosition;
+              const isActive = pos === 0;
 
               return (
                 <motion.div
                   key={card.id}
+                  drag={pos !== 0 ? "x" : false}
+                  dragConstraints={{ left: -120, right: 120 }}
+                  dragElastic={0.25}
+                  onDragEnd={() => bringToFront(card.id)}
                   initial={{
-                    scale: 1 - stackPosition * 0.1,
-                    x: xPosition,
-                    y: 0,
+                    scale: 1 - pos * 0.08,
+                    x: `${pos * 42}%`,
                     opacity: 0,
-                    rotateY: stackPosition * 8,
+                    rotateY: pos * 8,
                   }}
                   animate={{
-                    scale: 1 - stackPosition * 0.1,
-                    x: xPosition,
-                    y: 0,
+                    scale: isActive ? 1 : 1 - pos * 0.08,
+                    x: isActive ? "0%" : `${pos * 42}%`,
+                    y: isActive ? 0 : pos * 6,
                     opacity: 1,
-                    rotateY: stackPosition * 8,
+                    rotateY: isActive ? 0 : pos * 8,
                   }}
                   exit={{
-                    scale: 0.85,
-                    x: -200,
+                    x: "-40%",
                     opacity: 0,
                     rotateY: -30,
                   }}
                   transition={{
-                    duration: 0.6,
-                    ease: [0.32, 0.72, 0, 1],
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 20,
                   }}
-                  className="absolute top-0 left-0 group"
+                  className="absolute inset-0 cursor-grab active:cursor-grabbing"
                   style={{
+                    zIndex: 100 - pos,
                     transformStyle: "preserve-3d",
-                    perspective: "1500px",
-                    zIndex: 100 - stackPosition,
                   }}
                 >
                   {/* Card */}
-                  <div className="relative w-[433px] h-[464px] rounded-2xl overflow-hidden shadow-2xl bg-transparent cursor-pointer">
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
                     <Image
                       src={card.image}
                       alt={card.title}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="433px"
+                      className="object-cover"
                       priority={isActive}
                     />
-                    
-                    {/* Hover Overlay with Text */}
-                    <div className="absolute inset-0 bg-transparent bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-end p-6">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white">
-                        <h3 className="text-[20px] font-regular mb-2">{card.title}</h3>
-                      </div>
+
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/0 hover:bg-black/50 transition flex items-end p-4">
+                      <h3 className="text-white text-lg opacity-0 hover:opacity-100 transition">
+                        {card.title}
+                      </h3>
                     </div>
                   </div>
                 </motion.div>
@@ -147,18 +146,18 @@ const StackedCards = () => {
           </AnimatePresence>
         </div>
 
-        {/* Active Card Info - Directly Below Cards */}
-        <div className="mt-6 w-[433px] text-center">
+        {/* Active Card Info */}
+        <div className="mt-6 w-full max-w-[28rem] text-left">
           <motion.div
             key={activeCard.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
           >
-            <p className="text-[#7F7F7F] text-base text-left lg:text-lg mb-2 leading-relaxed">
+            <p className="text-gray-500 leading-relaxed mb-2">
               {activeCard.description}
             </p>
-            <p className="text-gray-900 font-bold text-left text-[20px]">
+            <p className="text-gray-900 font-semibold text-lg">
               {activeCard.date}
             </p>
           </motion.div>

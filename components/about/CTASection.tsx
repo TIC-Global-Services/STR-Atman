@@ -1,51 +1,74 @@
 "use client";
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
 const CTASection = () => {
   return (
-    <section className="relative w-full overflow-hidden px-4 md:px-8 lg:px-[50px] pb-8 lg:pb-12">
-      <div className="relative w-full max-w-[1340px] h-[350px] md:h-[450px] lg:h-[504px] overflow-hidden rounded-[20px] mx-auto">
-        {/* Background Image */}
+    <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-[3vw] py-[6vh]">
+      {/* Container */}
+      <div
+        className="relative w-full mx-auto overflow-hidden rounded-[clamp(16px,2vw,24px)] aspect-4/4 md:aspect-16/6"
+      >
+        {/* Background */}
         <div className="absolute inset-0">
           <Image
             src="/strcta.png"
             alt="CTA Background"
             fill
-            className="object-cover"
+            className="object-cover object-[80%_580%] md:object-right"
             priority
           />
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-transparent bg-opacity-50"></div>
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
         {/* Content */}
-        <div className="relative h-full flex items-center px-6 md:px-12 lg:px-16">
-          <div className="flex flex-col items-start justify-center w-full">
+        <div className="relative z-10 h-full flex items-start px-[clamp(1rem,4vw,4rem)]">
+          <div className="w-full flex flex-col gap-[clamp(2rem,5vw,4rem)] py-10">
             {/* Text */}
-            <h2 className="text-white text-2xl md:text-3xl lg:text-[34px] font-normal leading-tight mb-[80px] max-w-full lg:max-w-5xl">
-              Get a first look at upcoming films, trailers, and music<br />
+            <h2
+              className="
+                text-white font-normal leading-tight
+                text-[clamp(1.4rem,3.5vw,2.1rem)]
+                max-w-[65ch]
+              "
+            >
+              Get a first look at upcoming films, trailers, and music
+              <br className="hidden sm:block" />
               that mark the next phase of the journey.
             </h2>
-            
-            {/* Button and Signature Container */}
-            <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full gap-8 lg:gap-16">
-              {/* Button on the left */}
-              <Link 
+
+            {/* Actions */}
+            <div className="flex flex-col lg:flex-row items-start gap-[clamp(1.5rem,4vw,4rem)]">
+              {/* Button */}
+              <Link
                 href="/updates"
-                className="inline-block bg-green-500 hover:bg-green-600 text-black font-bold text-sm lg:text-base py-2.5 lg:py-3 px-6 lg:px-8 rounded-md transition-colors duration-200"
+                className="
+                  inline-flex items-center justify-center
+                  bg-green-500 hover:bg-green-600
+                  text-black font-semibold
+                  text-[clamp(0.85rem,1vw,1rem)]
+                  px-[clamp(1.25rem,2.5vw,2rem)]
+                  py-[clamp(0.6rem,1.2vw,0.85rem)]
+                  rounded-md transition-colors
+                "
               >
                 View Updates
               </Link>
-              
-              {/* Signature centered */}
-              <div className="relative w-full max-w-[420px] h-[150px] md:h-[170px] lg:h-[184px] z-50 mx-auto lg:mx-20">
+
+              {/* Signature */}
+              <div
+                className="absolute top-[60%] md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 w-full max-w-[clamp(220px,45vw,420px)]"
+                style={{ aspectRatio: "420 / 184" }}
+              >
                 <Image
                   src="/strsign.png"
                   alt="STR Signature"
                   fill
                   className="object-contain"
-                  style={{ filter: 'brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(1352%) hue-rotate(360deg) brightness(104%) contrast(101%)' }}
+                  style={{
+                    filter:
+                      "brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(1352%) hue-rotate(360deg) brightness(104%) contrast(101%)",
+                  }}
                 />
               </div>
             </div>

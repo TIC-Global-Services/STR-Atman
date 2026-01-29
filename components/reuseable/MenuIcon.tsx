@@ -14,46 +14,7 @@ export const MenuIcon = forwardRef<HTMLButtonElement, MenuIconProps>(
     const topLineRef = useRef<HTMLSpanElement>(null);
     const bottomLineRef = useRef<HTMLSpanElement>(null);
 
-    useEffect(() => {
-      if (!topLineRef.current || !bottomLineRef.current) return;
-
-      const tl = gsap.timeline({ defaults: { duration: 0.35, ease: "power3.out" } });
-
-      if (isOpen) {
-        tl
-          .to(topLineRef.current, {
-            y: 4,
-            rotate: 45,
-            width: 28,
-          })
-          .to(
-            bottomLineRef.current,
-            {
-              y: -4,
-              rotate: -45,
-              width: 28,
-            },
-            "<"
-          );
-      } else {
-        tl
-          .to(topLineRef.current, {
-            y: 0,
-            rotate: 0,
-            width: 28,           // or keep 20 if you prefer the original look when closed
-          })
-          .to(
-            bottomLineRef.current,
-            {
-              y: 0,
-              rotate: 0,
-              width: 20,           // ← restored your original closed width
-            },
-            "<"
-          );
-      }
-    }, [isOpen]);
-
+   
     return (
       <button
         ref={ref}
