@@ -84,13 +84,13 @@ const LatestUpdates = () => {
 
   return (
     <section className="light py-20 overflow-hidden">
-      <ContainerLayout className="min-h-screen flex flex-col items-center  gap-12">
+      <ContainerLayout className=" md:min-h-screen flex flex-col items-center  gap-12">
         <h1 className="text-4xl md:text-6xl text-center">
           What&apos;s Happening Now
         </h1>
 
         {/* Carousel */}
-        <div className="relative w-full h-[75dvh] flex items-center justify-center ">
+        <div className="relative w-full h-[60dvh] md:h-[75dvh] flex items-center justify-center ">
           {updates.map((item, idx) => (
             <div
               key={idx}

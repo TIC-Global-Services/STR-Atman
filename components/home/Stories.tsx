@@ -236,7 +236,7 @@ const Stories = () => {
               <Link
                 href={"/"}
                 ref={viewMoreRef}
-                className="text-xl font-medium hover:underline transition-all inline-flex items-center gap-2 group text-[#505050] pl-2"
+                className="text-xl font-medium hover:underline transition-all inline-flex items-center gap-2 group text-[#505050] pl-2 underline lg:decoration-0"
               >
                 Know More
                 

@@ -18,6 +18,14 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
     width: 0px; /* Optional: just make scrollbar space zero */
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
 
 body {
   background: var(--background);

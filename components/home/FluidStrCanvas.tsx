@@ -4,9 +4,14 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
+const isMobile =
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: coarse)").matches;
+
 /* ===============================================================
    🎨 CONFIGURATION
 =============================================================== */
+
 const CONFIG = {
   // Image paths
   BASE_IMAGE: "/Home/Str-07.png",
@@ -20,26 +25,28 @@ const CONFIG = {
     "/Home/Str-10.png",
     "/Home/Str-11.png",
   ],
-  
+
   // Timing
   IDLE_DELAY: 1000,
   RETURN_SPEED: 0.68,
-  RESET_CHECK_INTERVAL: 50,
+  RESET_CHECK_INTERVAL: 200,
   RESET_THRESHOLD: 2,
-  
+
   // Fluid behavior
-  ACTIVE_DECAY: 0.965,
+  ACTIVE_DECAY: 0.985,
   TRAIL_WIDTH: 0.08,
   TRAIL_INTENSITY: 0.8,
   REVEAL_SMOOTHNESS: 0.35,
   REVEAL_TRANSITION: 0.38,
-  
+
   // Rendering
   FLUID_RESOLUTION: 512,
 
-  AUTO_REVEAL_AFTER_IDLE_MS: 1000,     // start auto after user is idle this long
-  AUTO_MOVE_DURATION_MS: 5200,         // how long should one full zig-zag take
+  AUTO_REVEAL_AFTER_IDLE_MS: 1000, // start auto after user is idle this long
+  AUTO_MOVE_DURATION_MS: 5200, // how long should one full zig-zag take
   AUTO_MOVE_STEPS: 180,
+
+  MOBILE_AUTO_MOVE_STEPS: 120,
 };
 
 /* ===============================================================
@@ -127,7 +134,7 @@ void main() {
 function FluidScene() {
   const { gl, size } = useThree();
 
-  const baseTexture   = useTexture(CONFIG.BASE_IMAGE);
+  const baseTexture = useTexture(CONFIG.BASE_IMAGE);
   const revealTextures = useTexture(CONFIG.REVEAL_IMAGES);
 
   const renderTargets = useMemo(() => {
@@ -151,63 +158,76 @@ function FluidScene() {
   });
 
   // Auto reveal control
-  const autoActive      = useRef(false);
-  const autoStartTime   = useRef(0);
-  const autoProgress    = useRef(0);
+  const autoActive = useRef(false);
+  const autoStartTime = useRef(0);
+  const autoProgress = useRef(0);
   const virtualMousePos = useRef(new THREE.Vector2(0.08, 0.5));
 
   const startIdleTimerRef = useRef<() => void>(() => {});
 
-  const textureSizes = useMemo(() => ({
-    baseSize: new THREE.Vector2(
-      (baseTexture.image as HTMLImageElement)?.width  ?? 1920,
-      (baseTexture.image as HTMLImageElement)?.height ?? 1080
-    ),
-    revealSize: new THREE.Vector2(
-      (revealTextures[0].image as HTMLImageElement)?.width  ?? 1920,
-      (revealTextures[0].image as HTMLImageElement)?.height ?? 1080
-    ),
-  }), [baseTexture, revealTextures]);
+  const textureSizes = useMemo(
+    () => ({
+      baseSize: new THREE.Vector2(
+        (baseTexture.image as HTMLImageElement)?.width ?? 1920,
+        (baseTexture.image as HTMLImageElement)?.height ?? 1080,
+      ),
+      revealSize: new THREE.Vector2(
+        (revealTextures[0].image as HTMLImageElement)?.width ?? 1920,
+        (revealTextures[0].image as HTMLImageElement)?.height ?? 1080,
+      ),
+    }),
+    [baseTexture, revealTextures],
+  );
 
-  const fluidMaterial = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader: fluidFragmentShader,
-    uniforms: {
-      uPrevTrails:     { value: null },
-      uMouse:          { value: stateRef.current.mouse },
-      uPrevMouse:      { value: stateRef.current.prevMouse },
-      uDecay:          { value: CONFIG.ACTIVE_DECAY },
-      uIdleDecay:      { value: CONFIG.RETURN_SPEED },
-      uIsMoving:       { value: false },
-      uTrailWidth:     { value: CONFIG.TRAIL_WIDTH },
-      uTrailIntensity: { value: CONFIG.TRAIL_INTENSITY },
-    },
-  }), []);
+  const fluidMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader: fluidFragmentShader,
+        uniforms: {
+          uPrevTrails: { value: null },
+          uMouse: { value: stateRef.current.mouse },
+          uPrevMouse: { value: stateRef.current.prevMouse },
+          uDecay: { value: CONFIG.ACTIVE_DECAY },
+          uIdleDecay: { value: CONFIG.RETURN_SPEED },
+          uIsMoving: { value: false },
+          uTrailWidth: { value: CONFIG.TRAIL_WIDTH },
+          uTrailIntensity: { value: CONFIG.TRAIL_INTENSITY },
+        },
+      }),
+    [],
+  );
 
-  const displayMaterial = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader: displayFragmentShader,
-    uniforms: {
-      uFluid:         { value: null },
-      uBottomTexture: { value: baseTexture },
-      uTopTexture:    { value: revealTextures[0] },
-      uResolution:    { value: new THREE.Vector2() },
-      uTopTexSize:    { value: textureSizes.revealSize },
-      uBottomTexSize: { value: textureSizes.baseSize },
-      uRevealSmooth:  { value: CONFIG.REVEAL_SMOOTHNESS },
-      uRevealTransition: { value: CONFIG.REVEAL_TRANSITION },
-    },
-    transparent: true,
-  }), [baseTexture, revealTextures, textureSizes]);
+  const displayMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader: displayFragmentShader,
+        uniforms: {
+          uFluid: { value: null },
+          uBottomTexture: { value: baseTexture },
+          uTopTexture: { value: revealTextures[0] },
+          uResolution: { value: new THREE.Vector2() },
+          uTopTexSize: { value: textureSizes.revealSize },
+          uBottomTexSize: { value: textureSizes.baseSize },
+          uRevealSmooth: { value: CONFIG.REVEAL_SMOOTHNESS },
+          uRevealTransition: { value: CONFIG.REVEAL_TRANSITION },
+        },
+        transparent: true,
+      }),
+    [baseTexture, revealTextures, textureSizes],
+  );
 
   const fluidScene = useMemo(() => {
     const s = new THREE.Scene();
-    s.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), fluidMaterial));
+    s.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fluidMaterial));
     return s;
   }, [fluidMaterial]);
 
-  const fluidCamera = useMemo(() =>
-    new THREE.OrthographicCamera(-1,1,1,-1,0,1), []);
+  const fluidCamera = useMemo(
+    () => new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1),
+    [],
+  );
 
   // ─── Interaction + Idle → Auto logic ────────────────────────────────
   useEffect(() => {
@@ -293,14 +313,7 @@ function FluidScene() {
 
       gl.setRenderTarget(state.curr);
       const pixels = new Uint8Array(4);
-      gl.readRenderTargetPixels(
-        state.curr,
-        halfRes,
-        halfRes,
-        1,
-        1,
-        pixels
-      );
+      gl.readRenderTargetPixels(state.curr, halfRes, halfRes, 1, 1, pixels);
       gl.setRenderTarget(null);
 
       if (pixels[0] < CONFIG.RESET_THRESHOLD) {
@@ -332,7 +345,10 @@ function FluidScene() {
 
     if (autoActive.current && state.isOverImage) {
       const elapsed = performance.now() - autoStartTime.current;
-      autoProgress.current = Math.min(elapsed / CONFIG.AUTO_MOVE_DURATION_MS, 1);
+      autoProgress.current = Math.min(
+        elapsed / CONFIG.AUTO_MOVE_DURATION_MS,
+        1,
+      );
 
       if (autoProgress.current >= 1) {
         autoActive.current = false;
@@ -343,13 +359,31 @@ function FluidScene() {
       } else {
         const t = autoProgress.current;
 
-        const x = 0.08 + t * 0.84;
+        const steps = isMobile
+          ? CONFIG.MOBILE_AUTO_MOVE_STEPS
+          : CONFIG.AUTO_MOVE_STEPS;
 
-        const waves = 5.5;
-        const triangle = Math.abs((t * waves * 2) % 2 - 1);
-        const y = 0.15 + triangle * 0.7;
+        const stepT = Math.floor(t * steps) / steps;
 
-        virtualMousePos.current.set(x, y);
+        if (isMobile) {
+          // 📱 MOBILE → vertical sweep
+          const y = 0.1 + stepT * 0.8;
+
+          const waves = 4.5;
+          const triangle = Math.abs(((stepT * waves * 2) % 2) - 1);
+          const x = 0.15 + triangle * 0.7;
+
+          virtualMousePos.current.set(x, y);
+        } else {
+          // 🖥 DESKTOP → horizontal sweep (original behavior)
+          const x = 0.08 + stepT * 0.84;
+
+          const waves = 5.5;
+          const triangle = Math.abs(((stepT * waves * 2) % 2) - 1);
+          const y = 0.15 + triangle * 0.7;
+
+          virtualMousePos.current.set(x, y);
+        }
 
         state.prevMouse.copy(state.mouse);
         state.mouse.copy(virtualMousePos.current);
@@ -382,19 +416,28 @@ function FluidScene() {
 =============================================================== */
 export default function FluidStrCanvas() {
   const [isLoaded, setIsLoaded] = useState(false);
-  
+
   return (
-    <div 
+    <div
       className="w-full h-full cursor-pointer"
-      style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
+      style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.3s" }}
     >
       <Canvas
         orthographic
-        camera={{ position: [0, 0, 1], zoom: 1, left: -1, right: 1, top: 1, bottom: -1, near: 0, far: 1 }}
-        gl={{ 
+        camera={{
+          position: [0, 0, 1],
+          zoom: 1,
+          left: -1,
+          right: 1,
+          top: 1,
+          bottom: -1,
+          near: 0,
+          far: 1,
+        }}
+        gl={{
           alpha: true,
           antialias: false,
-          powerPreference: "high-performance"
+          powerPreference: "high-performance",
         }}
         onCreated={() => setIsLoaded(true)}
       >

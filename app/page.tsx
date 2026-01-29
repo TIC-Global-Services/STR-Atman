@@ -13,12 +13,37 @@ export default function Home() {
     <div className=" overflow-hidden">
       <HomeHero />
       {/* <Hero /> */}
-      <ContourBackground background="#ffffff" lineColor="#7a825c" speed={0.03} resolution={10} levels={10}>
+      <ContourBackground
+        background="#ffffff"
+        lineColor="#7a825c"
+        speed={0.03}
+        resolution={20}
+        levels={9}
+      >
         <STRAbout />
-        <Timeline />
+      </ContourBackground>
+
+      <Timeline />
+      
+      <ContourBackground
+        background="#ffffff"
+        lineColor="#7a825c"
+        speed={0.03}
+        resolution={20}
+        levels={9}
+      >
         <LatestUpdates />
         <HorizontalImageGallery />
-        <VideoSection videoId="xkHtjS58Dds" />
+      </ContourBackground>
+
+      <VideoSection videoId="xkHtjS58Dds" />
+      <ContourBackground
+        background="#ffffff"
+        lineColor="#7a825c"
+        speed={0.03}
+        resolution={20}
+        levels={9}
+      >
         <Stories />
       </ContourBackground>
     </div>
