@@ -193,6 +193,7 @@ const Navbar = () => {
       });
     }
   };
+  
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -251,7 +252,7 @@ const Navbar = () => {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
         <Link href="/">
           <Image
             src="/logo/logo.png"
@@ -285,7 +286,7 @@ const Navbar = () => {
           >
             <AudioWave isPlaying={isPlaying} isLightSection={isLightSection} />
 
-            <p className="text-xs md:text-sm tracking-wide">
+            <p className="text-[10px] md:text-sm tracking-wide">
               <span
                 className={
                   isPlaying
@@ -311,7 +312,7 @@ const Navbar = () => {
             </p>
           </button>
 
-          <button className="bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
+          <button className=" hidden md:flex bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200  items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
             <Image
               src="/shopicon.png"
               alt="Store"
