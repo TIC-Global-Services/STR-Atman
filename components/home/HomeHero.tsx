@@ -209,12 +209,13 @@ const HomeHero = () => {
         </div>
 
         <div className="absolute bottom-10 md:bottom-4 left-1/2 transform -translate-x-1/2 z-50">
-          {" "}
-          <div className="bg-white/20 backdrop-blur-sm rounded-full py-2">
-            <span className="text-black text-sm font-medium">
-              Scroll to Explore
-            </span>
+     
+       
+          <div className="flex items-center gap-2 text-white text-xs  py-2 px-4">
+            <div className="dot-animation bg-white/60" />
+            <span className="text-white/60 ">Scroll to explore</span>
           </div>
+
         </div>
       </div>
     </div>

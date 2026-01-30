@@ -186,7 +186,7 @@ const DecayCard: React.FC<DecayCardProps> = ({
           />
         </g>
       </svg>
-      <div className=" absolute -bottom-2 left-4 text-2xl mix-blend-difference ">
+      <div className=" absolute -bottom-12 left-4 text-2xl mix-blend-difference ">
         {children}
       </div>
     </div>

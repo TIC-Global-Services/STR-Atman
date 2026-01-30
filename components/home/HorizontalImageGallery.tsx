@@ -8,12 +8,36 @@ import DecayCard from "../reuseable/DecayCard";
 gsap.registerPlugin(ScrollTrigger);
 
 const gallery = [
-  { img: "/membership/memberherobg.jpg", content: "Visit to maleysia" },
-  { img: "/membership/community.jpg" },
-  { img: "/membership/sharedmoment3.png", content: "Visit to maleysia" },
-  { img: "/newsroom/news2.png" },
-  { img: "/membership/memberherobg.jpg" },
-  { img: "/membership/community.jpg", content: "Visit to maleysia" },
+  {
+    img: "/membership/memberherobg.jpg",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
+  {
+    img: "/membership/community.jpg",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
+  {
+    img: "/membership/sharedmoment3.png",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
+  {
+    img: "/newsroom/news2.png",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
+  {
+    img: "/membership/memberherobg.jpg",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
+  {
+    img: "/membership/community.jpg",
+    title: "Lorem Ipsum",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis erat erat.",
+  },
 ];
 const HorizontalImageGallery = () => {
   const pinRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +52,7 @@ const HorizontalImageGallery = () => {
       ease: "power2.out",
       scrollTrigger: {
         trigger: pinRef.current,
-        start: "50% center", 
+        start: "50% center",
         end: "bottom top",
         scrub: 1.5,
       },
@@ -82,7 +106,6 @@ const HorizontalImageGallery = () => {
   }, []);
 
   return (
-    
     <div ref={pinRef} className="h-screen w-full overflow-hidden py-10">
       <div
         ref={gradientRef}
@@ -105,11 +128,14 @@ const HorizontalImageGallery = () => {
                 `}
             >
               <DecayCard
-                width={isCenter ? 420 : 300}
-                height={isCenter ? 520 : 400}
+                width={isCenter ? 400 : 280}
+                height={isCenter ? 500 : 380}
                 image={item.img}
               >
-                {item.content && <h1>{item.content}</h1>}
+                <div className=" max-w-xs pt-6">
+                  {item.title && <h1>{item.title}</h1>}
+                  {item.desc && <p className=" text-sm ">{item.desc}</p>}
+                </div>
               </DecayCard>
             </div>
           );
