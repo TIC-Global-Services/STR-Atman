@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import PrimaryLinkButton from "../reuseable/PrimaryLinkButton";
 
 const CTASection = () => {
   return (
@@ -39,21 +40,9 @@ const CTASection = () => {
 
             {/* Actions */}
             <div className="flex flex-col lg:flex-row items-start gap-[clamp(1.5rem,4vw,4rem)]">
-              {/* Button */}
-              <Link
-                href="/updates"
-                className="
-                  inline-flex items-center justify-center
-                  bg-green-500 hover:bg-green-600
-                  text-black font-semibold
-                  text-[clamp(0.85rem,1vw,1rem)]
-                  px-[clamp(1.25rem,2.5vw,2rem)]
-                  py-[clamp(0.6rem,1.2vw,0.85rem)]
-                  rounded-md transition-colors
-                "
-              >
-                View Updates
-              </Link>
+              
+
+              <PrimaryLinkButton title="View Updates" href="#" />
 
               {/* Signature */}
               <div

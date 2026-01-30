@@ -8,7 +8,7 @@ import ContourBackground from "@/components/reuseable/ContourBackground";
 export default function MusicJourneyPage() {
   return (
     <main className="relative min-h-screen">
-      <MusicHero />
+      {/* <MusicHero /> */}
 
       <ContourBackground
         background="#ffffff"

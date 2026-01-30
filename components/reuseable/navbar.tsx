@@ -193,7 +193,6 @@ const Navbar = () => {
       });
     }
   };
-  
 
   useEffect(() => {
     if (!menuOpen) return;

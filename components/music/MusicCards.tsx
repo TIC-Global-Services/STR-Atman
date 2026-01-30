@@ -55,7 +55,7 @@ const MusicCards = () => {
   }, []);
 
   return (
-    <section className="relative w-full py-[8vh] px-[clamp(1rem,4vw,4rem)]">
+    <section className=" light relative w-full pt-32 py-[8vh] px-[clamp(1rem,4vw,4rem)]">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* HEADER */}
         <div className="md:text-center mb-[clamp(3rem,8vw,6rem)]">

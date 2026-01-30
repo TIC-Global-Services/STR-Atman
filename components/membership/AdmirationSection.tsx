@@ -1,202 +1,287 @@
 "use client";
-import Image from 'next/image';
-import { useRef, useState } from 'react';
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import BlurText from "../reuseable/BlurText";
+import PrimaryButton from "../reuseable/PrimaryButton";
+
+// --- Sub-components for better organization ---
+
+const FormField = ({
+  label,
+  name,
+  type = "text",
+  placeholder,
+  required = false,
+  onChange,
+}: any) => (
+  <div className="flex flex-col gap-1.5 w-full">
+    <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 ml-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <input
+      type={type}
+      name={name}
+      placeholder={placeholder}
+      required={required}
+      onChange={onChange}
+      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-black placeholder:text-gray-300 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/5 transition-all duration-300 outline-none text-sm"
+    />
+  </div>
+);
+
+const SectionHeader = ({ title }: { title: string }) => (
+  <div className="col-span-full flex items-center gap-4 pt-4 pb-1">
+    <span className="text-[11px] font-black text-black/30 uppercase tracking-[0.2em] whitespace-nowrap">
+      {title}
+    </span>
+    <div className="h-[1px] w-full bg-gray-100" />
+  </div>
+);
 
 const AdmirationSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [formData, setFormData] = useState({});
 
-  const handleJoinClub = () => {
-    setShowPopup(true);
-  };
-
-  const closePopup = () => {
-    setShowPopup(false);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted');
+    console.log("Member Data:", formData);
+    // Add your API call here
     setShowPopup(false);
   };
 
+  const Images = [
+    { img: "/membership/slide1.jpg", title: "Slide 1" },
+    { img: "/membership/slide2.jpg", title: "Slide 2" },
+    { img: "/membership/slide3.jpg", title: "Slide 3" },
+  ];
+
   return (
-    <section className="relative w-full bg-transparent pb-20 light">
-      <div className="w-full">
-        <div 
+    <section className="relative w-full bg-transparent py-20 light px-6 md:pl-10 overflow-hidden">
+      <div className="w-full flex flex-col gap-14">
+        <div
           ref={scrollContainerRef}
-          className="flex gap-5 overflow-x-auto scrollbar-none pb-4 pl-6 lg:pl-12 pr-5"
-          style={{ scrollBehavior: 'smooth' }}
+          className="flex flex-col md:flex-row gap-8"
         >
-          {/* Text Content - First item in carousel */}
-          <div className="shrink-0 w-96 lg:w-[480px] space-y-6 flex flex-col justify-center">
-            <h2 
-              className="text-black"
-              style={{ 
-                fontFamily: 'Halfre, sans-serif',
-                fontWeight: 400,
-                fontSize: 'clamp(36px, 5vw, 30px)',
-                lineHeight: '1.1',
-                letterSpacing: '0%'
-              }}
-            >
-              Built on shared admiration
-            </h2>
-            
-            <p className="text-black/80 text-[20px] leading-tight">
-              The STR Community Is Built On Genuine Admiration And Mutual Respect. It&apos;s A Verified Space Where Fans Come Together To Stay Connected, Celebrate Meaningful Moments, And Engage With STR&apos;s Journey Through Official Updates And Shared Experiences.
-            </p>
-          </div>
-
-          {/* Image 1 */}
-          <div className="shrink-0 relative overflow-hidden" style={{ width: '368px', height: '508px', borderRadius: '12px' }}>
-            <Image
-              src="/membership/slide1.jpg"
-              alt="STR Community Image 1"
-              fill
-              className="object-cover"
-              priority
+          {/* Text Content */}
+          <div className="max-w-lg space-y-6 flex flex-col justify-center">
+            <BlurText
+              text="Built on shared admiration"
+              delay={60}
+              animateBy="words"
+              direction="top"
+              className="text-black font-medium text-4xl"
+            />
+            <BlurText
+              text="The STR Community Is Built On Genuine Admiration And Mutual Respect. It's A Verified Space Where Fans Come Together To Stay Connected."
+              delay={5}
+              animateBy="words"
+              direction="top"
+              className="text-black/80 text-[20px] leading-tight"
             />
           </div>
 
-          {/* Image 2 */}
-          <div className="shrink-0 relative overflow-hidden" style={{ width: '368px', height: '508px', borderRadius: '12px' }}>
-            <Image
-              src="/membership/slide2.jpg"
-              alt="STR Community Image 2"
-              fill
-              className="object-cover"
-              style={{ objectPosition: 'center 0%' }}
-              priority
-            />
-          </div>
-
-          {/* Image 3 - Partially visible, reveals on scroll */}
-          <div className="shrink-0 relative overflow-hidden" style={{ width: '368px', height: '508px', borderRadius: '12px' }}>
-            <Image
-              src="/membership/slide3.jpg"
-              alt="STR Community Image 3"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Join the Club Button - Final item in carousel */}
-          <div className="shrink-0 flex items-end justify-left pr-5" style={{ width: 'auto', height: '508px' }}>
-            <button 
-              onClick={handleJoinClub}
-              className="bg-[#1DB954] text-black hover:bg-[#1DB954]-800 transition-colors duration-300 whitespace-nowrap"
-              style={{ 
-                height: '42px',
-                borderRadius: '4px',
-                paddingTop: '10px',
-                paddingRight: '30px',
-                paddingBottom: '10px',
-                paddingLeft: '30px',
-                fontFamily: 'Halfre, sans-serif',
-                fontWeight: 400,
-                fontSize: '14px',
-                letterSpacing: '0%'
-              }}
-            >
-              Join the Club
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Membership Popup Modal */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black/60 bg-opacity-30 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 relative">
-            {/* Close Button */}
-            <button
-              onClick={closePopup}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
-            >
-              ×
-            </button>
-
-            {/* Modal Content */}
-            <div className="text-center mb-8">
-              <h2 
-                className="text-black mb-4"
-                style={{ 
-                  fontFamily: 'Halfre, sans-serif',
-                  fontWeight: 400,
-                  fontSize: 'clamp(32px, 5vw, 48px)',
-                  lineHeight: '1.1',
-                  letterSpacing: '0%'
-                }}
+          {/* Image Carousel */}
+          <div className="flex gap-4 md:gap-12 w-screen overflow-x-auto no-scrollbar scroll-smooth md:px-10">
+            {Images.map((img, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="w-[65%] md:w-[35%] aspect-3/4 h-[40dvh] md:h-[60dvh] shrink-0"
               >
-                Become a member
-              </h2>
-              
-              <p className="text-gray-600 text-lg leading-relaxed max-w-xl mx-auto">
-                A Verified STR Community Built On Admiration And Respect, Where Fans Connect And Stay Updated Through Official Moments.
-              </p>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  required
+                <Image
+                  src={img.img}
+                  alt={img.title}
+                  width={500}
+                  height={500}
+                  className="object-cover object-top w-full h-full rounded-2xl shadow-lg"
+                  priority
                 />
-                <input
-                  type="text"
-                  placeholder="City / State"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  required
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="tel"
-                  placeholder="Phone number"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg transition-colors duration-300"
-                  style={{ 
-                    fontFamily: 'Halfre, sans-serif',
-                    fontWeight: 400,
-                    fontSize: '16px'
-                  }}
-                >
-                  Submit Customer Enquiry
-                </button>
-              </div>
-            </form>
+              </motion.div>
+            ))}
           </div>
         </div>
-      )}
-      
-      <style jsx>{`
-        .scrollbar-none::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-none {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+
+        <PrimaryButton
+          onClick={() => setShowPopup(true)}
+          title="Join the Club"
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Membership Popup Modal */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4  "
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-3xl md:rounded-[2.5rem] p-6 md:p-12 max-w-4xl w-full my-auto relative shadow-2xl border border-white/20 max-h-[90dvh] overflow-y-auto"
+            >
+              <button
+                onClick={() => setShowPopup(false)}
+                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all duration-300 cursor-pointer"
+              >
+                ✕
+              </button>
+
+              <div className="mb-10 text-center md:text-left ">
+                <h2 className="text-4xl md:text-5xl font-black text-black tracking-tight leading-none mb-3">
+                  MEMBERSHIP <span className=" text-primary">APPLICATION</span>
+                </h2>
+                <p className="text-gray-500 font-medium  max-w-lg">
+                  A verified STR community built on admiration and respect,
+                  where fans connect and stay updated through official moments.
+                </p>
+              </div>
+
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 "
+              >
+                <SectionHeader title="Personal Identity" />
+                <FormField
+                  label="Full Name"
+                  name="name"
+                  placeholder="Enter name"
+                  required
+                  onChange={handleChange}
+                />
+                <FormField
+                  label="Date of Birth"
+                  name="dob"
+                  type="date"
+                  required
+                  onChange={handleChange}
+                />
+                <div className="flex flex-col gap-1.5 w-full">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 ml-1">
+                    Blood Group
+                  </label>
+                  <select
+                    name="bloodGroup"
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:bg-white focus:border-black outline-none appearance-none text-sm"
+                  >
+                    <option value="">Select Group</option>
+                    {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map(
+                      (bg) => (
+                        <option key={bg} value={bg}>
+                          {bg}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </div>
+                <FormField
+                  label="Occupation"
+                  name="occupation"
+                  placeholder="Your profession"
+                  onChange={handleChange}
+                  required
+                />
+                <FormField
+                  label="Aadhar Number"
+                  name="aadhar"
+                  placeholder="0000 0000 0000"
+                  onChange={handleChange}
+                  required
+                />
+
+                <SectionHeader title="Contact Information" />
+                <FormField
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  placeholder="email@example.com"
+                  required
+                  onChange={handleChange}
+                  
+                />
+                <FormField
+                  label="Phone Number"
+                  name="phone"
+                  type="tel"
+                  placeholder="+91"
+                  required
+                  onChange={handleChange}
+                  
+                />
+
+                <SectionHeader title="Location Details" />
+                <div className="col-span-full">
+                  <FormField
+                    label="Residential Address"
+                    name="address"
+                    placeholder="Door No, Street, Area..."
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <FormField
+                  label="Zone"
+                  name="zone"
+                  placeholder="e.g. South"
+                  onChange={handleChange}
+                  required
+                />
+                <FormField
+                  label="District"
+                  name="district"
+                  placeholder="District name"
+                  onChange={handleChange}
+                  required
+                />
+                <FormField
+                  label="State"
+                  name="state"
+                  placeholder="State name"
+                  onChange={handleChange}
+                  required
+                />
+
+                <SectionHeader title="Social Presence" />
+                <FormField
+                  label="Instagram ID"
+                  name="instagram"
+                  placeholder="@handle"
+                  onChange={handleChange}
+                />
+                <FormField
+                  label="X (Twitter) ID"
+                  name="xTwitter"
+                  placeholder="@handle"
+                  onChange={handleChange}
+                />
+
+                <div className="col-span-full flex flex-col items-center gap-4 mt-8">
+                  
+                  <PrimaryButton title="Complete Registration" className="w-full md:w-auto px-16 py-4  rounded-2xl font-bold text-lg shadow-xl shadow-black/10  transition-colors hover:scale-105"  />
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                    Secure & Verified Environment
+                  </p>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

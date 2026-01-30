@@ -11,7 +11,7 @@ const PressHero = () => {
             style={{ 
               fontFamily: 'Halfre, sans-serif',
               fontWeight: 400,
-              fontSize: 'clamp(60px, 8vw, 80px)',
+              fontSize: 'clamp(40px, 8vw, 80px)',
               lineHeight: '0.9',
               letterSpacing: '0%'
             }}
@@ -21,14 +21,14 @@ const PressHero = () => {
           
           {/* Subtitle */}
           <p 
-            className="text-white/90 max-w-4xl"
+            className="text-white/90 max-w-3xl"
             style={{
               fontSize: 'clamp(18px, 2.5vw, 40px)',
               lineHeight: '1.1',
               fontWeight: 400
             }}
           >
-            Official News, Announcements, And Media Coverage <br />From Silambarasan TR
+            Official News, Announcements, And Media Coverage From Silambarasan TR
           </p>
         </div>
       </div>

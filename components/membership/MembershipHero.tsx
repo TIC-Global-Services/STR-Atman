@@ -1,52 +1,118 @@
 "use client";
-import Image from 'next/image';
+
+import Image from "next/image";
+import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
+import { useEffect } from "react";
 
 const MembershipHero = () => {
+  /* ------------------------------------------------------------------ */
+  /* SCROLL PARALLAX */
+  /* ------------------------------------------------------------------ */
+
+  const { scrollYProgress } = useScroll();
+
+  // Title moves slower (background depth)
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+
+  // Image moves faster (foreground depth)
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
+
+  /* ------------------------------------------------------------------ */
+  /* MOUSE PARALLAX (DESKTOP ONLY) */
+  /* ------------------------------------------------------------------ */
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+
+    if (window.innerWidth > 1024) {
+      window.addEventListener("mousemove", handleMouseMove);
+    }
+
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  /* ------------------------------------------------------------------ */
+  /* RENDER */
+  /* ------------------------------------------------------------------ */
+
   return (
-    <section className="relative w-full h-screen overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
+    <section className="relative w-full h-screen bg-black overflow-hidden">
+      <div className="absolute inset-0 z-10 pointer-events-none">
         <Image
-          src="/membership/memberherobg.jpg"
-          alt="Membership Background"
+          src="/membership/membership_bg.png"
+          alt="About background"
           fill
           className="object-cover"
-          style={{ objectPosition: 'center 30%' }}
           priority
         />
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30"></div>
       </div>
 
-      {/* Main Content */}
+      {/* CONTENT */}
       <div className="relative z-10 flex items-center justify-center h-full">
-        {/* Title */}
-        <h1 
-          className="text-white text-center"
-          style={{ 
-            fontFamily: 'Halfre, sans-serif',
-            fontWeight: 400,
-            fontSize: 'clamp(80px, 12vw, 120px)',
-            lineHeight: '0.9',
-            letterSpacing: '0%'
-          }}
+        {/* TITLE (BACKGROUND LAYER) */}
+        <motion.div
+          style={{ y: titleY, opacity: titleOpacity }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.25, 0.8, 0.25, 1] }}
+          className="absolute inset-0 flex items-center justify-center -translate-y-[12vh]"
         >
-          Become A Member
-        </h1>
+          <h1
+            className="text-white whitespace-nowrap select-none"
+            style={{
+              fontFamily: "Halfre, sans-serif",
+              fontWeight: 400,
+              fontSize: "clamp(2.5rem, 10vw, 7.5rem)",
+              lineHeight: "clamp(2.8rem, 8.5vw, 8rem)",
+              letterSpacing: "0em",
+            }}
+          >
+            Become a Member
+          </h1>
+        </motion.div>
+
+        {/* IMAGE (FOREGROUND LAYER) */}
+        <motion.div
+          style={{
+            y: imageY,
+            x: mouseX,
+          }}
+          initial={{ opacity: 0, y: 80, scale: 1.05 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.25, 0.8, 0.25, 1] }}
+          className="relative z-20 w-full h-dvh flex items-end justify-center"
+        >
+          <motion.div
+            animate={{ y: [0, -2, 0] }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="relative w-full h-[80%] md:h-full "
+          >
+            <Image
+              src="/membership/membersimbuu.png"
+              alt="Musical Journey"
+              fill
+              className="object-cover md:object-contain object-bottom"
+              priority
+            />
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Person Image - positioned to overlap with bg person */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative w-[1200px] h-[1200px] lg:w-[1300px] lg:h-[1300px] xl:w-[1400px] xl:h-[1400px] translate-y-30">
-          <Image
-            src="/membership/membersimbuu.png"
-            alt="STR Membership"
-            fill
-            className="object-contain object-center"
-            priority
-          />
-        </div>
-      </div>
+      {/* SUBTLE GRADIENT OVERLAY */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
     </section>
   );
 };

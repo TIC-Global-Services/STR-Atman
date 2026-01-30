@@ -224,7 +224,7 @@ const InstagramSection = () => {
       <div className="flex justify-end pr-6 lg:pr-12 mt-8 space-x-4">
         <button
           onClick={() => setCurrentIndex((prev) => prev - 1)}
-          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
+          className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
         >
           <svg
             width="20"
@@ -241,7 +241,7 @@ const InstagramSection = () => {
         </button>
         <button
           onClick={() => setCurrentIndex((prev) => prev + 1)}
-          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
+          className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
         >
           <svg
             width="20"

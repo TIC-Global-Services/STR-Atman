@@ -27,13 +27,13 @@ export default function LayoutProvider({
       </div>
 
       {/* LOADER OVERLAY (on top) */}
-      {loading && (
+      {/* {loading && (
         <PageLoader
           onFinish={() => {
             setLoading(false);
           }}
         />
-      )}
+      )} */}
     </>
   );
 }
