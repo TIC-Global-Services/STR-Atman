@@ -20,7 +20,7 @@ const Footer = () => {
   ];
 
   return (
-    <div className="px-4 sm:px-8 mx-auto w-full bg-[#000] pt-16 sm:pt-20 pb-4 md:pb-0">
+    <div className="px-4 sm:px-8 mx-auto w-full bg-[#000] pt-16 sm:pt-20 pb-6 md:pb-0">
       {/* MASKED FOOTER */}
       <div
         className="
@@ -107,7 +107,7 @@ const Footer = () => {
 
             {/* Simbu Image */}
             <Image
-              src="/footersimbu.png"
+              src="/str_footer.png"
               alt="STR"
               width={400}
               height={400}
@@ -140,7 +140,7 @@ const Footer = () => {
       </div>
 
       {/* ================= COPYRIGHT ================= */}
-      <div className="absolute z-50 flex flex-col sm:flex-row gap-2  md:w-[75%] items-end md:items-center justify-between bottom-4 md:bottom-12 right-6 text-[clamp(0.75rem,0.4rem+0.4vw,0.95rem)] text-[#FDFDFD] px-4 ">
+      <div className="absolute z-50 flex flex-col sm:flex-row gap-2  md:w-[75%] items-end md:items-center justify-between bottom-4 md:bottom-12 right-2 md:right-6 text-[clamp(0.75rem,0.4rem+0.4vw,0.95rem)] text-[#FDFDFD] px-4 ">
         <p>© {new Date().getFullYear()} Silambarasan TR. All rights reserved</p>
         <p>
           Designed & Developed by{" "}

@@ -3,7 +3,7 @@
 const PressSection = () => {
   return (
     <section className="relative w-full bg-transparent py-20 light">
-      <div className="container mx-auto px-6 lg:px-12">
+      <div className=" px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20 items-start relative">
           {/* Left Column - Title and Description (Larger) */}
           <div className="space-y-6 lg:col-span-3">

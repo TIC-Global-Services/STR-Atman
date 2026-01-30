@@ -92,7 +92,7 @@ const STRAbout = () => {
       >
         {/* Mobile Image */}
         <Image
-          src="/STR/str-mob-group.png"
+          src="/STR/str-mob-group-new.png"
           alt="STR Group Mobile"
           fill
           priority

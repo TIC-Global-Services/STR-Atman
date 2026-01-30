@@ -2,8 +2,8 @@
 
 const PressHero = () => {
   return (
-    <section className="relative w-full h-screen bg-black flex items-center">
-      <div className="container mx-auto px-6">
+    <section className="relative w-full h-[80dvh] bg-black flex items-center">
+      <div className=" px-14">
         <div className="max-w-4xl">
           {/* Main Title */}
           <h1 

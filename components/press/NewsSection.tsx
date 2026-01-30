@@ -128,7 +128,7 @@ const NewsSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-white py-20 light">
+    <section ref={sectionRef} className="relative w-full py-20 light">
       <div className="w-full">
         {/* Title and Description */}
         <div className="text-center mb-16 px-6 lg:px-12">
@@ -195,17 +195,17 @@ const NewsSection = () => {
         <div className="flex justify-end pr-6 lg:pr-12 mt-8 space-x-4">
           <button 
             onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-            className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
+            className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0de65a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
           </button>
           <button 
             onClick={() => setCurrentIndex(prev => (prev + 1) % newsCards.length)}
-            className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
+            className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0de65a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </button>

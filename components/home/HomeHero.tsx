@@ -9,7 +9,7 @@ const HomeHero = () => {
   const contourRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const fluidRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null); // for full-page blur
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const [showStaticStr, setShowStaticStr] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -168,11 +168,12 @@ const HomeHero = () => {
           ref={contourRef}
           className="
             absolute inset-0 z-20
-            flex items-center justify-center
-            mask-[url(/logo/logo.png)]
+            scale-180 md:scale-105
+            mask-[url(/logo/logo.png)] w-full
             mask-contain mask-no-repeat mask-center
             bg-white
             pointer-events-none
+            
           "
         >
           <ContourBackground
@@ -183,31 +184,12 @@ const HomeHero = () => {
             lineWidth={1.4}
           />
         </div>
-
-        {/* LIGHTING */}
-        <div className="absolute inset-0 z-40 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500 opacity-5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500 opacity-5 rounded-full blur-3xl" />
-        </div>
-
-        {/* Scroll hint */}
-        <div
-          className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-50 transition-opacity duration-1000 ${
-            showStaticStr ? "opacity-0 pointer-events-none" : "opacity-100"
-          }`}
-        >
-          <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-            <span className="text-black text-sm font-medium">
-              Scroll to Explore
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* STR content layer – always on top, not affected by parent blur */}
-      <div className="absolute inset-0 z-30 pointer-events-none">
+      <div className="absolute top-0 w-full h-full z-30 pointer-events-none">
         {/* Fluid canvas – default state */}
-        <div ref={fluidRef} className="absolute inset-0 w-full h-full">
+        <div ref={fluidRef} className="absolute  w-full h-full ">
           <FluidStrCanvas />
         </div>
 
@@ -226,12 +208,13 @@ const HomeHero = () => {
           />
         </div>
 
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50">        
-          <div className="bg-white/20 backdrop-blur-sm rounded-full py-2">          
+        <div className="absolute bottom-10 md:bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+          {" "}
+          <div className="bg-white/20 backdrop-blur-sm rounded-full py-2">
             <span className="text-black text-sm font-medium">
               Scroll to Explore
-            </span>        
-          </div>      
+            </span>
+          </div>
         </div>
       </div>
     </div>
