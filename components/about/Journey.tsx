@@ -11,11 +11,15 @@ const Journey = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const image = imageRef.current;
     const stats = statsRef.current;
-    if (!image || !stats) return;
+    const section = sectionRef.current;
+    const title = titleRef.current;
+
+    if (!image || !stats || !section || !title) return;
 
     const mm = gsap.matchMedia();
 
@@ -39,6 +43,15 @@ const Journey = () => {
           end: "bottom 20%",
           scrub: true,
         },
+      });
+
+      // 🔒 PIN TITLE
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        pin: title,
+        pinSpacing: false,
       });
     });
 
@@ -71,28 +84,27 @@ const Journey = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative xl:min-h-screen w-full overflow-hidden bg-black
+      className="relative  w-full overflow-hidden bg-black
                  px-4 sm:px-6 lg:px-12"
     >
       {/* Background Image */}
-      <div className="absolute inset-0 z-0 flex justify-center items-end">
+      <div className="absolute inset-0 z-0 flex justify-center items-center">
         <img
           ref={imageRef}
           src="/journeybg.jpg"
           alt="Journey background"
-          className=" object-contain object-bottom
-            translate-y-24 sm:translate-y-32 lg:translate-y-36
-          "
+          className="object-contain object-bottom
+                     "
         />
       </div>
 
-      {/* Fallback */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-gray-900 to-black -z-10" />
-
       {/* Content */}
-      <div className="relative z-10 flex xl:min-h-screen flex-col lg:flex-row pt-16 lg:pt-24">
-        {/* Title */}
-        <div className=" md:flex-1 flex items-start justify-start">
+      <div className="relative z-10 flex flex-col lg:flex-row pt-16 lg:pt-24">
+        {/* TITLE */}
+        <div
+          ref={titleRef}
+          className="md:flex-1 flex items-start justify-start"
+        >
           <h1
             className="
               text-white font-halfre
@@ -108,14 +120,12 @@ const Journey = () => {
           </h1>
         </div>
 
-        {/* Stats */}
+        {/* STATS */}
         <div
           ref={statsRef}
-          className="flex-1 flex items-end lg:items-end
-                     justify-start lg:justify-end
-                     py-16 lg:pb-0"
+          className="flex-1 flex items-end md:justify-end  lg:pb-0"
         >
-          <div className=" w-[80%] md:w-full md:max-w-sm space-y-4 md:space-y-10">
+          <div className="w-[80%] md:w-full md:max-w-sm space-y-4 md:space-y-10">
             {[
               ["1987", "The Year He Stepped Into Cinema As A Child Artist"],
               ["25+", "Years Of Experience Across Acting, Direction, Music, And Writing"],
@@ -124,13 +134,7 @@ const Journey = () => {
               ["1", "An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty"],
             ].map(([num, text]) => (
               <div key={num}>
-                <div
-                  className="
-                    text-green-400 font-normal
-                    text-[clamp(28px,5vw,64px)]
-                    leading-tight
-                  "
-                >
+                <div className="text-green-400 text-[clamp(28px,5vw,64px)]">
                   {num}
                 </div>
                 <p className="text-white text-sm sm:text-base lg:text-lg">

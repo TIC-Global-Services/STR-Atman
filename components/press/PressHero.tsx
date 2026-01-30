@@ -3,7 +3,7 @@
 const PressHero = () => {
   return (
     <section className="relative w-full h-[80dvh] bg-black flex items-center">
-      <div className=" px-14">
+      <div className=" px-6 md:px-14">
         <div className="max-w-4xl">
           {/* Main Title */}
           <h1 
