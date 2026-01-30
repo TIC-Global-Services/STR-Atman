@@ -34,15 +34,14 @@ const Footer = () => {
         "
       >
         <div className="absolute inset-0 z-0">
-
-        {/* PATTERN */}
-        <ContourBackground
-          lineColor="rgba(0,0,0,0.35)"
-          speed={0.05}
-          resolution={9}
-          levels={8}
-          lineWidth={1}
-        />
+          {/* PATTERN */}
+          <ContourBackground
+            lineColor="rgba(0,0,0,0.35)"
+            speed={0.05}
+            resolution={9}
+            levels={8}
+            lineWidth={1}
+          />
         </div>
 
         <div className="relative z-10 w-full flex flex-col md:flex-row justify-between">

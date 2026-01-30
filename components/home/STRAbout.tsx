@@ -83,19 +83,29 @@ const STRAbout = () => {
       <div
         ref={imageCardRef}
         className="
-          fixed top-1/2 left-1/2
-          -translate-x-1/2 -translate-y-1/2
-          aspect-9/16 md:aspect-video
-          w-[200px] md:w-[35dvw]
-          bg-black overflow-hidden z-40
-        "
+    fixed top-1/2 left-1/2
+    -translate-x-1/2 -translate-y-1/2
+    aspect-9/16 md:aspect-video
+    w-[200px] md:w-[35dvw]
+    bg-black overflow-hidden z-40
+  "
       >
+        {/* Mobile Image */}
         <Image
-          src="/STR/str-group-new.png"
-          alt="STR Group"
+          src="/STR/str-mob-group.png"
+          alt="STR Group Mobile"
           fill
           priority
-          className="object-cover"
+          className="object-cover block md:hidden"
+        />
+
+        {/* Desktop Image */}
+        <Image
+          src="/STR/str-group-new.png"
+          alt="STR Group Desktop"
+          fill
+          priority
+          className="object-cover hidden md:block"
         />
       </div>
 
