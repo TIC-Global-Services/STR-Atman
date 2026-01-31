@@ -21,29 +21,28 @@ export const MenuIcon = forwardRef<HTMLButtonElement, MenuIconProps>(
         onClick={onClick}
         aria-label="Menu"
         className={`
-          relative w-10 h-10 flex items-center justify-start cursor-pointer z-50
+          relative w-10 h-10 flex items-center justify-between cursor-pointer z-50
           transition-colors duration-300
-          ${isOpen ? "bg-white rounded-xl" : "bg-transparent"}
         `}
       >
         {/* TOP LINE */}
         <span
           ref={topLineRef}
           className={`
-            absolute h-[3px] rounded-full transition-colors mb-2 duration-300
+            absolute h-[3px] rounded-full transition-colors  duration-300
             ${isOpen ? "bg-black" : "bg-green-500"}
           `}
-          style={{ top: "14px", width: isOpen ? "28px" : "28px" }} // base width
+          style={{ top: "14px", width: isOpen ? "0px" : "28px" }} // base width
         />
 
         {/* BOTTOM LINE */}
         <span
           ref={bottomLineRef}
           className={`
-            absolute h-[3px] rounded-full transition-colors duration-300
+            absolute h-[3px] rounded-full mt-[2px] transition-colors duration-300
             ${isOpen ? "bg-black" : "bg-green-500"}
           `}
-          style={{ top: "22px", width: isOpen ? "28px" : "20px" }}
+          style={{ top: "22px", width: isOpen ? "0px" : "20px" }}
         />
       </button>
     );

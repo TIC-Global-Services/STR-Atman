@@ -41,6 +41,21 @@ const Navbar = () => {
     }, 700); // match your GSAP close duration
   };
 
+  useEffect(() => {
+    const handleGlobalAudio = (e: any) => {
+      // If someone else (like music-cta) plays, pause Navbar audio
+      if (e.detail.source !== "navbar" && audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    window.addEventListener("global-audio-play", handleGlobalAudio);
+    return () =>
+      window.removeEventListener("global-audio-play", handleGlobalAudio);
+  }, []);
+
+  // Ensure toggleAudio notifies others when it starts
   const toggleAudio = async () => {
     if (audioRef.current) {
       try {
@@ -48,6 +63,7 @@ const Navbar = () => {
           audioRef.current.pause();
           setIsPlaying(false);
         } else {
+          // Notify others to stop before we start
           window.dispatchEvent(
             new CustomEvent("global-audio-play", {
               detail: { source: "navbar" },
@@ -63,22 +79,6 @@ const Navbar = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const handleGlobalAudio = (e: any) => {
-      // If the event is NOT from navbar → stop navbar audio
-      if (e.detail.source !== "navbar" && audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      }
-    };
-
-    window.addEventListener("global-audio-play", handleGlobalAudio);
-
-    return () => {
-      window.removeEventListener("global-audio-play", handleGlobalAudio);
-    };
-  }, []);
 
   const menuLinks = [
     { title: "Home", slug: "/" },
@@ -362,7 +362,7 @@ const Navbar = () => {
             </p>
           </button>
 
-          <button className=" hidden md:flex bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200  items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
+          <Link href={'/store'} className=" hidden md:flex bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200  items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
             <Image
               src="/shopicon.png"
               alt="Store"
@@ -371,7 +371,7 @@ const Navbar = () => {
               className="object-contain w-[15px] md:w-[18px]"
             />
             STORE
-          </button>
+          </Link>
 
           <MenuIcon ref={menuBtnRef} isOpen={menuOpen} onClick={toggleMenu} />
         </div>
