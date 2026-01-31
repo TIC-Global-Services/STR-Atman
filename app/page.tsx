@@ -7,6 +7,7 @@ import Timeline from "@/components/home/Timeline";
 import Stories from "@/components/home/Stories";
 import HomeHero from "@/components/home/HomeHero";
 import Hero from "@/components/home/hero";
+import MusicCTA from "@/components/home/MusicCTA";
 
 export default function Home() {
   return (
@@ -33,7 +34,8 @@ export default function Home() {
         levels={9}
       >
         <LatestUpdates />
-        <HorizontalImageGallery />
+        {/* <HorizontalImageGallery /> */}
+        <MusicCTA />
       </ContourBackground>
 
       <VideoSection videoId="xkHtjS58Dds" />
