@@ -185,7 +185,7 @@ const MusicCTA = () => {
         <h3 className="text-xl text-center font-medium">Voice of Unity</h3>
       </motion.div>
 
-      <Link href="/music-journey" className=" text-sm text-neutral-500 hover:text-neutral-700  transition-colors z-20">
+      <Link href="/music-journey" onClick={()=>stopMusic()} className=" text-sm text-neutral-500 hover:text-neutral-700  transition-colors z-20">
         Explore Musical Journey →
       </Link>
     </section>
