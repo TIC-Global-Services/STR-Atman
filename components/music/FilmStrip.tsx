@@ -39,19 +39,19 @@ const FilmReelSet = ({ images }: { images: string[] }) => {
           />
 
           {/* Frames */}
-          <div className="absolute inset-0 grid grid-cols-6  py-[8%] w-dvw">
+          <div className="absolute inset-0 grid grid-cols-3 w-screen  py-[8%]">
             {images
               .slice(reelIndex * 3, reelIndex * 3 + 3)
               .map((img, index) => (
                 <div
                   key={`${reelIndex}-${index}`}
-                  className="relative w-full h-full border-x-2 overflow-hidden"
+                  className="relative w-[400px]  overflow-hidden border-x-2"
                 >
                   <Image
                     src={img}
                     alt={`Moment ${index + 1}`}
                     fill
-                    className="object-cover object-right w-full h-full"
+                    className="object-cover w-[400px]"
                   />
                 </div>
               ))}
@@ -61,6 +61,7 @@ const FilmReelSet = ({ images }: { images: string[] }) => {
     </div>
   );
 };
+
 
 /* ------------------------------------------------------------------ */
 /* FILM STRIP */
