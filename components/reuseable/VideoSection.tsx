@@ -85,7 +85,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
             className="
               absolute top-1/2 left-1/2
               w-[177.77vh] h-[56.25vw]
-              min-w-full min-h-full
+              min-w-full min-h-screen
               -translate-x-1/2 -translate-y-1/2
               scale-125 md:scale-110
             "
@@ -102,10 +102,9 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
             preload="auto"
             className="
               absolute top-1/2 left-1/2
-              min-w-full min-h-full
+              min-w-full min-h-screen
               -translate-x-1/2 -translate-y-1/2
-              object-cover
-              scale-110
+              object-cover scale-110
             "
           />
         )}

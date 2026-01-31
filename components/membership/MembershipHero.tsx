@@ -48,7 +48,7 @@ const MembershipHero = () => {
     <section className="relative w-full h-screen bg-black overflow-hidden">
       <div className="absolute inset-0 z-10 pointer-events-none">
         <Image
-          src="/membership/membership_bg.png"
+          src="/membership/Mem-01.png"
           alt="About background"
           fill
           className="object-cover"
@@ -64,7 +64,7 @@ const MembershipHero = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.25, 0.8, 0.25, 1] }}
-          className="absolute inset-0 flex items-center justify-center -translate-y-[12vh]"
+          className="absolute inset-0 mb-14 flex items-center justify-center -translate-y-[12vh]"
         >
           <h1
             className="text-white whitespace-nowrap select-none"
@@ -101,7 +101,7 @@ const MembershipHero = () => {
             className="relative w-full h-[80%] md:h-full "
           >
             <Image
-              src="/membership/membersimbuu.png"
+              src="/membership/Mem-02.png"
               alt="Musical Journey"
               fill
               className="object-cover md:object-contain object-bottom"

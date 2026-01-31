@@ -24,11 +24,11 @@ const AboutHero = () => {
       {/* 3D MODEL — MUST RECEIVE MOUSE */}
       <div className="absolute inset-0 z-30 pointer-events-auto">
         <ModelViewer
-          modelUrl="/glb/str.glb"
+          modelUrl="/glb/3d_logo.glb"
           modelScale={5}
           cameraPosition={[0, 3, 8]}
-          cameraFov={25}
-          environmentPreset="dawn"
+          cameraFov={35}
+          environmentPreset="studio"
           enableControls={false}
           useStage
         />

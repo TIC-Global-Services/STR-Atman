@@ -5,7 +5,7 @@ import PrimaryLinkButton from "../reuseable/PrimaryLinkButton";
 
 const CTASection = () => {
   return (
-    <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-[3vw] py-[6vh]">
+    <section className=" light relative w-full overflow-hidden px-4 sm:px-6 lg:px-[3vw] py-[6vh]">
       {/* Container */}
       <div
         className="relative w-full mx-auto overflow-hidden rounded-[clamp(16px,2vw,24px)] aspect-4/4 md:aspect-16/6"
@@ -42,7 +42,7 @@ const CTASection = () => {
             <div className="flex flex-col lg:flex-row items-start gap-[clamp(1.5rem,4vw,4rem)]">
               
 
-              <PrimaryLinkButton title="View Updates" href="#" />
+              <PrimaryLinkButton title="View Updates" href="/press" />
 
               {/* Signature */}
               <div

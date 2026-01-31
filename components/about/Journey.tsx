@@ -48,7 +48,7 @@ const Journey = () => {
       // 🔒 PIN TITLE
       ScrollTrigger.create({
         trigger: section,
-        start: "top top",
+        start: "top top+=50",
         end: "bottom bottom",
         pin: title,
         pinSpacing: false,
@@ -88,18 +88,17 @@ const Journey = () => {
                  px-4 sm:px-6 lg:px-12"
     >
       {/* Background Image */}
-      <div className="absolute inset-0 z-0 flex justify-center items-center">
+      <div className="absolute inset-0 z-0 flex justify-center bg-cover w-full h-full items-end">
         <img
           ref={imageRef}
           src="/journeybg.jpg"
           alt="Journey background"
-          className="object-contain object-bottom
-                     "
+          className=" object-cover  md:object-contain w-full h-[80dvh] md:h-auto md:w-1/2"
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col lg:flex-row pt-16 lg:pt-24">
+      <div className="relative z-10 flex flex-col gap-10 lg:flex-row pt-32">
         {/* TITLE */}
         <div
           ref={titleRef}
@@ -123,7 +122,7 @@ const Journey = () => {
         {/* STATS */}
         <div
           ref={statsRef}
-          className="flex-1 flex items-end md:justify-end  lg:pb-0"
+          className=" flex items-end md:justify-end "
         >
           <div className="w-[80%] md:w-full md:max-w-sm space-y-4 md:space-y-10">
             {[

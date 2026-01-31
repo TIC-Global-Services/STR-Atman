@@ -6,9 +6,9 @@ const PressSection = () => {
   return (
     <section className="relative w-full bg-transparent py-20 light">
       <div className=" px-6 lg:px-12">
-        <div className=" flex  gap-6  lg:gap-20 items-center relative">
+        <div className=" flex justify-between gap-6  lg:gap-20 items-end relative">
           {/* Left Column - Title and Description (Larger) */}
-          <div className=" space-y-3 md:space-y-6  flex items-start flex-col max-w-2xl border-r">
+          <div className="  flex gap-4 md:gap-6 items-start flex-col max-w-2xl border-r md:border-none">
             <h2 className="text-black text-2xl md:text-5xl">Press Synopsis</h2>
 
             <p className="text-[#646464] text-sm md:text-[28px] leading-tight pr-[40px]">

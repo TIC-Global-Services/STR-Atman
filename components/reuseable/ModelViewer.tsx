@@ -183,7 +183,7 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
 
           {useStage ? (
             <Stage intensity={1} environment={environmentPreset}>
-              <ParallaxGroup intensity={0.1}>
+              <ParallaxGroup intensity={0.06}>
                 <ShineAnimator speed={0.0025} />
                 <Model
                   url={modelUrl}

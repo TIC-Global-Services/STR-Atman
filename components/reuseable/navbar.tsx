@@ -6,6 +6,7 @@ import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import AudioWave from "./AudioWave";
 import { MenuIcon } from "./MenuIcon";
+import MembershipForm from "../membership/MembershipForm";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,20 @@ const Navbar = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [isLightSection, setIsLightSection] = useState(false);
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  const openMembershipFromMenu = () => {
+    if (!menuBtnRef.current) return;
+
+    // Close menu first
+    toggleMenu();
+
+    // Open popup AFTER menu close animation
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 700); // match your GSAP close duration
+  };
 
   const toggleAudio = async () => {
     if (audioRef.current) {
@@ -44,17 +59,17 @@ const Navbar = () => {
     { title: "Home", slug: "/" },
     { title: "About", slug: "/about" },
     { title: "Press Desk", slug: "/press" },
-    { title: "Merch Store", slug: "/" },
+    { title: "Merch Store", slug: "/store" },
     { title: "Membership", slug: "/membership" },
     { title: "Musical Journey", slug: "/music-journey" },
-    { title: "Contact", slug: "/contact" },
+    { title: "Contact", slug: "#" },
   ];
 
   const menuImages = [
-    "/menu/str1.jpg",
+    "/STR/Str-2a.png",
     "/menu/str2.jpg",
-    "/menu/str3.jpg",
-    "/menu/car.png",
+    "/STR/Str-3a.png",
+    "/STR/Str-1a.png",
   ];
 
   // INITIAL STATE
@@ -326,6 +341,11 @@ const Navbar = () => {
         </div>
       </nav>
 
+      <MembershipForm
+        showPopup={showPopup}
+        onClose={() => setShowPopup(false)}
+      />
+
       {/* OVERLAY */}
       <div
         ref={overlayRef}
@@ -358,14 +378,14 @@ const Navbar = () => {
                       colRight.current[Math.floor(i / 2)] = el;
                     }
                   }}
-                  className="relative overflow-hidden aspect-3/4 will-change-transform translate-y-2 xl:w-[17dvw] xl:h-[66vdh]"
+                  className="relative overflow-hidden aspect-3/4 will-change-transform translate-y-2 "
                 >
                   <Image
                     src={src}
                     alt=""
                     width={500}
                     height={500}
-                    className="object-cover  transition-transform duration-700 ease-out grayscale hover:grayscale-0 hover:scale-105 xl:w-[17dvw] xl:h-[66dvh]"
+                    className="object-contain  transition-transform duration-700 ease-out grayscale hover:grayscale-0 hover:scale-105 xl:w-[17dvw] xl:h-[66dvh]"
                   />
                 </div>
               );
@@ -382,7 +402,14 @@ const Navbar = () => {
                 <li key={i}>
                   <Link
                     href={item.slug}
-                    onClick={toggleMenu}
+                    onClick={(e) => {
+                      if (item.title === "Contact") {
+                        e.preventDefault();
+                        openMembershipFromMenu();
+                      } else {
+                        toggleMenu();
+                      }
+                    }}
                     className="relative inline-block overflow-hidden group uppercase"
                   >
                     <span className="block transition-transform duration-300 group-hover:-translate-y-full">

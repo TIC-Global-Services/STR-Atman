@@ -94,7 +94,7 @@ const ShareMomentSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-white py-12 md:py-24 overflow-hidden">
+    <section ref={sectionRef} className=" light relative w-full py-12 md:py-24 overflow-hidden">
       <div className="w-full">
         <h2 
           className="text-black text-center mb-10 md:mb-16 px-6"

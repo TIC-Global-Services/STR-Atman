@@ -5,9 +5,9 @@ const VideoSection = () => {
   return (
     <section className="relative w-full min-h-screen bg-black">
       {/* Full Width Video Container */}
-      <div className="relative w-full h-screen">
+      <div className="relative w-full aspect-9/16 md:aspect-video">
         <iframe
-          className="absolute top-0 left-0 w-full h-full"
+          className="absolute top-0 left-0 w-full h-screen"
           src="https://www.youtube.com/embed/pGd_s2Db9Fo?autoplay=1&mute=1&loop=1&playlist=pGd_s2Db9Fo&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&playsinline=1"
           title="YouTube video player"
           frameBorder="0"

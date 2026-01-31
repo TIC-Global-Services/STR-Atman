@@ -176,7 +176,7 @@ const InstagramSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative w-full py-20">
+    <section ref={sectionRef} className=" light relative w-full py-20">
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
         <h2 className="text-black text-2xl md:text-5xl mb-6">

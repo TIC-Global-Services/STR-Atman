@@ -16,7 +16,7 @@ export const timeline = [
   {
     year: "2005 - 2009",
     backgroundImg: "/Timeline/200510.png",
-    strImg: "/Timeline/05S.png",
+    strImg: "/Timeline/5S.png",
     title: "Defining the STR Persona",
     desc: "This phase saw STR strengthen his mass appeal while pushing creative boundaries. Films like Saravana and Thotti Jaya reinforced his commercial image, while Vallavan showcased his ambition beyond acting.",
   },

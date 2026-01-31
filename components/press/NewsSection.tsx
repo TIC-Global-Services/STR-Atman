@@ -142,7 +142,7 @@ const NewsSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative w-full py-16">
+    <section ref={sectionRef} className=" light relative w-full py-16">
       {/* TITLE */}
       <div className="text-center mb-12 px-6 lg:px-12">
         <h2 className="text-black mb-6 text-2xl md:text-5xl">
