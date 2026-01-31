@@ -45,7 +45,7 @@ const FilmReelSet = ({ images }: { images: string[] }) => {
               .map((img, index) => (
                 <div
                   key={`${reelIndex}-${index}`}
-                  className="relative w-[400px]  overflow-hidden border-x-2"
+                  className="relative w-[400px]  overflow-hidden border-x-8"
                 >
                   <Image
                     src={img}
