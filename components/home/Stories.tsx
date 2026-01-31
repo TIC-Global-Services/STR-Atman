@@ -234,7 +234,7 @@ const Stories = () => {
                 </div>
               </div>
               <Link
-                href={"/"}
+                href={"/press"}
                 ref={viewMoreRef}
                 className="text-xl font-medium hover:underline transition-all inline-flex items-center gap-2 group text-[#505050] pl-2 underline lg:decoration-0"
               >

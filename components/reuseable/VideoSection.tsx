@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 interface VideoProps {
-  videoId?: string;   // YouTube ID
-  videoSrc?: string;  // MP4 source
+  videoId?: string; // YouTube ID
+  videoSrc?: string; // MP4 source
 }
 
 const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
@@ -29,7 +29,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
               func: entry.isIntersecting ? "playVideo" : "pauseVideo",
               args: [],
             }),
-            "*"
+            "*",
           );
         }
 
@@ -41,7 +41,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
           }
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     observer.observe(sectionRef.current);
@@ -49,6 +49,17 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
   }, [videoId, videoSrc]);
 
   const toggleMute = () => {
+    // If user is UNMUTING the video
+    if (muted) {
+      // Tell whole site: "video audio is playing"
+      window.dispatchEvent(
+        new CustomEvent("global-audio-play", {
+          detail: { source: "video" },
+        }),
+      );
+    }
+
+    // YouTube
     if (videoId && iframeRef.current) {
       iframeRef.current.contentWindow?.postMessage(
         JSON.stringify({
@@ -56,16 +67,49 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
           func: muted ? "unMute" : "mute",
           args: [],
         }),
-        "*"
+        "*",
       );
     }
 
+    // MP4 video
     if (videoSrc && videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
     }
 
     setMuted(!muted);
   };
+
+  useEffect(() => {
+    const handleGlobalAudio = (e: any) => {
+      // If event is NOT from video → mute video
+      if (e.detail.source !== "video") {
+        // YouTube
+        if (videoId && iframeRef.current) {
+          iframeRef.current.contentWindow?.postMessage(
+            JSON.stringify({
+              event: "command",
+              func: "mute",
+              args: [],
+            }),
+            "*",
+          );
+        }
+
+        // MP4
+        if (videoSrc && videoRef.current) {
+          videoRef.current.muted = true;
+        }
+
+        setMuted(true);
+      }
+    };
+
+    window.addEventListener("global-audio-play", handleGlobalAudio);
+
+    return () => {
+      window.removeEventListener("global-audio-play", handleGlobalAudio);
+    };
+  }, [videoId, videoSrc]);
 
   return (
     <section

@@ -7,6 +7,7 @@ import gsap from "gsap";
 import AudioWave from "./AudioWave";
 import { MenuIcon } from "./MenuIcon";
 import MembershipForm from "../membership/MembershipForm";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -25,6 +26,8 @@ const Navbar = () => {
   const [isLightSection, setIsLightSection] = useState(false);
 
   const [showPopup, setShowPopup] = useState(false);
+
+  const pathname = usePathname();
 
   const openMembershipFromMenu = () => {
     if (!menuBtnRef.current) return;
@@ -45,6 +48,12 @@ const Navbar = () => {
           audioRef.current.pause();
           setIsPlaying(false);
         } else {
+          window.dispatchEvent(
+            new CustomEvent("global-audio-play", {
+              detail: { source: "navbar" },
+            }),
+          );
+
           await audioRef.current.play();
           setIsPlaying(true);
         }
@@ -54,6 +63,22 @@ const Navbar = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const handleGlobalAudio = (e: any) => {
+      // If the event is NOT from navbar → stop navbar audio
+      if (e.detail.source !== "navbar" && audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    window.addEventListener("global-audio-play", handleGlobalAudio);
+
+    return () => {
+      window.removeEventListener("global-audio-play", handleGlobalAudio);
+    };
+  }, []);
 
   const menuLinks = [
     { title: "Home", slug: "/" },
@@ -89,6 +114,13 @@ const Navbar = () => {
     });
   }, []);
 
+  const updateLightSection = () => {
+    requestAnimationFrame(() => {
+      const isLight = getSectionUnderNavbar();
+      setIsLightSection(isLight);
+    });
+  };
+
   const getSectionUnderNavbar = () => {
     const nav = document.querySelector("nav");
     const sections = document.querySelectorAll("section");
@@ -109,28 +141,30 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const update = () => {
-      setIsLightSection(getSectionUnderNavbar());
-    };
+    const onUpdate = () => updateLightSection();
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", onUpdate, { passive: true });
+    window.addEventListener("resize", onUpdate);
 
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", onUpdate);
+      window.removeEventListener("resize", onUpdate);
     };
   }, []);
 
   useEffect(() => {
-    const handleLoad = () => {
-      setIsLightSection(getSectionUnderNavbar());
-    };
+    // Run immediately on route change
+    updateLightSection();
 
-    window.addEventListener("load", handleLoad);
-    return () => window.removeEventListener("load", handleLoad);
-  }, []);
+    // Run again after layout/images settle on new page
+    const t1 = setTimeout(updateLightSection, 50);
+    const t2 = setTimeout(updateLightSection, 300);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [pathname]);
 
   const toggleMenu = () => {
     if (!menuBtnRef.current || !overlayRef.current) return;
@@ -196,6 +230,8 @@ const Navbar = () => {
             pointerEvents: "none",
             visibility: "hidden",
           });
+
+          updateLightSection();
         },
       });
 

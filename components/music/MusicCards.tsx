@@ -108,9 +108,37 @@ const MusicCards = () => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  useEffect(() => {
+    const handleGlobalAudio = (e: any) => {
+      // If the event is NOT from music cards → stop preview audio
+      if (e.detail.source !== "music-cards") {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+          audioRef.current = null;
+        }
+        setPlayingId(null);
+      }
+    };
+
+    window.addEventListener("global-audio-play", handleGlobalAudio);
+
+    return () => {
+      window.removeEventListener("global-audio-play", handleGlobalAudio);
+    };
+  }, []);
+
   const playMusic = (id: number, src?: string) => {
     if (!src) return;
 
+    // 🔊 Tell entire site: music card audio is playing
+    window.dispatchEvent(
+      new CustomEvent("global-audio-play", {
+        detail: { source: "music-cards" },
+      }),
+    );
+
+    // Stop previous music card audio
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -120,6 +148,7 @@ const MusicCards = () => {
     audio.volume = 0.7;
     audio.play().catch(() => {});
     audioRef.current = audio;
+
     setPlayingId(id);
   };
 
@@ -180,7 +209,13 @@ const MusicCards = () => {
                 }}
                 className="group flex flex-col items-center cursor-pointer"
               >
-                <Link href={music.spotify} target="_blank">
+                <Link
+                  href={music.spotify}
+                  target="_blank"
+                  onClick={() => {
+                    stopMusic();
+                  }}
+                >
                   <div className="relative mb-4">
                     {/* ALBUM */}
                     <div className="relative aspect-square w-[clamp(180px,28vw,270px)] rounded-lg overflow-hidden shadow-xl z-10">
