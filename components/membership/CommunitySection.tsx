@@ -7,13 +7,14 @@ const CommunitySection = () => {
       <div className="relative w-[95%] h-[50dvh] md:h-[90dvh] rounded-2xl" >
         {/* Background Image */}
         <Image
-          src="/membership/community.jpg"
+          src="/membership/membership-02.png"
           alt="Community member"
           fill
           className="object-cover object-[50%_10%] rounded-2xl"
           priority
+          quality={100}
         />
-        <div className=' absolute inset-0 bg-linear-to-r from-black via-black/80  to-transparent rounded-2xl' />
+        <div className=' absolute inset-0 bg-linear-to-r from-black via-black/50  to-transparent rounded-2xl' />
         {/* Text Content Overlay */}
         <div className="absolute inset-0 flex items-center">
           <div className=" px-8 md:px-12 lg:px-16 space-y-8 max-w-2xl">

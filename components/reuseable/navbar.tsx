@@ -84,7 +84,7 @@ const Navbar = () => {
     { title: "Home", slug: "/" },
     { title: "About", slug: "/about" },
     { title: "Press Desk", slug: "/press" },
-    // { title: "Merch Store", slug: "/store" },
+    { title: "Merch Store", slug: "/store" },
     { title: "Membership", slug: "/membership" },
     { title: "Musical Journey", slug: "/music-journey" },
     { title: "Contact", slug: "#" },
@@ -305,14 +305,14 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
         <Link href="/">
           <Image
-            src="/logo/logo.png"
+            src="/logo/STR_logo.png"
             alt="STR Logo"
             width={120}
             height={50}
             className={`
-              w-[80px] md:w-[120px]
+              w-[150px] md:w-[200px]
               transition-all duration-300
-              ${isLightSection ? "invert" : "invert-0"}
+              ${isLightSection ? "invert-0" : "invert"}
             `}
           />
         </Link>

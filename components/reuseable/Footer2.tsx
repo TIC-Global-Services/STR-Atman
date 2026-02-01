@@ -7,16 +7,16 @@ const Footer = () => {
   const footerLinks = [
     { title: "Home", slug: "/" },
     { title: "About", slug: "/about" },
-    { title: "Press Desk", slug: "/press-desk" },
+    { title: "Press Desk", slug: "/press" },
     { title: "Music Journey", slug: "/music-journey" },
     { title: "Membership", slug: "/membership" },
-    { title: "Merch Store", slug: "/" },
+    { title: "Merch Store", slug: "/store" },
   ];
 
   const socialLinks = [
-    { title: "Instagram", href: "/" },
-    { title: "X", href: "/" },
-    { title: "Spotify", href: "/" },
+    { title: "Instagram", href: "https://www.instagram.com/silambarasantrofficial/?hl=en" },
+    { title: "X", href: "https://x.com/SilambarasanTR_" },
+    { title: "Spotify", href: "https://open.spotify.com/artist/5Hn84AFwiTEi8eMoI5B9AS?si=byETKeXhQmmj5HZb0GGzFQ" },
   ];
 
   return (
@@ -71,6 +71,7 @@ const Footer = () => {
                 <div key={idx}>
                   <Link
                     href={social.href}
+                    target="_blank"
                     className=" font-medium hover:text-primary"
                   >
                     {social.title}
@@ -129,6 +130,7 @@ const Footer = () => {
               <div key={idx}>
                 <Link
                   href={social.href}
+                  target="_blank"
                   className="font-medium text-lg 2xl:text-xl hover:text-primary"
                 >
                   {social.title}
