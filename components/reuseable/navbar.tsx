@@ -8,6 +8,7 @@ import AudioWave from "./AudioWave";
 import { MenuIcon } from "./MenuIcon";
 import MembershipForm from "../membership/MembershipForm";
 import { usePathname } from "next/navigation";
+import JoinWaitlistForm from "./JoinWaitlist";
 
 const Navbar = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -305,7 +306,7 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
         <Link href="/">
           <Image
-            src="/logo/STR_logo.png"
+            src="/logo/STR_Logo.png"
             alt="STR Logo"
             width={120}
             height={50}
@@ -377,7 +378,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <MembershipForm
+      <JoinWaitlistForm
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
       />

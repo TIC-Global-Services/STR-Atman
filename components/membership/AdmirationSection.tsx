@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import BlurText from "../reuseable/BlurText";
 import PrimaryButton from "../reuseable/PrimaryButton";
 import MembershipForm from "./MembershipForm";
+import JoinWaitlistForm from "../reuseable/JoinWaitlist";
 
 const AdmirationSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +75,7 @@ const AdmirationSection = () => {
       </div>
 
       {/* Membership Popup Modal */}
-      <MembershipForm
+      <JoinWaitlistForm
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
       />
