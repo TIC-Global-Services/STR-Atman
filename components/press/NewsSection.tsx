@@ -4,6 +4,8 @@ import { useRef, useEffect, useState } from "react";
 
 const NewsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const [isInView, setIsInView] = useState(false);
 
   /* ==============================
@@ -37,7 +39,7 @@ const NewsSection = () => {
   const extendedCards = [...newsCards, ...newsCards, ...newsCards];
 
   /* ==============================
-     RESPONSIVE LAYOUT STATE (FIX)
+     RESPONSIVE LAYOUT
   ============================== */
   const [layout, setLayout] = useState<any>(null);
 
@@ -58,7 +60,6 @@ const NewsSection = () => {
 
     calculateLayout();
     window.addEventListener("resize", calculateLayout);
-
     return () => window.removeEventListener("resize", calculateLayout);
   }, []);
 
@@ -68,7 +69,7 @@ const NewsSection = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.3 },
+      { threshold: 0.3 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -76,25 +77,40 @@ const NewsSection = () => {
   }, []);
 
   /* ==============================
-     AUTO SCROLL
+     AUTOPLAY CONTROLS
   ============================== */
-  useEffect(() => {
-    if (!isInView) return;
+  const stopAutoPlay = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
-    const interval = setInterval(() => {
+  const startAutoPlay = () => {
+    stopAutoPlay();
+
+    intervalRef.current = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = prev + 1;
 
         if (next >= newsCards.length * 2) {
-          setTimeout(() => setCurrentIndex(newsCards.length), 50);
+          setTimeout(() => {
+            setCurrentIndex(newsCards.length);
+          }, 50);
           return next;
         }
+
         return next;
       });
     }, 3000);
+  };
 
-    return () => clearInterval(interval);
-  }, [isInView, newsCards.length]);
+  useEffect(() => {
+    if (isInView) startAutoPlay();
+    else stopAutoPlay();
+
+    return stopAutoPlay;
+  }, [isInView]);
 
   /* ==============================
      CARD STYLE
@@ -129,7 +145,9 @@ const NewsSection = () => {
       left: "50%",
       width: isCenter ? `${centerWidth}px` : `${sideWidth}px`,
       height: isCenter ? `${centerHeight}px` : `${sideHeight}px`,
-      marginLeft: isCenter ? `-${centerWidth / 2}px` : `-${sideWidth / 2}px`,
+      marginLeft: isCenter
+        ? `-${centerWidth / 2}px`
+        : `-${sideWidth / 2}px`,
       opacity: isVisible ? (isCenter ? 1 : 0.85) : 0,
       transform: `
         translateX(${translateX}px)
@@ -141,6 +159,21 @@ const NewsSection = () => {
     };
   };
 
+  /* ==============================
+     ARROW HANDLERS
+  ============================== */
+  const handlePrev = () => {
+    stopAutoPlay();
+    setCurrentIndex((prev) => prev - 1);
+    setTimeout(startAutoPlay, 700);
+  };
+
+  const handleNext = () => {
+    stopAutoPlay();
+    setCurrentIndex((prev) => prev + 1);
+    setTimeout(startAutoPlay, 700);
+  };
+
   return (
     <section ref={sectionRef} className=" light relative w-full py-16">
       {/* TITLE */}
@@ -148,20 +181,24 @@ const NewsSection = () => {
         <h2 className="text-black mb-6 text-2xl md:text-5xl">
           Official news & announcements
         </h2>
-        <p className="text-[#717580] text-base md:text-[20px] leading-tight max-w-3xl mx-auto">
+        <p className="text-[#717580] text-base md:text-[20px] max-w-3xl mx-auto">
           Verified updates, media coverage, and official announcements related
           to Silambarasan TR.
         </p>
       </div>
 
       {/* CAROUSEL */}
-      <div className="relative w-full overflow-hidden h-[200px] md:h-[450px]">
+      <div
+        className="relative w-full overflow-hidden h-[200px] md:h-[450px]"
+        onMouseEnter={stopAutoPlay}
+        onMouseLeave={startAutoPlay}
+      >
         <div className="relative w-full">
           {layout &&
             extendedCards.map((card, index) => (
               <div
                 key={`${card.id}-${index}`}
-                className="relative overflow-hidden rounded-2xl group cursor-pointer"
+                className="relative overflow-hidden rounded-2xl group"
                 style={getCardStyle(index)}
               >
                 <Image
@@ -171,7 +208,6 @@ const NewsSection = () => {
                   className="object-cover"
                 />
 
-                {/* Hover Overlay */}
                 {card.hasOverlay && (
                   <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="flex items-center justify-between">
@@ -190,10 +226,10 @@ const NewsSection = () => {
       {/* ARROWS */}
       <div className="flex justify-end pr-6 lg:pr-12 mt-8 space-x-4">
         <button
-          onClick={() => setCurrentIndex((prev) => prev - 1)}
-          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
+          onClick={handlePrev}
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black transition-all"
         >
-          <svg
+           <svg
             width="20"
             height="20"
             viewBox="0 0 24 24"
@@ -208,8 +244,8 @@ const NewsSection = () => {
         </button>
 
         <button
-          onClick={() => setCurrentIndex((prev) => prev + 1)}
-          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
+          onClick={handleNext}
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black transition-all"
         >
           <svg
             width="20"

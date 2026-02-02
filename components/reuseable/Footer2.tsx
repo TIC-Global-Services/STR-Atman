@@ -108,7 +108,7 @@ const Footer = () => {
 
             {/* Simbu Image */}
             <Image
-              src="/Str_footer.png"
+              src="/STR/str-footer.png"
               alt="STR"
               width={400}
               height={400}
@@ -118,7 +118,7 @@ const Footer = () => {
                 object-contain
                 absolute bottom-0 z-50
                 left-1/2 -translate-x-1/2
-                w-[85%] sm:w-[60%] md:w-[37%]
+                w-[85%] sm:w-[60%] md:w-[42%]
               "
             />
           </div>

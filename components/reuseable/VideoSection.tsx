@@ -13,8 +13,15 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [muted, setMuted] = useState(true);
 
+  /* ==============================
+     YOUTUBE CONFIGURATION
+     The "Loop Trick":
+     1. loop=1 
+     2. playlist={videoId} (Mandatory for single videos to loop)
+     3. rel=0 (Limits related videos to your own channel)
+  ============================== */
   const youtubeSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${videoId}&enablejsapi=1`
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${videoId}&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1`
     : "";
 
   useEffect(() => {
@@ -29,7 +36,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
               func: entry.isIntersecting ? "playVideo" : "pauseVideo",
               args: [],
             }),
-            "*",
+            "*"
           );
         }
 
@@ -41,7 +48,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
           }
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.3 }
     );
 
     observer.observe(sectionRef.current);
@@ -49,17 +56,14 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
   }, [videoId, videoSrc]);
 
   const toggleMute = () => {
-    // If user is UNMUTING the video
     if (muted) {
-      // Tell whole site: "video audio is playing"
       window.dispatchEvent(
         new CustomEvent("global-audio-play", {
           detail: { source: "video" },
-        }),
+        })
       );
     }
 
-    // YouTube
     if (videoId && iframeRef.current) {
       iframeRef.current.contentWindow?.postMessage(
         JSON.stringify({
@@ -67,11 +71,10 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
           func: muted ? "unMute" : "mute",
           args: [],
         }),
-        "*",
+        "*"
       );
     }
 
-    // MP4 video
     if (videoSrc && videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
     }
@@ -81,43 +84,28 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
 
   useEffect(() => {
     const handleGlobalAudio = (e: any) => {
-      // If event is NOT from video → mute video
       if (e.detail.source !== "video") {
-        // YouTube
         if (videoId && iframeRef.current) {
           iframeRef.current.contentWindow?.postMessage(
-            JSON.stringify({
-              event: "command",
-              func: "mute",
-              args: [],
-            }),
-            "*",
+            JSON.stringify({ event: "command", func: "mute", args: [] }),
+            "*"
           );
         }
-
-        // MP4
         if (videoSrc && videoRef.current) {
           videoRef.current.muted = true;
         }
-
         setMuted(true);
       }
     };
 
     window.addEventListener("global-audio-play", handleGlobalAudio);
-
-    return () => {
-      window.removeEventListener("global-audio-play", handleGlobalAudio);
-    };
+    return () => window.removeEventListener("global-audio-play", handleGlobalAudio);
   }, [videoId, videoSrc]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full h-screen overflow-hidden"
-    >
+    <section ref={sectionRef} className="relative w-full h-screen overflow-hidden bg-black">
       {/* 🎬 Background video wrapper */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {videoId ? (
           <iframe
             ref={iframeRef}
@@ -125,7 +113,6 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
             title="Background video"
             frameBorder="0"
             allow="autoplay; encrypted-media"
-            allowFullScreen={false}
             className="
               absolute top-1/2 left-1/2
               w-[177.77vh] h-[56.25vw]
@@ -133,7 +120,6 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
               -translate-x-1/2 -translate-y-1/2
               scale-125 md:scale-110
             "
-            style={{ pointerEvents: "none" }}
           />
         ) : (
           <video
@@ -143,7 +129,6 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
             loop
             muted
             playsInline
-            preload="auto"
             className="
               absolute top-1/2 left-1/2
               min-w-full min-h-screen
@@ -162,7 +147,7 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
         onClick={toggleMute}
         className="absolute bottom-8 right-8 z-20
           bg-black/60 text-white px-4 py-2
-          rounded-full backdrop-blur-md"
+          rounded-full backdrop-blur-md hover:bg-black transition-all"
       >
         {muted ? "Unmute" : "Mute"}
       </button>

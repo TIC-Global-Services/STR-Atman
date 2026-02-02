@@ -9,7 +9,7 @@ export const timeline = [
   {
     year: "2002 - 2004",
     backgroundImg: "/Timeline/200204.png",
-    strImg: "/Timeline/02S.png",
+    strImg: "/Timeline/2S.png",
     title: "From Promise to Presence",
     desc: "This period marked Silambarasan TR’s transition from rising talent to established leading actor. It was a phase of consolidation and calculated risk, where mass appeal met creative ambition.",
   },

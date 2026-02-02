@@ -1,13 +1,17 @@
 "use client";
-import Image from 'next/image';
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+
+import Image from "next/image";
+import { useRef, useEffect, useState } from "react";
 
 const ShareMomentSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isInView, setIsInView] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [isInView, setIsInView] = useState(false);
+
+  /* ==============================
+     DATA
+  ============================== */
   const cards = [
     { id: 1, image: "/update1.jpg", alt: "Fan moment 1" },
     { id: 2, image: "/update2.jpg", alt: "Featured fan moment" },
@@ -15,145 +19,219 @@ const ShareMomentSection = () => {
     { id: 4, image: "/update4.jpg", alt: "Fan moment 4" },
     { id: 5, image: "/membership/sharedmoment1.png", alt: "Fan moment 5" },
     { id: 6, image: "/membership/sharedmoment2.png", alt: "Fan moment 6" },
-    { id: 7, image: "/membership/sharedmoment3.png", alt: "Fan moment 7" }
+    { id: 7, image: "/membership/sharedmoment3.png", alt: "Fan moment 7" },
   ];
 
+  /* ==============================
+     INFINITE SETUP
+  ============================== */
   const [currentIndex, setCurrentIndex] = useState(cards.length);
   const extendedCards = [...cards, ...cards, ...cards];
 
-  // Handle Resize for responsiveness
+  /* ==============================
+     RESPONSIVE LAYOUT (Same as NewsSection)
+  ============================== */
+  const [layout, setLayout] = useState<any>(null);
+
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const calculateLayout = () => {
+      const isMobile = window.innerWidth < 768;
+
+      setLayout({
+        centerWidth: isMobile ? 280 : 624,
+        sideWidth: isMobile ? 240 : 500,
+        centerHeight: isMobile ? 180 : 394,
+        sideHeight: isMobile ? 160 : 314,
+        gap: isMobile ? 16 : 40,
+        sideOffsetY: isMobile ? 20 : 40,
+        sideScale: isMobile ? 0.97 : 0.95,
+      });
+    };
+
+    calculateLayout();
+    window.addEventListener("resize", calculateLayout);
+    return () => window.removeEventListener("resize", calculateLayout);
   }, []);
 
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => {
-      const next = prev + 1;
-      if (next >= cards.length * 2) {
-        setTimeout(() => setCurrentIndex(cards.length), 50);
-        return next;
-      }
-      return next;
-    });
-  }, [cards.length]);
-
-  const handlePrev = useCallback(() => {
-    setCurrentIndex((prev) => {
-      const next = prev - 1;
-      if (next < cards.length) {
-        setTimeout(() => setCurrentIndex(cards.length * 2 - 1), 50);
-        return next;
-      }
-      return next;
-    });
-  }, [cards.length]);
-
-  // Auto-scroll
+  /* ==============================
+     INTERSECTION OBSERVER
+  ============================== */
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isInView) {
-      interval = setInterval(handleNext, 4000);
-    }
-    return () => clearInterval(interval);
-  }, [isInView, handleNext]);
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
 
-  // Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting), { threshold: 0.3 });
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  const getCardStyle = (cardIndex: number) => {
-    const position = cardIndex - currentIndex;
-    const isCenter = position === 0;
-    const isVisible = Math.abs(position) <= (isMobile ? 1 : 2);
+  /* ==============================
+     AUTOPLAY CONTROLS
+  ============================== */
+  const stopAutoPlay = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
-    // Responsive sizing logic
-    const baseWidth = isMobile ? 85 : 40; // width in % or vw
-    const centerScale = isMobile ? 1 : 1.2;
-    
-    // Spacing calculation
-    const offsetMultiplier = isMobile ? 90 : 45;
-    const xTransform = position * offsetMultiplier;
+  const startAutoPlay = () => {
+    stopAutoPlay();
+
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => {
+        const next = prev + 1;
+        if (next >= cards.length * 2) {
+          setTimeout(() => {
+            setCurrentIndex(cards.length);
+          }, 50);
+          return next;
+        }
+        return next;
+      });
+    }, 3000);
+  };
+
+  useEffect(() => {
+    if (isInView) startAutoPlay();
+    else stopAutoPlay();
+    return stopAutoPlay;
+  }, [isInView]);
+
+  /* ==============================
+     CARD STYLE (Matching NewsSection)
+  ============================== */
+  const getCardStyle = (index: number) => {
+    if (!layout) return { opacity: 0 };
+
+    const position = index - currentIndex;
+    const isCenter = position === 0;
+    const isVisible = Math.abs(position) <= 1;
+
+    const {
+      centerWidth,
+      sideWidth,
+      centerHeight,
+      sideHeight,
+      gap,
+      sideOffsetY,
+      sideScale,
+    } = layout;
+
+    let translateX = 0;
+
+    if (position > 0) {
+      translateX = centerWidth / 2 + gap + sideWidth / 2;
+    } else if (position < 0) {
+      translateX = -(centerWidth / 2 + gap + sideWidth / 2);
+    }
 
     return {
-      width: isMobile ? '80vw' : isCenter ? '600px' : '480px',
-      height: isMobile ? '50vh' : isCenter ? '380px' : '300px',
-      opacity: isVisible ? (isCenter ? 1 : 0.4) : 0,
-      transform: `translateX(calc(-50% + ${xTransform}vw)) scale(${isCenter ? 1 : 0.85}) translateY(${isCenter ? 0 : isMobile ? 20 : 40}px)`,
-      zIndex: isCenter ? 20 : 10 - Math.abs(position),
-      transition: 'all 800ms cubic-bezier(0.4, 0, 0.2, 1)',
-      position: 'absolute' as const,
-      left: '50%',
-      pointerEvents: isCenter ? 'auto' as const : 'none' as const,
+      position: "absolute" as const,
+      left: "50%",
+      width: isCenter ? `${centerWidth}px` : `${sideWidth}px`,
+      height: isCenter ? `${centerHeight}px` : `${sideHeight}px`,
+      marginLeft: isCenter
+        ? `-${centerWidth / 2}px`
+        : `-${sideWidth / 2}px`,
+      opacity: isVisible ? (isCenter ? 1 : 0.85) : 0,
+      transform: `
+        translateX(${translateX}px)
+        translateY(${isCenter ? 0 : sideOffsetY}px)
+        scale(${isCenter ? 1 : sideScale})
+      `,
+      zIndex: isCenter ? 10 : 5,
+      transition: "all 700ms cubic-bezier(0.4,0,0.2,1)",
     };
   };
 
+  /* ==============================
+     ARROW HANDLERS
+  ============================== */
+  const handlePrev = () => {
+    stopAutoPlay();
+    setCurrentIndex((prev) => prev - 1);
+    setTimeout(startAutoPlay, 700);
+  };
+
+  const handleNext = () => {
+    stopAutoPlay();
+    setCurrentIndex((prev) => prev + 1);
+    setTimeout(startAutoPlay, 700);
+  };
+
   return (
-    <section ref={sectionRef} className=" light relative w-full py-12 md:py-24 overflow-hidden">
-      <div className="w-full">
-        <h2 
-          className="text-black text-center mb-10 md:mb-16 px-6"
-          style={{ 
-            fontFamily: 'Halfre, sans-serif',
-            fontSize: 'clamp(32px, 6vw, 64px)',
-            lineHeight: '1',
-          }}
-        >
+    <section ref={sectionRef} className=" light relative w-full py-16">
+      {/* TITLE */}
+      <div className="text-center mb-12 px-6 lg:px-12">
+        <h2 className="text-black mb-6 text-2xl md:text-5xl">
           Share your moment
         </h2>
+      </div>
 
-        {/* Carousel Container */}
-        <div className="relative w-full" style={{ height: isMobile ? '55vh' : '430px' }}>
-          {extendedCards.map((card, index) => (
-            <div 
-              key={`${card.id}-${index}`}
-              className="relative overflow-hidden rounded-2xl shadow-xl"
-              style={getCardStyle(index)}
-            >
-              <Image
-                src={card.image}
-                alt={card.alt}
-                fill
-                className="object-cover transition-transform duration-700 hover:scale-105"
-                sizes="(max-width: 768px) 80vw, 600px"
-              />
-            </div>
-          ))}
+      {/* CAROUSEL */}
+      <div
+        className="relative w-full overflow-hidden h-[200px] md:h-[450px]"
+        onMouseEnter={stopAutoPlay}
+        onMouseLeave={startAutoPlay}
+      >
+        <div className="relative w-full">
+          {layout &&
+            extendedCards.map((card, index) => (
+              <div
+                key={`${card.id}-${index}`}
+                className="relative overflow-hidden rounded-2xl group"
+                style={getCardStyle(index)}
+              >
+                <Image
+                  src={card.image}
+                  alt={card.alt}
+                  fill
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                />
+              </div>
+            ))}
         </div>
+      </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center items-center gap-6">
-          <button 
-            onClick={handlePrev}
-            className="group flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full cursor-pointer border border-black hover:bg-primary hover:border-primary transition-all duration-300"
-            aria-label="Previous slide"
+      {/* ARROWS */}
+      <div className="flex justify-end pr-6 lg:pr-12 mt-8 space-x-4">
+        <button
+          onClick={handlePrev}
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black transition-all"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0de65a"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg 
-              className="w-5 h-5 text-primary group-hover:text-black transition-colors" 
-              fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-          <button 
-            onClick={handleNext}
-            className="group flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full cursor-pointer border border-black hover:bg-primary hover:border-primary transition-all duration-300"
-            aria-label="Next slide"
+        <button
+          onClick={handleNext}
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black transition-all"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0de65a"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg 
-              className="w-5 h-5 text-primary group-hover:text-black transition-colors" 
-              fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </section>
   );
