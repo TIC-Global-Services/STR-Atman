@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 
 const InstagramSection = () => {
@@ -188,7 +189,13 @@ const InstagramSection = () => {
                 style={getCardStyle(index)}
               >
                 {/* EMBED */}
-                <div className="absolute inset-0 pointer-events-none">
+                <div
+                  className={`absolute inset-0 ${
+                    index === currentIndex
+                      ? "pointer-events-auto"
+                      : "pointer-events-none"
+                  }`}
+                >
                   <blockquote
                     className="instagram-media"
                     data-instgrm-permalink={post.postUrl}
@@ -198,7 +205,8 @@ const InstagramSection = () => {
                 </div>
 
                 {/* HOVER OVERLAY */}
-                <div className="
+                <div
+                  className="
                   absolute inset-0 z-10
                   bg-gradient-to-t from-black/70 via-black/40 to-transparent
                   opacity-0 group-hover:opacity-100
@@ -206,14 +214,23 @@ const InstagramSection = () => {
                   flex flex-col justify-end
                   p-5
                   pointer-events-none
-                ">
+                "
+                >
                   <p className="text-white text-sm font-medium line-clamp-1">
                     {post.caption}
                   </p>
 
                   <div className="mt-2 flex items-center gap-3 text-white text-sm">
                     <span>❤️ {post.likes}</span>
-                    <span className="opacity-70">View on Instagram</span>
+
+                    <Link
+                      href={post.postUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-80 underline underline-offset-4 hover:opacity-100 pointer-events-auto"
+                    >
+                      View on Instagram
+                    </Link>
                   </div>
                 </div>
               </div>
