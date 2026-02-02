@@ -131,11 +131,7 @@ const FilmStrip = () => {
           className="text-[clamp(2rem,5vw,3rem)] font-medium mb-4"
         />
         <BlurText
-          text="This isn&apos;t just a list of songs — it&apos;s a collection of
-          moments that defined STR&apos;s musical journey. From mass anthems
-          that shook theatres to melodies hit the heart, every track carries a
-          memory. Relive the phases, the vibes, and the iconic highs that made
-          Silambarasan TR a true musical force."
+          text="A curated collection of defining musical moments. From theatre-shaking anthems to emotionally driven compositions, each track marks a key phase in Silambarasan TR’s musical journey."
           delay={5}
           animateBy="words"
           direction="top"

@@ -101,7 +101,7 @@ const STRAbout = () => {
 
         {/* Desktop Image */}
         <Image
-          src="/STR/str-01-group-web.png"
+          src="/STR/str-new-group-web.png"
           alt="STR Group Desktop"
           fill
           priority
@@ -122,7 +122,7 @@ const STRAbout = () => {
           "
         >
           <BlurText
-            text="I'm Silambarasan TR someone who grew up on film sets, learned life through cinema, and evolved with every role I played. From being a child artist to leading films, my journey has never been about playing it safe. It's been about honesty, growth, and staying true to who I am."
+            text="I am Silambarasan TR. Cinema shaped my childhood, disciplined my craft, and defined my evolution. From stepping onto film sets as a child artist to carrying films as a lead, my journey has been driven by conviction, not comfort.  I do not believe in playing it safe. I believe in honesty, continuous evolution, and standing firmly by who I am, on screen and beyond it."
             animateBy="words"
             delay={1}
             direction="top"

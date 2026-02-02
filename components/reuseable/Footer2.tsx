@@ -142,7 +142,7 @@ const Footer = () => {
       </div>
 
       {/* ================= COPYRIGHT ================= */}
-      <div className="absolute z-50 flex flex-col sm:flex-row gap-2  md:w-[75%] items-end md:items-center justify-between bottom-4 md:bottom-[2%] right-2 md:right-6 text-[clamp(0.75rem,0.4rem+0.4vw,0.95rem)] text-[#FDFDFD] px-4 ">
+      <div className="absolute  z-50 flex flex-col sm:flex-row gap-2  md:w-[75%] items-end md:items-end justify-between bottom-0 md:bottom-[8dvh] right-2 md:right-6 text-[clamp(0.75rem,0.4rem+0.4vw,0.95rem)] text-[#FDFDFD] px-4 ">
         <p>© {new Date().getFullYear()} Silambarasan TR. All rights reserved</p>
         <p>
           Designed & Developed by{" "}
