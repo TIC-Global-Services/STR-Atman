@@ -11,7 +11,7 @@ export default function AboutPage() {
     <div className=" overflow-x-hidden">
       <AboutHero />
       <Journey />
-      <VideoSection videoSrc="/video/title-card.mp4" />
+      <VideoSection videoSrc="/video/title-card-final.mp4" />
       <ContourBackground
         background="#ffffff"
         lineColor="#7a825c"

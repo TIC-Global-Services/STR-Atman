@@ -10,8 +10,8 @@ export const timeline = [
     year: "2002 - 2004",
     backgroundImg: "/Timeline/200204.png",
     strImg: "/Timeline/02S.png",
-    title: "The hero takes shape",
-    desc: "This phase saw STR strengthen his mass appeal while pushing creative boundaries. Films like Saravana and Thotti Jaya reinforced his commercial image, while Vallavan showcased his ambition beyond acting.",
+    title: "From Promise to Presence",
+    desc: "This period marked Silambarasan TR’s transition from rising talent to established leading actor. It was a phase of consolidation and calculated risk, where mass appeal met creative ambition.",
   },
   {
     year: "2005 - 2009",
@@ -30,7 +30,7 @@ export const timeline = [
   {
     year: "2016 - Present",
     backgroundImg: "/Timeline/2016Present.png",
-    strImg: "/Timeline/16S.png",
+    strImg: "/Timeline/PresentS.png",
     title: "Reinvention. Resilience. Rise. STR 2.0",
     desc: "This era marks STR’s transformation - personally and professionally following introspection and renewal. His comeback with Maanaadu, followed by successes like Pathu Thala and his move into production, signals a confident, self-driven phase of reinvention.",
   },

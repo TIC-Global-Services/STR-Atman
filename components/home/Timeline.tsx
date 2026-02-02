@@ -227,7 +227,11 @@ const Timeline = () => {
             <Image src={item.strImg} alt="" width={600} height={500} priority />
           </div>
 
-          <p className="p-desc absolute right-[5%] bottom-[6%] text-xl max-w-md text-gray-300">
+          <p
+            className={`p-desc absolute right-[5%] bottom-[6%] text-xl max-w-md ${
+              i === 3 ? "text-[#303030]" : "text-neutral-300"
+            }`}
+          >
             {item.desc}
           </p>
         </div>

@@ -10,69 +10,79 @@ if (typeof window !== "undefined") {
 const Journey = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
+  const statsInnerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const image = imageRef.current;
-    const stats = statsRef.current;
     const section = sectionRef.current;
+    const image = imageRef.current;
     const title = titleRef.current;
+    const statsInner = statsInnerRef.current;
 
-    if (!image || !stats || !section || !title) return;
+    if (!section || !image || !title || !statsInner) return;
 
     const mm = gsap.matchMedia();
 
-    // Desktop
+    /* =========================
+       DESKTOP
+    ========================= */
     mm.add("(min-width: 1024px)", () => {
-      gsap.to(image, {
-        y: -40,
-        scrollTrigger: {
-          trigger: stats,
-          start: "top 80%",
-          end: "bottom 20%",
-          scrub: true,
-        },
-      });
-
-      gsap.to(stats, {
-        y: -220,
-        scrollTrigger: {
-          trigger: stats,
-          start: "top 80%",
-          end: "bottom 20%",
-          scrub: true,
-        },
-      });
-
-      // 🔒 PIN TITLE
+      // 🔒 Sticky / pinned title
       ScrollTrigger.create({
         trigger: section,
-        start: "top top+=50",
+        start: "top top+=100",
         end: "bottom bottom",
         pin: title,
-        pinSpacing: false,
+        pinSpacing: false, // absolute → no layout spacing needed
+      });
+
+      // 🌄 Background image parallax
+      gsap.to(image, {
+        y: -80,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      // 📊 Stats parallax (inner only)
+      gsap.to(statsInner, {
+        y: -100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top center",
+          end: "bottom center",
+          scrub: true,
+        },
       });
     });
 
-    // Tablet & Mobile
+    /* =========================
+       MOBILE
+    ========================= */
     mm.add("(max-width: 1023px)", () => {
       gsap.to(image, {
-        y: -60,
+        y: -40,
+        ease: "none",
         scrollTrigger: {
-          trigger: stats,
-          start: "top 85%",
-          end: "bottom 30%",
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
           scrub: true,
         },
       });
 
-      gsap.to(stats, {
-        y: -20,
+      gsap.to(statsInner, {
+        y: -40,
+        ease: "none",
         scrollTrigger: {
-          trigger: stats,
-          start: "top 85%",
-          end: "bottom 30%",
+          trigger: section,
+          start: "top center",
+          end: "bottom center",
           scrub: true,
         },
       });
@@ -84,64 +94,57 @@ const Journey = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative  w-full overflow-hidden bg-black
-                 px-4 sm:px-6 lg:px-12"
+      className="relative w-full min-h-screen md:min-h-[200vh] overflow-hidden bg-black"
     >
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0 flex justify-center bg-cover w-full h-full items-end">
+      {/* IMAGE BASE LAYER */}
+      <div className="absolute inset-0 z-0 flex justify-center items-end">
         <img
           ref={imageRef}
           src="/journeybg.jpg"
           alt="Journey background"
-          className=" object-cover  md:object-contain w-full h-[80dvh] md:h-auto md:w-1/2"
+          className="w-full h-[80vh] md:h-full object-cover md:object-contain"
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col gap-10 lg:flex-row pt-32">
-        {/* TITLE */}
-        <div
-          ref={titleRef}
-          className="md:flex-1 flex items-start justify-start"
+      {/* TITLE — ABSOLUTE OVERLAY */}
+      <div
+        ref={titleRef}
+        className="absolute top-12 md:top-32 left-6 md:left-12 z-20"
+      >
+        <h1
+          className="
+            text-white font-halfre leading-[1]
+            text-[clamp(28px,6vw,120px)]
+            max-w-[14ch] md:max-w-[10ch]
+          "
         >
-          <h1
-            className="
-              text-white font-halfre
-              leading-[1]
-              text-left
-              text-[clamp(28px,6vw,120px)]
-              max-w-[14ch]
-              md:max-w-[10ch]
-            "
-          >
-            A Closer Look At The{" "}
-            <span className="text-green-400">Journey</span>
-          </h1>
-        </div>
+          A Closer Look At The{" "}
+          <span className="text-green-400">Journey</span>
+        </h1>
+      </div>
 
-        {/* STATS */}
+      {/* STATS — ABSOLUTE OVERLAY */}
+      <div className="absolute right-12 bottom-0 md:bottom-32 z-20">
         <div
-          ref={statsRef}
-          className=" flex items-end md:justify-end "
+          ref={statsInnerRef}
+          className="w-[80vw] sm:w-[60vw] md:w-full md:max-w-sm space-y-6 md:space-y-10"
         >
-          <div className="w-[80%] md:w-full md:max-w-sm space-y-4 md:space-y-10">
-            {[
-              ["1987", "The Year He Stepped Into Cinema As A Child Artist"],
-              ["25+", "Years Of Experience Across Acting, Direction, Music, And Writing"],
-              ["40+", "Films That Shaped Pop Culture And Sparked Conversation"],
-              ["100+", "Songs Written, Sung, Or Influenced By His Creative Vision"],
-              ["1", "An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty"],
-            ].map(([num, text]) => (
-              <div key={num}>
-                <div className="text-green-400 text-[clamp(28px,5vw,64px)]">
-                  {num}
-                </div>
-                <p className="text-white text-sm sm:text-base lg:text-lg">
-                  {text}
-                </p>
+          {[
+            ["1987", "The Year He Stepped Into Cinema As A Child Artist"],
+            ["25+", "Years Of Experience Across Acting, Direction, Music, And Writing"],
+            ["40+", "Films That Shaped Pop Culture And Sparked Conversation"],
+            ["100+", "Songs Written, Sung, Or Influenced By His Creative Vision"],
+            ["1", "An Evolving Legacy Defined By Reinvention, Resilience, And Raw Honesty"],
+          ].map(([num, text]) => (
+            <div key={num}>
+              <div className="text-green-400 text-[clamp(28px,5vw,64px)]">
+                {num}
               </div>
-            ))}
-          </div>
+              <p className="text-white text-sm sm:text-base lg:text-lg">
+                {text}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
