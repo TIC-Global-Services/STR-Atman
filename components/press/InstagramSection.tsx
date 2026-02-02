@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import { useRef, useEffect, useState } from "react";
 
 const InstagramSection = () => {
@@ -7,56 +7,27 @@ const InstagramSection = () => {
   const [isInView, setIsInView] = useState(false);
 
   /* ==============================
-     DATA
+     DATA (MANUAL META – REQUIRED)
+     Later this can come from API
   ============================== */
   const instagramPosts = [
     {
       id: 1,
-      image: "/simbusong1.jpg",
-      alt: "STR Instagram Post 1",
-      caption: "Latest update from STR",
-      likes: "125K",
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
+      postUrl: "https://www.instagram.com/p/DRrdGrTkXGA/",
+      likes: "754K",
+      caption: "As per my fans request ❤️",
     },
     {
       id: 2,
-      image: "/simbusong2.png",
-      alt: "STR Instagram Post 2",
-      caption: "New music coming soon! 🎵",
-      likes: "89K",
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
+      postUrl: "https://www.instagram.com/reel/DRG3XXXkdt0/",
+      likes: "2.5M",
+      caption: "❤️❤️",
     },
     {
       id: 3,
-      image: "/simbusong3.jpg",
-      alt: "STR Instagram Post 3",
-      caption: "Thank you for all the love ❤️",
-      likes: "156K",
       postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
-    },
-    {
-      id: 4,
-      image: "/simbusong4.jpg",
-      alt: "STR Instagram Post 4",
-      caption: "Studio vibes 🎬",
-      likes: "92K",
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
-    },
-    {
-      id: 5,
-      image: "/simbusong5.png",
-      alt: "STR Instagram Post 5",
-      caption: "Grateful for this journey",
-      likes: "134K",
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
-    },
-    {
-      id: 6,
-      image: "/simbusong6.jpg",
-      alt: "STR Instagram Post 6",
-      caption: "Family time is the best time",
-      likes: "201K",
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
+      likes: "2.1M",
+      caption: "Thank you all for the endless love and support ❤️",
     },
   ];
 
@@ -71,7 +42,7 @@ const InstagramSection = () => {
   ];
 
   /* ==============================
-     RESPONSIVE LAYOUT STATE (FIX)
+     RESPONSIVE LAYOUT
   ============================== */
   const [layout, setLayout] = useState<any>(null);
 
@@ -80,19 +51,18 @@ const InstagramSection = () => {
       const isMobile = window.innerWidth < 768;
 
       setLayout({
-        centerWidth: isMobile ? 280 : 624,
-        sideWidth: isMobile ? 240 : 500,
-        centerHeight: isMobile ? 180 : 394,
-        sideHeight: isMobile ? 160 : 314,
+        centerWidth: isMobile ? 300 : 420,
+        sideWidth: isMobile ? 260 : 360,
+        centerHeight: isMobile ? 460 : 540,
+        sideHeight: isMobile ? 420 : 500,
         gap: isMobile ? 16 : 40,
         sideOffsetY: isMobile ? 20 : 40,
-        sideScale: isMobile ? 0.97 : 0.95,
+        sideScale: isMobile ? 0.96 : 0.94,
       });
     };
 
     calculateLayout();
     window.addEventListener("resize", calculateLayout);
-
     return () => window.removeEventListener("resize", calculateLayout);
   }, []);
 
@@ -118,17 +88,41 @@ const InstagramSection = () => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = prev + 1;
-
         if (next >= instagramPosts.length * 2) {
           setTimeout(() => setCurrentIndex(instagramPosts.length), 50);
           return next;
         }
         return next;
       });
-    }, 4000);
+    }, 4500);
 
     return () => clearInterval(interval);
   }, [isInView, instagramPosts.length]);
+
+  /* ==============================
+     LOAD INSTAGRAM EMBED SCRIPT
+  ============================== */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (!(window as any).instgrm) {
+      const script = document.createElement("script");
+      script.src = "https://www.instagram.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    } else {
+      (window as any).instgrm.Embeds.process();
+    }
+  }, []);
+
+  /* ==============================
+     REPROCESS EMBEDS
+  ============================== */
+  useEffect(() => {
+    if ((window as any).instgrm) {
+      (window as any).instgrm.Embeds.process();
+    }
+  }, [currentIndex]);
 
   /* ==============================
      CARD STYLE
@@ -151,20 +145,16 @@ const InstagramSection = () => {
     } = layout;
 
     let translateX = 0;
-
-    if (position > 0) {
-      translateX = centerWidth / 2 + gap + sideWidth / 2;
-    } else if (position < 0) {
-      translateX = -(centerWidth / 2 + gap + sideWidth / 2);
-    }
+    if (position > 0) translateX = centerWidth / 2 + gap + sideWidth / 2;
+    if (position < 0) translateX = -(centerWidth / 2 + gap + sideWidth / 2);
 
     return {
       position: "absolute" as const,
       left: "50%",
-      width: isCenter ? `${centerWidth}px` : `${sideWidth}px`,
-      height: isCenter ? `${centerHeight}px` : `${sideHeight}px`,
-      marginLeft: isCenter ? `-${centerWidth / 2}px` : `-${sideWidth / 2}px`,
-      opacity: isVisible ? (isCenter ? 1 : 0.85) : 0,
+      width: isCenter ? centerWidth : sideWidth,
+      height: isCenter ? centerHeight : sideHeight,
+      marginLeft: isCenter ? -centerWidth / 2 : -sideWidth / 2,
+      opacity: isVisible ? 1 : 0,
       transform: `
         translateX(${translateX}px)
         translateY(${isCenter ? 0 : sideOffsetY}px)
@@ -176,43 +166,54 @@ const InstagramSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className=" light relative w-full py-20">
+    <section ref={sectionRef} className="relative w-full py-20">
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
         <h2 className="text-black text-2xl md:text-5xl mb-6">
-          In The Spotlight
+          Instagram Highlights
         </h2>
         <p className="text-[#717580] text-base md:text-[20px] max-w-4xl mx-auto">
-          From press meets and exclusive interviews to iconic Instagram moments.
+          A curated glimpse into STR’s Instagram — official posts and reels.
         </p>
       </div>
 
       {/* CAROUSEL */}
-      <div className="relative w-full overflow-hidden h-[200px] md:h-[450px]">
-        <div className="relative w-full">
+      <div className="relative w-full overflow-hidden h-[520px] md:h-[620px]">
+        <div className="relative w-full h-full">
           {layout &&
             extendedPosts.map((post, index) => (
               <div
                 key={`${post.id}-${index}`}
-                className="relative overflow-hidden rounded-2xl group cursor-pointer"
+                className="relative rounded-2xl overflow-hidden bg-white shadow-xl group"
                 style={getCardStyle(index)}
-                onClick={() => window.open(post.postUrl, "_blank")}
               >
-                <Image
-                  src={post.image}
-                  alt={post.alt}
-                  fill
-                  className="object-cover"
-                />
+                {/* EMBED */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <blockquote
+                    className="instagram-media"
+                    data-instgrm-permalink={post.postUrl}
+                    data-instgrm-version="14"
+                    style={{ width: "100%", height: "100%", margin: 0 }}
+                  />
+                </div>
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/50 p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition">
-                  <p className="text-white text-sm mb-2 line-clamp-2">
+                {/* HOVER OVERLAY */}
+                <div className="
+                  absolute inset-0 z-10
+                  bg-gradient-to-t from-black/70 via-black/40 to-transparent
+                  opacity-0 group-hover:opacity-100
+                  transition-opacity duration-300
+                  flex flex-col justify-end
+                  p-5
+                  pointer-events-none
+                ">
+                  <p className="text-white text-sm font-medium line-clamp-1">
                     {post.caption}
                   </p>
-                  <div className="flex justify-between text-white text-sm">
+
+                  <div className="mt-2 flex items-center gap-3 text-white text-sm">
                     <span>❤️ {post.likes}</span>
-                    <span className="opacity-80">View →</span>
+                    <span className="opacity-70">View on Instagram</span>
                   </div>
                 </div>
               </div>
@@ -224,7 +225,7 @@ const InstagramSection = () => {
       <div className="flex justify-end pr-6 lg:pr-12 mt-8 space-x-4">
         <button
           onClick={() => setCurrentIndex((prev) => prev - 1)}
-          className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
           <svg
             width="20"
@@ -239,9 +240,10 @@ const InstagramSection = () => {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
+
         <button
           onClick={() => setCurrentIndex((prev) => prev + 1)}
-          className="w-12 h-12 cursor-pointer rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition"
+          className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
           <svg
             width="20"
