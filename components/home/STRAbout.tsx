@@ -101,7 +101,7 @@ const STRAbout = () => {
 
         {/* Desktop Image */}
         <Image
-          src="/STR/str-group-new.png"
+          src="/STR/str-01-group-web.png"
           alt="STR Group Desktop"
           fill
           priority
