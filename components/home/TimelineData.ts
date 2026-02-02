@@ -23,7 +23,7 @@ export const timeline = [
   {
     year: "2010 - 2015",
     backgroundImg: "/Timeline/201015.png",
-    strImg: "/Timeline/10S.png",
+    strImg: "/Timeline/2K10S.png",
     title: "The Cult & The Contrast",
     desc: "Vinnaithaandi Varuvaayaa (2010) earned cult status and critical acclaim, redefining STR’s career. The following years highlighted his versatility across ensemble roles and commercial cinema, despite production challenges.",
   },
