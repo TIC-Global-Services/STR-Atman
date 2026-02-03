@@ -213,7 +213,7 @@ const Stories = () => {
                   className="overflow-hidden  cursor-pointer will-change-transform"
                 >
                   <Image
-                    src={"/Stories/story3.png"}
+                    src={"/Stories/str-story-3.png"}
                     alt={"StR story pic"}
                     width={600}
                     height={600}

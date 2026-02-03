@@ -31,6 +31,10 @@ const ScrollProvider = ({ children }: LenisProviderProps) => {
         wheelMultiplier: 1,
         syncTouch: false,
         autoRaf: false, // <-- changed (important!)
+
+        prevent: (node) => {
+          return node?.hasAttribute?.("data-lenis-prevent");
+        },
       });
 
       lenisRef.current = lenis;
@@ -41,10 +45,9 @@ const ScrollProvider = ({ children }: LenisProviderProps) => {
          3. Proper GSAP scrollerProxy that doesn't override
             browser's scroll on page load
       --------------------------------------------------- */
-      ScrollTrigger.scrollerProxy(document.body, {
+      ScrollTrigger.scrollerProxy(document.documentElement, {
         scrollTop(value) {
           if (value !== undefined) {
-            // allow browser's native scroll restore FIRST
             lenis.scrollTo(value, { immediate: true });
           }
           return window.scrollY;

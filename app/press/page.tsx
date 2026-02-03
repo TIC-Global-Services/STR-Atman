@@ -3,6 +3,7 @@ import PressSection from "@/components/press/PressSection";
 import NewsSection from "@/components/press/NewsSection";
 import InstagramSection from "@/components/press/InstagramSection";
 import ContourBackground from "@/components/reuseable/ContourBackground";
+import XSection from "@/components/press/XSection";
 
 export default function PressPage() {
   return (
@@ -18,6 +19,7 @@ export default function PressPage() {
         <PressSection />
         <NewsSection />
         <InstagramSection />
+        <XSection />
       </ContourBackground>
     </main>
   );

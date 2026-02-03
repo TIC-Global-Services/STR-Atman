@@ -3,44 +3,39 @@
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 
-const InstagramSection = () => {
+declare global {
+  interface Window {
+    twttr: any;
+  }
+}
+
+const XSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isInView, setIsInView] = useState(false);
 
   /* ==============================
-     DATA (MANUAL META – REQUIRED)
-     Later this can come from API
+     X POSTS (EXACT TWEETS)
   ============================== */
-  const instagramPosts = [
+  const xPosts = [
     {
       id: 1,
-      postUrl: "https://www.instagram.com/p/DRrdGrTkXGA/",
-      likes: "754K",
-      caption: "As per my fans request ❤️",
+      postUrl: "https://twitter.com/Arasanfilm_/status/2002707559153889516",
     },
     {
       id: 2,
-      postUrl: "https://www.instagram.com/reel/DRG3XXXkdt0/",
-      likes: "2.5M",
-      caption: "❤️❤️",
+      postUrl: "https://twitter.com/SilambarasanTR_/status/1998434523718291507",
     },
     {
       id: 3,
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
-      likes: "2.1M",
-      caption: "Thank you all for the endless love and support ❤️",
+      postUrl: "https://twitter.com/SilambarasanTR_/status/1995092985256833217",
     },
   ];
 
   /* ==============================
      INFINITE SETUP
   ============================== */
-  const [currentIndex, setCurrentIndex] = useState(instagramPosts.length);
-  const extendedPosts = [
-    ...instagramPosts,
-    ...instagramPosts,
-    ...instagramPosts,
-  ];
+  const [currentIndex, setCurrentIndex] = useState(xPosts.length);
+  const extendedPosts = [...xPosts, ...xPosts, ...xPosts];
 
   /* ==============================
      RESPONSIVE LAYOUT
@@ -89,8 +84,8 @@ const InstagramSection = () => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = prev + 1;
-        if (next >= instagramPosts.length * 2) {
-          setTimeout(() => setCurrentIndex(instagramPosts.length), 50);
+        if (next >= xPosts.length * 2) {
+          setTimeout(() => setCurrentIndex(xPosts.length), 50);
           return next;
         }
         return next;
@@ -98,21 +93,22 @@ const InstagramSection = () => {
     }, 4500);
 
     return () => clearInterval(interval);
-  }, [isInView, instagramPosts.length]);
+  }, [isInView, xPosts.length]);
 
   /* ==============================
-     LOAD INSTAGRAM EMBED SCRIPT
+     LOAD X SCRIPT (ONCE)
   ============================== */
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    if (!(window as any).instgrm) {
+    if (!window.twttr) {
       const script = document.createElement("script");
-      script.src = "https://www.instagram.com/embed.js";
+      script.src = "https://platform.twitter.com/widgets.js";
       script.async = true;
+      script.charset = "utf-8";
       document.body.appendChild(script);
     } else {
-      (window as any).instgrm.Embeds.process();
+      window.twttr.widgets.load();
     }
   }, []);
 
@@ -120,8 +116,8 @@ const InstagramSection = () => {
      REPROCESS EMBEDS
   ============================== */
   useEffect(() => {
-    if ((window as any).instgrm) {
-      (window as any).instgrm.Embeds.process();
+    if (window.twttr) {
+      window.twttr.widgets.load();
     }
   }, [currentIndex]);
 
@@ -167,22 +163,21 @@ const InstagramSection = () => {
   };
 
   return (
-    <section data-lenis-prevent ref={sectionRef} className=" light relative w-full py-20">
+    <section
+      data-lenis-prevent
+      ref={sectionRef}
+      className="relative w-full py-20"
+    >
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
-        <h2 className="text-black text-2xl md:text-5xl mb-6">
-          Instagram Highlights
-        </h2>
+        <h2 className="text-black text-2xl md:text-5xl mb-6">X Highlights</h2>
         <p className="text-[#717580] text-base md:text-[20px] max-w-4xl mx-auto">
-          A curated glimpse into STR’s Instagram — official posts and reels.
+          A curated glimpse into official posts from X.
         </p>
       </div>
 
       {/* CAROUSEL */}
-      <div
-        data-lenis-prevent
-        className="relative w-full overflow-hidden h-[520px] md:h-[620px]"
-      >
+      <div className="relative w-full overflow-hidden h-[520px] md:h-[620px]">
         <div className="relative w-full h-full">
           {layout &&
             extendedPosts.map((post, index) => (
@@ -191,7 +186,7 @@ const InstagramSection = () => {
                 className="relative rounded-2xl overflow-hidden bg-white shadow-xl group"
                 style={getCardStyle(index)}
               >
-                {/* EMBED */}
+                {/* X EMBED */}
                 <div
                   data-lenis-prevent
                   className={`absolute inset-0 ${
@@ -201,41 +196,13 @@ const InstagramSection = () => {
                   }`}
                 >
                   <blockquote
-                    className="instagram-media"
-                    data-instgrm-permalink={post.postUrl}
-                    data-instgrm-version="14"
+                    className="twitter-tweet"
+                    data-theme="light"
+                    data-dnt="true"
                     style={{ width: "100%", height: "100%", margin: 0 }}
-                  />
-                </div>
-
-                {/* HOVER OVERLAY */}
-                <div
-                  className="
-                  absolute inset-0 z-10
-                  bg-gradient-to-t from-black/70 via-black/40 to-transparent
-                  opacity-0 group-hover:opacity-100
-                  transition-opacity duration-300
-                  flex flex-col justify-end
-                  p-5
-                  pointer-events-none
-                "
-                >
-                  <p className="text-white text-sm font-medium line-clamp-1">
-                    {post.caption}
-                  </p>
-
-                  <div className="mt-2 flex items-center gap-3 text-white text-sm">
-                    <span>❤️ {post.likes}</span>
-
-                    <Link
-                      href={post.postUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="opacity-80 underline underline-offset-4 hover:opacity-100 pointer-events-auto"
-                    >
-                      View on Instagram
-                    </Link>
-                  </div>
+                  >
+                    <a href={post.postUrl}></a>
+                  </blockquote>
                 </div>
               </div>
             ))}
@@ -284,4 +251,4 @@ const InstagramSection = () => {
   );
 };
 
-export default InstagramSection;
+export default XSection;

@@ -108,7 +108,7 @@ const Footer = () => {
 
             {/* Simbu Image */}
             <Image
-              src="/STR/str-footer.png"
+              src="/STR/Str-footer01.png"
               alt="STR"
               width={400}
               height={400}

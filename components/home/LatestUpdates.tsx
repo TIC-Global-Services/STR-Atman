@@ -13,29 +13,9 @@ import { IoIosArrowRoundBack as ArrowLeft, IoIosArrowRoundForward  as ArrowRight
 
 
 import gsap from "gsap";
+import { news } from "../press/data/News";
 
-const updates = [
-  {
-    img: "/update1.jpg",
-    title: "arasan shooting resumes",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  },
-  {
-    img: "/update2.jpg",
-    title: "Living in the process",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  },
-  {
-    img: "/update3.jpg",
-    title: "Creative flow",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  },
-  {
-    img: "/update4.jpg",
-    title: "Behind the scenes",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  },
-];
+const updates = news.slice(-3);
 
 const POSITIONS = {
   LEFT: { x: -360, scale: 0.85, opacity: 1, z: 1 },
@@ -100,7 +80,10 @@ const LatestUpdates = () => {
               className="absolute w-[320px] md:w-[360px] "
             >
               <UpdateCard
-                {...item}
+               title={item.title}
+               img={item.image}
+               desc={item.excerpt}
+               slug={`news/${item.slug}`}
                 isActive={idx === center}
               />
             </div>

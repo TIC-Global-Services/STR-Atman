@@ -13,7 +13,7 @@ const CTASection = () => {
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src="/strcta.png"
+            src="/membership/membership-03.png"
             alt="CTA Background"
             fill
             className="object-cover object-[80%_580%] md:object-right"

@@ -23,8 +23,8 @@ const UpdateCard = ({ img, title, desc, slug, isActive }: UpdateCardProps) => {
         />
         {isActive && (
           <>
-            <h1 className=" text-3xl capitalize ">{title}</h1>
-            <p className=" text-[#505050] text-xl">{desc}</p>
+            <h1 className=" text-2xl capitalize ">{title}</h1>
+            <p className=" text-[#505050] text-lg line-clamp-2">{desc}</p>
           </>
         )}
       </div>
