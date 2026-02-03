@@ -6,3 +6,9 @@ export const Halfre = localFont({
   variable: "--font-halfre",
   display: "swap",
 });
+
+export const Velcan = localFont({
+  src: [{ path: "./velcan/Velcan-Regular.otf", weight: "400", style: "normal" }],
+  variable: "--font-velcan",
+  display: "swap",
+});

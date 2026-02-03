@@ -132,9 +132,9 @@ const STRAbout = () => {
       )}
 
       {/* Foreground */}
-      <div className="relative z-0 flex flex-col items-center justify-end min-h-screen pb-20">
+      {/* <div className="relative z-0 flex flex-col items-center justify-end min-h-screen pb-20">
         <Image src="/strsign.png" alt="Signature" width={100} height={100} />
-      </div>
+      </div> */}
     </section>
   );
 };

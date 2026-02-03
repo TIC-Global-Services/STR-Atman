@@ -310,6 +310,8 @@ const Navbar = () => {
             alt="STR Logo"
             width={120}
             height={50}
+            priority
+            quality={100}
             className={`
               w-[150px] md:w-[200px]
               transition-all duration-300
