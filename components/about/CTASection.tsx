@@ -23,13 +23,13 @@ const CTASection = () => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full flex items-start px-[clamp(1rem,4vw,4rem)]">
-          <div className="w-full flex flex-col gap-[clamp(2rem,5vw,4rem)] py-10">
+        <div className="relative z-10 h-full flex items-end md:items-start px-[clamp(1rem,4vw,4rem)]">
+          <div className="w-full flex flex-col gap-[clamp(1rem,5vw,4rem)] py-10">
             {/* Text */}
             <h2
               className="
                 text-white font-normal leading-tight
-                text-[clamp(1.4rem,3.5vw,2.1rem)]
+                text-[clamp(1.2rem,3.5vw,2.1rem)]
                 max-w-[65ch]
               "
             >

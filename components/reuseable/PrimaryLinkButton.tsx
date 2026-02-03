@@ -21,7 +21,7 @@ const PrimaryLinkButton = ({ title, href, className }: PrimaryButtonProps) => {
       `}
     >
       {/* Wrapper keeps height consistent */}
-      <span className="relative block  overflow-hidden">
+      <span className="relative block  overflow-hidden text-xs md:text-base">
         {/* Default text */}
         <span className="block transition-transform duration-300 ease-out group-hover:-translate-y-full">
           {title}

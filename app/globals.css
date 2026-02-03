@@ -37,6 +37,12 @@ body {
   scrollbar-width: none;
 }
 
+.instagram-media,
+.instagram-media iframe {
+  max-height: 100% !important;
+}
+
+
 .dot-animation {
   width: 10px;
   height: 10px;

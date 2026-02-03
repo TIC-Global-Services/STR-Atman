@@ -167,7 +167,11 @@ const InstagramSection = () => {
   };
 
   return (
-    <section data-lenis-prevent ref={sectionRef} className=" light relative w-full py-20">
+    <section
+      data-lenis-prevent
+      ref={sectionRef}
+      className=" light relative w-full py-20"
+    >
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
         <h2 className="text-black text-2xl md:text-5xl mb-6">
@@ -194,7 +198,7 @@ const InstagramSection = () => {
                 {/* EMBED */}
                 <div
                   data-lenis-prevent
-                  className={`absolute inset-0 ${
+                  className={`absolute inset-0 flex items-start justify-center overflow-hidden ${
                     index === currentIndex
                       ? "pointer-events-auto"
                       : "pointer-events-none"
@@ -204,7 +208,11 @@ const InstagramSection = () => {
                     className="instagram-media"
                     data-instgrm-permalink={post.postUrl}
                     data-instgrm-version="14"
-                    style={{ width: "100%", height: "100%", margin: 0 }}
+                    style={{
+                      width: "100%",
+                      minWidth: "100%",
+                      margin: "0 auto",
+                    }}
                   />
                 </div>
 
@@ -216,7 +224,7 @@ const InstagramSection = () => {
                   opacity-0 group-hover:opacity-100
                   transition-opacity duration-300
                   flex flex-col justify-end
-                  p-5
+                  p-2 md:p-5
                   pointer-events-none
                 "
                 >
