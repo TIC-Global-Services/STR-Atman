@@ -16,13 +16,13 @@ const PressSection = () => {
               iconic public moments.
             </p>
 
-            <Image
+            {/* <Image
               src="/strsign.png"
               alt="Signature"
               width={200}
               height={200}
               className=" absolute left-[20%] w-20 md:w-40 h-20 md:h-40"
-            />
+            /> */}
           </div>
 
           {/* Right Column - Additional Description (Smaller) */}

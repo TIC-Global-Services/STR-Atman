@@ -75,7 +75,7 @@ const AdmirationSection = () => {
       </div>
 
       {/* Membership Popup Modal */}
-      <MembershipForm
+      <JoinWaitlistForm
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
       />

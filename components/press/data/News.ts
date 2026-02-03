@@ -69,7 +69,7 @@ Overall, the Malaysia visit reflected a balance between responsibility and relat
     excerpt:
       "A quiet moment of service and reflection during Ramalinga Swamigal’s birth anniversary.",
     image: "/newsroom/Blog-03.png",
-    banner: "/newsroom/str_at_vallalar.avif",
+    banner: "/newsroom/str_at_vallalar-banner.avif",
     date: "October 2025",
     content: `
   # Silambarasan TR at Vallalar Temple: An Act of Service and Reflection

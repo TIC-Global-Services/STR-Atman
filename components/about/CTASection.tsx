@@ -45,7 +45,7 @@ const CTASection = () => {
               <PrimaryLinkButton title="View Updates" href="/press" />
 
               {/* Signature */}
-              <div
+              {/* <div
                 className="absolute top-[60%] md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 w-full max-w-[clamp(220px,45vw,420px)]"
                 style={{ aspectRatio: "420 / 184" }}
               >
@@ -59,7 +59,7 @@ const CTASection = () => {
                       "brightness(0) saturate(100%) invert(88%) sepia(85%) saturate(1352%) hue-rotate(360deg) brightness(104%) contrast(101%)",
                   }}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
