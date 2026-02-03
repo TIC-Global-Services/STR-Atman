@@ -4,26 +4,42 @@ import { useEffect, useRef, useState } from "react";
 
 interface VideoProps {
   videoId?: string; // YouTube ID
-  videoSrc?: string; // MP4 source
+  videoSrc?: string; // Desktop MP4
+  mobVideoSrc?: string; // Mobile MP4
 }
 
-const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
+const VideoSection = ({ videoId, videoSrc, mobVideoSrc }: VideoProps) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
+
   const [muted, setMuted] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   /* ==============================
-     YOUTUBE CONFIGURATION
-     The "Loop Trick":
-     1. loop=1 
-     2. playlist={videoId} (Mandatory for single videos to loop)
-     3. rel=0 (Limits related videos to your own channel)
+     Detect Mobile
+  ============================== */
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsMobile(mediaQuery.matches);
+
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
+  }, []);
+
+  const activeVideoSrc = isMobile && mobVideoSrc ? mobVideoSrc : videoSrc;
+
+  /* ==============================
+     YOUTUBE CONFIG
   ============================== */
   const youtubeSrc = videoId
-    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${videoId}&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1`
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${videoId}&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1`
     : "";
 
+  /* ==============================
+     Intersection Observer
+  ============================== */
   useEffect(() => {
     if (!sectionRef.current) return;
 
@@ -40,12 +56,10 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
           );
         }
 
-        if (videoSrc && videoRef.current) {
-          if (entry.isIntersecting) {
-            videoRef.current.play().catch(() => {});
-          } else {
-            videoRef.current.pause();
-          }
+        if (!videoId && videoRef.current) {
+          entry.isIntersecting
+            ? videoRef.current.play().catch(() => {})
+            : videoRef.current.pause();
         }
       },
       { threshold: 0.3 }
@@ -53,8 +67,11 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
 
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
-  }, [videoId, videoSrc]);
+  }, [videoId, activeVideoSrc]);
 
+  /* ==============================
+     Mute Toggle
+  ============================== */
   const toggleMute = () => {
     if (muted) {
       window.dispatchEvent(
@@ -75,36 +92,19 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
       );
     }
 
-    if (videoSrc && videoRef.current) {
+    if (!videoId && videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
     }
 
     setMuted(!muted);
   };
 
-  useEffect(() => {
-    const handleGlobalAudio = (e: any) => {
-      if (e.detail.source !== "video") {
-        if (videoId && iframeRef.current) {
-          iframeRef.current.contentWindow?.postMessage(
-            JSON.stringify({ event: "command", func: "mute", args: [] }),
-            "*"
-          );
-        }
-        if (videoSrc && videoRef.current) {
-          videoRef.current.muted = true;
-        }
-        setMuted(true);
-      }
-    };
-
-    window.addEventListener("global-audio-play", handleGlobalAudio);
-    return () => window.removeEventListener("global-audio-play", handleGlobalAudio);
-  }, [videoId, videoSrc]);
-
   return (
-    <section ref={sectionRef} className="relative w-full h-screen overflow-hidden bg-black">
-      {/* 🎬 Background video wrapper */}
+    <section
+      ref={sectionRef}
+      className="relative w-full h-screen overflow-hidden bg-black"
+    >
+      {/* 🎬 Background video */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {videoId ? (
           <iframe
@@ -124,14 +124,15 @@ const VideoSection = ({ videoId, videoSrc }: VideoProps) => {
         ) : (
           <video
             ref={videoRef}
-            src={videoSrc}
+            key={activeVideoSrc} // 🔑 forces reload on src change
+            src={activeVideoSrc}
             autoPlay
             loop
             muted
             playsInline
             className="
               absolute top-1/2 left-1/2
-              min-w-full min-h-screen
+              min-w-full md:min-h-screen
               -translate-x-1/2 -translate-y-1/2
               object-cover scale-110
             "
