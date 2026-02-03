@@ -113,7 +113,7 @@ const STRAbout = () => {
       {showText && (
         <div
           className="
-            fixed top-[25%] md:top-[10%]
+            fixed top-[15%] md:top-[10%]
             left-1/2 -translate-x-1/2
             w-[calc(100vw-2rem)] md:max-w-4xl
             px-4 md:px-10
