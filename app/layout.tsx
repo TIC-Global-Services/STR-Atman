@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Halfre } from "@/fonts";
+import { Halfre, Velcan } from "@/fonts";
 import LayoutProvider from "@/layout/LayoutProvider";
 
 export const metadata: Metadata = {
@@ -15,10 +15,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${Halfre.variable}  antialiased`}>
-        <LayoutProvider>
-          {children}
-        </LayoutProvider>
+      <body className={`${Halfre.variable} ${Velcan.variable} antialiased `}>
+        <LayoutProvider>{children}</LayoutProvider>
       </body>
     </html>
   );

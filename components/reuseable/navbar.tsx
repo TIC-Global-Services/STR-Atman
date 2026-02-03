@@ -304,8 +304,12 @@ const Navbar = () => {
     <>
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
-        <Link href="/">
-          <Image
+        <Link href="/" className={`
+              font-velcan text-3xl
+              transition-all duration-300
+              ${isLightSection ? "invert-0" : "invert"}
+            `}>
+          {/* <Image
             src="/logo/STR_Logo.png"
             alt="STR Logo"
             width={120}
@@ -317,7 +321,8 @@ const Navbar = () => {
               transition-all duration-300
               ${isLightSection ? "invert-0" : "invert"}
             `}
-          />
+          /> */}
+          Silambarasan TR
         </Link>
 
         <audio
