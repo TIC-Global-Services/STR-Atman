@@ -20,7 +20,7 @@ const Footer = () => {
   ];
 
   return (
-    <div className="px-4 sm:px-8 mx-auto w-full bg-[#000] pt-16 sm:pt-20 pb-6 md:pb-0">
+    <section className=" md:light px-4 sm:px-8 mx-auto w-full bg-[#000] pt-16 sm:pt-20 pb-6 md:pb-0">
       {/* MASKED FOOTER */}
       <div
         className="
@@ -155,7 +155,7 @@ const Footer = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </section>
   );
 };
 
