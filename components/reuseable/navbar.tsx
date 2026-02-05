@@ -24,6 +24,10 @@ const Navbar = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  const navRef = useRef<HTMLElement | null>(null);
+  const lastScrollY = useRef(0);
+  const navTween = useRef<gsap.core.Tween | null>(null);
+
   const [isLightSection, setIsLightSection] = useState(false);
 
   const [showPopup, setShowPopup] = useState(false);
@@ -300,28 +304,72 @@ const Navbar = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!navRef.current) return;
+
+    const showNav = () => {
+      navTween.current?.kill();
+      navTween.current = gsap.to(navRef.current, {
+        y: 0,
+        duration: 0.4,
+        ease: "power3.out",
+      });
+    };
+
+    const hideNav = () => {
+      navTween.current?.kill();
+      navTween.current = gsap.to(navRef.current, {
+        y: "-110%",
+        duration: 0.4,
+        ease: "power3.out",
+      });
+    };
+
+    const onScroll = () => {
+      if (menuOpen) return; // Don't auto-hide when menu is open
+
+      const currentScrollY = window.scrollY;
+
+      // Always show at top
+      if (currentScrollY <= 10) {
+        showNav();
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY > lastScrollY.current) {
+        // scrolling down
+        hideNav();
+      } else {
+        // scrolling up
+        showNav();
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [menuOpen]);
+
   return (
     <>
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full">
-        <Link href="/" className={`
+      <nav
+        ref={navRef}
+        className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full will-change-transform"
+      >
+        <Link
+          href="/"
+          className={`
               font-velcan text-2xl md:text-3xl
               transition-all duration-300 px-3
               ${isLightSection ? "invert-0" : "invert"}
-            `}>
-          {/* <Image
-            src="/logo/STR_Logo.png"
-            alt="STR Logo"
-            width={120}
-            height={50}
-            priority
-            quality={100}
-            className={`
-              w-[150px] md:w-[200px]
-              transition-all duration-300
-              ${isLightSection ? "invert-0" : "invert"}
             `}
-          /> */}
+        >
           Silambarasan TR
         </Link>
 
@@ -370,7 +418,10 @@ const Navbar = () => {
             </p>
           </button>
 
-          <Link href={'/store'} className=" hidden md:flex bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200  items-center justify-center gap-2 cursor-pointer text-sm md:text-base">
+          <Link
+            href={"/store"}
+            className=" hidden md:flex bg-green-500 hover:bg-green-600 text-black py-2 px-4 rounded-md transition-colors duration-200  items-center justify-center gap-2 cursor-pointer text-sm md:text-base"
+          >
             <Image
               src="/shopicon.png"
               alt="Store"
