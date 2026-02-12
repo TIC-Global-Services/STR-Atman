@@ -436,7 +436,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <JoinWaitlistForm
+      <MembershipForm
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
       />
