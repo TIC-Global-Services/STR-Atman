@@ -3,44 +3,56 @@
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+interface InstagramPost {
+  id: string;
+  postUrl: string;
+  caption?: string;
+}
+
 const InstagramSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isInView, setIsInView] = useState(false);
+  const [instagramPosts, setInstagramPosts] = useState<InstagramPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   /* ==============================
-     DATA (MANUAL META – REQUIRED)
-     Later this can come from API
+     FETCH FROM API
   ============================== */
-  const instagramPosts = [
-    {
-      id: 1,
-      postUrl: "https://www.instagram.com/p/DRrdGrTkXGA/",
-      likes: "754K",
-      caption: "As per my fans request ❤️",
-    },
-    {
-      id: 2,
-      postUrl: "https://www.instagram.com/reel/DRG3XXXkdt0/",
-      likes: "2.5M",
-      caption: "❤️❤️",
-    },
-    {
-      id: 3,
-      postUrl: "https://www.instagram.com/p/DQ1YlwOkSNJ/",
-      likes: "2.1M",
-      caption: "Thank you all for the endless love and support ❤️",
-    },
-  ];
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/social/instagram`);
+        const data = await res.json();
+
+        const posts = Array.isArray(data) ? data : data.data;
+        setInstagramPosts(posts || []);
+      } catch (err) {
+        console.error("Failed to fetch Instagram posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   /* ==============================
      INFINITE SETUP
   ============================== */
-  const [currentIndex, setCurrentIndex] = useState(instagramPosts.length);
-  const extendedPosts = [
-    ...instagramPosts,
-    ...instagramPosts,
-    ...instagramPosts,
-  ];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const extendedPosts =
+    instagramPosts.length > 0
+      ? [...instagramPosts, ...instagramPosts, ...instagramPosts]
+      : [];
+
+  useEffect(() => {
+    if (instagramPosts.length > 0) {
+      setCurrentIndex(instagramPosts.length);
+    }
+  }, [instagramPosts.length]);
 
   /* ==============================
      RESPONSIVE LAYOUT
@@ -73,7 +85,7 @@ const InstagramSection = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.3 },
+      { threshold: 0.3 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -84,15 +96,17 @@ const InstagramSection = () => {
      AUTO SCROLL
   ============================== */
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || instagramPosts.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = prev + 1;
+
         if (next >= instagramPosts.length * 2) {
           setTimeout(() => setCurrentIndex(instagramPosts.length), 50);
           return next;
         }
+
         return next;
       });
     }, 4500);
@@ -116,9 +130,6 @@ const InstagramSection = () => {
     }
   }, []);
 
-  /* ==============================
-     REPROCESS EMBEDS
-  ============================== */
   useEffect(() => {
     if ((window as any).instgrm) {
       (window as any).instgrm.Embeds.process();
@@ -166,12 +177,16 @@ const InstagramSection = () => {
     };
   };
 
+  if (loading) {
+    return (
+      <section className="py-20 text-center">
+        <p>Loading Instagram posts...</p>
+      </section>
+    );
+  }
+
   return (
-    <section
-      data-lenis-prevent
-      ref={sectionRef}
-      className=" light relative w-full py-20"
-    >
+    <section ref={sectionRef} className="light relative w-full py-20">
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
         <h2 className="text-black text-2xl md:text-5xl mb-6">
@@ -183,10 +198,7 @@ const InstagramSection = () => {
       </div>
 
       {/* CAROUSEL */}
-      <div
-        data-lenis-prevent
-        className="relative w-full overflow-hidden h-[520px] md:h-[620px]"
-      >
+      <div className="relative w-full overflow-hidden h-[520px] md:h-[620px]">
         <div className="relative w-full h-full">
           {layout &&
             extendedPosts.map((post, index) => (
@@ -197,7 +209,6 @@ const InstagramSection = () => {
               >
                 {/* EMBED */}
                 <div
-                  data-lenis-prevent
                   className={`absolute inset-0 flex items-start justify-center overflow-hidden ${
                     index === currentIndex
                       ? "pointer-events-auto"
@@ -217,34 +228,31 @@ const InstagramSection = () => {
                 </div>
 
                 {/* HOVER OVERLAY */}
-                <div
-                  className="
-                  absolute inset-0 z-10
-                  bg-gradient-to-t from-black/70 via-black/40 to-transparent
-                  opacity-0 group-hover:opacity-100
-                  transition-opacity duration-300
-                  flex flex-col justify-end
-                  p-2 md:p-5
-                  pointer-events-none
-                "
-                >
-                  <p className="text-white text-sm font-medium line-clamp-1">
-                    {post.caption}
-                  </p>
-
-                  <div className="mt-2 flex items-center gap-3 text-white text-sm">
-                    <span>❤️ {post.likes}</span>
+                {post.caption && (
+                  <div
+                    className="
+                    absolute inset-0 z-10
+                    bg-gradient-to-t from-black/70 via-black/40 to-transparent
+                    opacity-0 group-hover:opacity-100
+                    transition-opacity duration-300
+                    flex flex-col justify-end
+                    p-4
+                  "
+                  >
+                    <p className="text-white text-sm font-medium line-clamp-2">
+                      {post.caption}
+                    </p>
 
                     <Link
                       href={post.postUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="opacity-80 underline underline-offset-4 hover:opacity-100 pointer-events-auto"
+                      className="mt-2 text-white text-sm underline underline-offset-4 hover:opacity-80"
                     >
                       View on Instagram
                     </Link>
                   </div>
-                </div>
+                )}
               </div>
             ))}
         </div>
@@ -256,36 +264,14 @@ const InstagramSection = () => {
           onClick={() => setCurrentIndex((prev) => prev - 1)}
           className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0de65a"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
+          ←
         </button>
 
         <button
           onClick={() => setCurrentIndex((prev) => prev + 1)}
           className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0de65a"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+          →
         </button>
       </div>
     </section>

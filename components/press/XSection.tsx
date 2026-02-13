@@ -9,33 +9,55 @@ declare global {
   }
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+interface XPost {
+  id: string;
+  postUrl: string;
+}
+
 const XSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isInView, setIsInView] = useState(false);
+  const [xPosts, setXPosts] = useState<XPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   /* ==============================
-     X POSTS (EXACT TWEETS)
+     FETCH FROM API
   ============================== */
-  const xPosts = [
-    {
-      id: 1,
-      postUrl: "https://twitter.com/Arasanfilm_/status/2002707559153889516",
-    },
-    {
-      id: 2,
-      postUrl: "https://twitter.com/SilambarasanTR_/status/1998434523718291507",
-    },
-    {
-      id: 3,
-      postUrl: "https://twitter.com/SilambarasanTR_/status/1995092985256833217",
-    },
-  ];
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/social/x`);
+        const data = await res.json();
+
+        const posts = Array.isArray(data) ? data : data.data;
+        setXPosts(posts || []);
+      } catch (err) {
+        console.error("Failed to fetch X posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   /* ==============================
      INFINITE SETUP
   ============================== */
-  const [currentIndex, setCurrentIndex] = useState(xPosts.length);
-  const extendedPosts = [...xPosts, ...xPosts, ...xPosts];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const extendedPosts =
+    xPosts.length > 0
+      ? [...xPosts, ...xPosts, ...xPosts]
+      : [];
+
+  useEffect(() => {
+    if (xPosts.length > 0) {
+      setCurrentIndex(xPosts.length);
+    }
+  }, [xPosts.length]);
 
   /* ==============================
      RESPONSIVE LAYOUT
@@ -68,7 +90,7 @@ const XSection = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.3 },
+      { threshold: 0.3 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -79,15 +101,17 @@ const XSection = () => {
      AUTO SCROLL
   ============================== */
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || xPosts.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = prev + 1;
+
         if (next >= xPosts.length * 2) {
           setTimeout(() => setCurrentIndex(xPosts.length), 50);
           return next;
         }
+
         return next;
       });
     }, 4500);
@@ -96,7 +120,7 @@ const XSection = () => {
   }, [isInView, xPosts.length]);
 
   /* ==============================
-     LOAD X SCRIPT (ONCE)
+     LOAD X SCRIPT
   ============================== */
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -112,9 +136,6 @@ const XSection = () => {
     }
   }, []);
 
-  /* ==============================
-     REPROCESS EMBEDS
-  ============================== */
   useEffect(() => {
     if (window.twttr) {
       window.twttr.widgets.load();
@@ -162,15 +183,21 @@ const XSection = () => {
     };
   };
 
+  if (loading) {
+    return (
+      <section className="py-20 text-center">
+        <p>Loading X posts...</p>
+      </section>
+    );
+  }
+
   return (
-    <section
-      data-lenis-prevent
-      ref={sectionRef}
-      className="relative w-full py-20"
-    >
+    <section ref={sectionRef} className="relative w-full py-20">
       {/* TITLE */}
       <div className="text-center mb-16 px-6 lg:px-12">
-        <h2 className="text-black text-2xl md:text-5xl mb-6">X Highlights</h2>
+        <h2 className="text-black text-2xl md:text-5xl mb-6">
+          X Highlights
+        </h2>
         <p className="text-[#717580] text-base md:text-[20px] max-w-4xl mx-auto">
           A curated glimpse into official posts from X.
         </p>
@@ -183,12 +210,10 @@ const XSection = () => {
             extendedPosts.map((post, index) => (
               <div
                 key={`${post.id}-${index}`}
-                className="relative rounded-2xl overflow-hidden bg-white shadow-xl group"
+                className="relative rounded-2xl overflow-hidden bg-white shadow-xl"
                 style={getCardStyle(index)}
               >
-                {/* X EMBED */}
                 <div
-                  data-lenis-prevent
                   className={`absolute inset-0 ${
                     index === currentIndex
                       ? "pointer-events-auto"
@@ -215,36 +240,14 @@ const XSection = () => {
           onClick={() => setCurrentIndex((prev) => prev - 1)}
           className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0de65a"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
+          ←
         </button>
 
         <button
           onClick={() => setCurrentIndex((prev) => prev + 1)}
           className="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0de65a"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+          →
         </button>
       </div>
     </section>

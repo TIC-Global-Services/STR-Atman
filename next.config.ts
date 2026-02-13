@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     qualities: [90, 100],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+      },
+    ],
   },
 };
 

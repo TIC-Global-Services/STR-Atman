@@ -1,20 +1,53 @@
 "use client";
 
-import { useState } from "react";
-import { news } from "@/components/press/data/News";
+import { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import UpdateCard from "../home/UpdateCard";
 
 const ITEMS_PER_PAGE = 10;
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  coverImage: string;
+}
 
 export default function NewsList() {
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch from API
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/news`);
+        const data = await res.json();
+
+        const newsData = Array.isArray(data) ? data : data.data;
+
+        setNews(newsData);
+      } catch (err) {
+        console.error("Failed to fetch news:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  // 🔎 Search filter
   const filtered = news.filter(
     (n) =>
       n.title.toLowerCase().includes(search.toLowerCase()) ||
-      n.excerpt.toLowerCase().includes(search.toLowerCase()),
+      (n.summary ?? "")
+        .toLowerCase()
+        .includes(search.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -25,7 +58,7 @@ export default function NewsList() {
   );
 
   return (
-    <section className=" light mx-auto px-6 py-24 md:px-14">
+    <section className="light mx-auto px-6 py-24 md:px-14">
       {/* HEADER */}
       <div className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
         <div>
@@ -34,9 +67,7 @@ export default function NewsList() {
           </h1>
           <p className="text-[#717580] max-w-xl">
             This space features verified updates, media coverage, and official
-            announcements related to Silambarasan TR. From film launches to
-            major milestones, every update here reflects accurate and
-            authenticated information.
+            announcements related to Silambarasan TR.
           </p>
         </div>
 
@@ -60,66 +91,70 @@ export default function NewsList() {
         </div>
       </div>
 
-      {/* GRID */}
-      {visible.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-          {visible.map((item) => (
-            <UpdateCard
-              key={item.slug}
-              title={item.title}
-              img={item.image}
-              desc={item.excerpt}
-              slug={`/news/${item.slug}`}
-              isActive
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-[#717580] mt-20">No results found.</p>
-      )}
+      {/* LOADING */}
+      {loading ? (
+        <p className="text-center mt-20">Loading news...</p>
+      ) : visible.length > 0 ? (
+        <>
+          {/* GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+            {visible.map((item) => (
+              <UpdateCard
+                key={item.id}
+                title={item.title}
+                img={item.coverImage}
+                desc={item.summary}
+                slug={`/news/${item.slug}`}
+                isActive
+              />
+            ))}
+          </div>
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-3 mt-20">
-          {/* Prev */}
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-            className="px-4 py-2 rounded-full border border-black/20 
-                       disabled:opacity-40 hover:border-black transition"
-          >
-            Prev
-          </button>
-
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const pageNum = i + 1;
-            return (
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-3 mt-20">
               <button
-                key={pageNum}
-                onClick={() => setPage(pageNum)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center 
-                  border transition ${
-                    page === pageNum
-                      ? "bg-black text-white border-black"
-                      : "border-black/20 hover:border-black"
-                  }`}
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-4 py-2 rounded-full border border-black/20 
+                           disabled:opacity-40 hover:border-black transition"
               >
-                {pageNum}
+                Prev
               </button>
-            );
-          })}
 
-          {/* Next */}
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className="px-4 py-2 rounded-full border border-black/20 
-                       disabled:opacity-40 hover:border-black transition"
-          >
-            Next
-          </button>
-        </div>
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center 
+                      border transition ${
+                        page === pageNum
+                          ? "bg-black text-white border-black"
+                          : "border-black/20 hover:border-black"
+                      }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-4 py-2 rounded-full border border-black/20 
+                           disabled:opacity-40 hover:border-black transition"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="text-center text-[#717580] mt-20">
+          No results found.
+        </p>
       )}
     </section>
   );

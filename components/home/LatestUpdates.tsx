@@ -1,21 +1,10 @@
 "use client";
 
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useEffect, useRef, useState } from "react";
 import UpdateCard from "./UpdateCard";
 import ContainerLayout from "@/layout/ContainerLayout";
-import {
-  MdOutlineKeyboardArrowLeft,
-  MdOutlineKeyboardArrowRight,
-} from "react-icons/md";
-
-
-import { IoIosArrowRoundBack as ArrowLeft, IoIosArrowRoundForward  as ArrowRight } from "react-icons/io";
-
-
+import { IoIosArrowRoundBack as ArrowLeft, IoIosArrowRoundForward as ArrowRight } from "react-icons/io";
 import gsap from "gsap";
-import { news } from "../press/data/News";
-
-const updates = news.slice(-3);
 
 const POSITIONS = {
   LEFT: { x: -360, scale: 0.85, opacity: 1, z: 1 },
@@ -23,19 +12,58 @@ const POSITIONS = {
   RIGHT: { x: 360, scale: 0.85, opacity: 1, z: 1 },
 };
 
+interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  coverImage: string;
+  summary: string;
+}
+
 const LatestUpdates = () => {
   const cardsRef = useRef<HTMLDivElement[]>([]);
-  const [center, setCenter] = useState(1);
+  const [updates, setUpdates] = useState<NewsItem[]>([]);
+  const [center, setCenter] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch from API
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/news`
+        );
+        const data = await res.json();
+
+        // Adjust if API wraps response inside data field
+        const newsData = Array.isArray(data) ? data : data.data;
+
+        const latestThree = newsData.slice(-3);
+        setUpdates(latestThree);
+        setCenter(1); // middle card default
+      } catch (err) {
+        console.error("Failed to fetch news:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const getIndex = (offset: number) =>
     (center + offset + updates.length) % updates.length;
 
   const animate = () => {
+    if (updates.length === 0) return;
+
     const left = getIndex(-1);
     const mid = center;
     const right = getIndex(1);
 
     cardsRef.current.forEach((card, i) => {
+      if (!card) return;
+
       let pos = null;
 
       if (i === left) pos = POSITIONS.LEFT;
@@ -60,30 +88,38 @@ const LatestUpdates = () => {
 
   useLayoutEffect(() => {
     animate();
-  }, [center]);
+  }, [center, updates]);
+
+  if (loading) {
+    return (
+      <section className="py-20 text-center">
+        <p>Loading latest updates...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="light py-20 overflow-hidden">
-      <ContainerLayout className=" md:min-h-screen flex flex-col items-center  gap-12">
+      <ContainerLayout className="md:min-h-screen flex flex-col items-center gap-12">
         <h1 className="text-4xl md:text-6xl text-center">
           What&apos;s Happening Now
         </h1>
 
         {/* Carousel */}
-        <div className="relative w-full h-[60dvh] md:h-[75dvh] flex items-center justify-center ">
+        <div className="relative w-full h-[60dvh] md:h-[75dvh] flex items-center justify-center">
           {updates.map((item, idx) => (
             <div
-              key={idx}
+              key={item.id}
               ref={(el) => {
                 if (el) cardsRef.current[idx] = el;
               }}
-              className="absolute w-[320px] md:w-[360px] "
+              className="absolute w-[320px] md:w-[360px]"
             >
               <UpdateCard
-               title={item.title}
-               img={item.image}
-               desc={item.excerpt}
-               slug={`news/${item.slug}`}
+                title={item.title}
+                img={item.coverImage}
+                desc={item.summary}
+                slug={`news/${item.slug}`}
                 isActive={idx === center}
               />
             </div>
@@ -91,25 +127,25 @@ const LatestUpdates = () => {
         </div>
 
         {/* Arrows */}
-        <div className="flex gap-6 text-primary">
-          <button
-            onClick={() =>
-              setCenter((c) => (c - 1 + updates.length) % updates.length)
-            }
-            className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition cursor-pointer"
-          >
-            <ArrowLeft size={26} />
-          </button>
+        {updates.length > 1 && (
+          <div className="flex gap-6 text-primary">
+            <button
+              onClick={() =>
+                setCenter((c) => (c - 1 + updates.length) % updates.length)
+              }
+              className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition"
+            >
+              <ArrowLeft size={26} />
+            </button>
 
-          <button
-            onClick={() =>
-              setCenter((c) => (c + 1) % updates.length)
-            }
-            className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition cursor-pointer"
-          >
-            <ArrowRight size={26} />
-          </button>
-        </div>
+            <button
+              onClick={() => setCenter((c) => (c + 1) % updates.length)}
+              className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black transition"
+            >
+              <ArrowRight size={26} />
+            </button>
+          </div>
+        )}
       </ContainerLayout>
     </section>
   );

@@ -3,35 +3,47 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { remark } from "remark";
 import html from "remark-html";
-import { news } from "@/components/press/data/News";
 import ContourBackground from "@/components/reuseable/ContourBackground";
-import {
-  IoIosArrowBack,
-  IoIosArrowForward,
-} from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return news.map((article) => ({
-    slug: article.slug,
-  }));
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function NewsArticle({ params }: Props) {
   const { slug } = await params;
-  const currentIndex = news.findIndex((n) => n.slug === slug);
 
-  if (currentIndex === -1) return notFound();
+  // 🔥 Fetch current article
+  const articleRes = await fetch(`${API_BASE}/news/${slug}`, {
+    cache: "no-store", // or { next: { revalidate: 60 } } for ISR
+  });
 
-  const article = news[currentIndex];
-  const prev = news[currentIndex - 1];
-  const next = news[currentIndex + 1];
+  if (!articleRes.ok) return notFound();
 
-  // Convert Markdown to HTML
-  const processed = await remark().use(html).process(article.content);
+  const article = await articleRes.json();
+  if (!article) return notFound();
+
+  // 🔥 Fetch all published news (for prev/next)
+  const listRes = await fetch(`${API_BASE}/news`, {
+    cache: "no-store",
+  });
+
+  const newsList = await listRes.json();
+
+  const currentIndex = newsList.findIndex(
+    (n: any) => n.id === article.id
+  );
+
+  const prev = newsList[currentIndex - 1];
+  const next = newsList[currentIndex + 1];
+
+  // Convert Markdown → HTML
+  const processed = await remark()
+    .use(html)
+    .process(article.content || "");
+
   const contentHtml = processed.toString();
 
   return (
@@ -43,7 +55,6 @@ export default async function NewsArticle({ params }: Props) {
       levels={9}
     >
       <section className="light max-w-4xl mx-auto px-6 py-20">
-
         {/* BACK LINK */}
         <Link
           href="/press"
@@ -56,7 +67,7 @@ export default async function NewsArticle({ params }: Props) {
         {/* HERO */}
         <div className="relative h-[420px] rounded-2xl overflow-hidden mb-10">
           <Image
-            src={article.banner}
+            src={article.bannerImage || article.coverImage}
             alt={article.title}
             fill
             className="object-cover"
@@ -64,7 +75,11 @@ export default async function NewsArticle({ params }: Props) {
           />
         </div>
 
-        <p className="text-gray-500 mb-6">{article.date}</p>
+        <p className="text-gray-500 mb-6">
+          {article.publishedAt
+            ? new Date(article.publishedAt).toDateString()
+            : ""}
+        </p>
 
         {/* CONTENT */}
         <article
