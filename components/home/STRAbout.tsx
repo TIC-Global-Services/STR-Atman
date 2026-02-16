@@ -92,7 +92,7 @@ const STRAbout = () => {
       >
         {/* Mobile Image */}
         <Image
-          src="/STR/str-collage-mble.png"
+          src="/STR/str-cover-mob.png"
           alt="STR Group Mobile"
           fill
           priority
@@ -101,7 +101,7 @@ const STRAbout = () => {
 
         {/* Desktop Image */}
         <Image
-          src="/STR/str-collage-web.png"
+          src="/STR/str-cover-web.png"
           alt="STR Group Desktop"
           fill
           priority
@@ -113,7 +113,7 @@ const STRAbout = () => {
       {showText && (
         <div
           className="
-            fixed top-[15%] md:top-[10%]
+            fixed top-[10%] md:top-[5%]
             left-1/2 -translate-x-1/2
             w-[calc(100vw-2rem)] md:max-w-4xl
             px-4 md:px-10
@@ -126,7 +126,7 @@ const STRAbout = () => {
             animateBy="words"
             delay={1}
             direction="top"
-            className="text-[clamp(14px,2vw,24px)] text-black leading-tight"
+            className="text-[clamp(12px,2vw,20px)] leading-tight mix-blend-difference"
           />
         </div>
       )}
