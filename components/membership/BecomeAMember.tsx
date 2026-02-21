@@ -9,7 +9,7 @@ const BecomeAMember = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
-    <div>
+    <section className=" light">
       <div className=" flex items-center flex-col justify-center space-y-4 text-center ">
         <h1 className=" text-3xl md:text-5xl">Become a Verified Member</h1>
         <p className=" text-neutral-500 text-xl max-w-lg">
@@ -38,7 +38,7 @@ const BecomeAMember = () => {
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
       />
-    </div>
+    </section>
   );
 };
 

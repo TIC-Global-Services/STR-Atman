@@ -49,7 +49,7 @@ const TrackMembershipSection = () => {
   };
 
   return (
-    <section id="track" className="py-24 px-4">
+    <section id="track" className=" light py-24 px-4">
       <div className="max-w-2xl mx-auto text-center space-y-10">
 
         <div className="space-y-3">
