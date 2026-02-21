@@ -8,6 +8,7 @@ import Stories from "@/components/home/Stories";
 import HomeHero from "@/components/home/HomeHero";
 import Hero from "@/components/home/hero";
 import MusicCTA from "@/components/home/MusicCTA";
+import BecomeAMember from "@/components/membership/BecomeAMember";
 
 export default function Home() {
   return (
@@ -34,6 +35,7 @@ export default function Home() {
         levels={9}
       >
         <LatestUpdates />
+        <BecomeAMember />
         {/* <HorizontalImageGallery /> */}
         <MusicCTA />
       </ContourBackground>
