@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import PrimaryButton from "../reuseable/PrimaryButton";
 import MembershipForm from "./MembershipForm";
+import Link from "next/link";
 
 const BecomeAMember = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -30,7 +31,7 @@ const BecomeAMember = () => {
             className="mx-auto"
           />
 
-          <p>Already applied? <span className=" text-primary hover:underline">Track your application →</span></p>
+          <p>Already applied? <Link href={'/membership#track'} className=" text-primary hover:underline">Track your application →</Link></p>
         </div>
       </div>
       <MembershipForm
