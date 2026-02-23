@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Halfre, Velcan } from "@/fonts";
 import LayoutProvider from "@/layout/LayoutProvider";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "STR Atman",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${Halfre.variable} ${Velcan.variable} antialiased `}>
+        <Toaster position="top-right" />
         <LayoutProvider>{children}</LayoutProvider>
       </body>
     </html>

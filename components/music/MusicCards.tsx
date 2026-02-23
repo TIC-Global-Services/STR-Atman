@@ -26,7 +26,7 @@ const musicData: MusicCard[] = [
     title: "Vallavan",
     image: "/record1.png",
     hasVinyl: true,
-    mp3: "/music/vallavan.mp3",
+    mp3: "/music/loosu_penne.mp3",
     spotify:
       "https://open.spotify.com/album/7JfTOsi6jeQ1HQXSPKC5NV?si=71OZ3kDIRvSkikVK4TXDHQ",
   },
@@ -53,7 +53,7 @@ const musicData: MusicCard[] = [
     title: "Poda Podi",
     image: "/record4.png",
     hasVinyl: true,
-    mp3: "/music/poda_podi.mp3",
+    mp3: "/music/love_pannalama.mp3",
     spotify:
       "https://open.spotify.com/album/2f4wyBEqLUG9e4GqNdZmUC?si=G9GqxmDpSNqft0-1gbF6UA",
   },

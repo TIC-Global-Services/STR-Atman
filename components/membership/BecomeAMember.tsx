@@ -9,7 +9,7 @@ const BecomeAMember = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
-    <section className=" light">
+    <section className=" light py-20">
       <div className=" flex items-center flex-col justify-center space-y-4 text-center ">
         <h1 className=" text-3xl md:text-5xl">Become a Verified Member</h1>
         <p className=" text-neutral-500 text-xl max-w-lg">
