@@ -43,21 +43,21 @@ export default function MemberIdCard({ data }: Props) {
 
       <div
         ref={cardRef}
-        className="relative w-full max-w-[520px] h-[30dvh] md:h-[40dvh] aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl border border-white/10 text-white bg-neutral-950"
+        className="relative w-full max-w-[520px] h-[30dvh] md:h-[40dvh] aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl  text-white bg-neutral-950"
       >
         {!showBack ? (
           <>
             {/* FRONT SIDE */}
 
-            <div className="absolute inset-y-0 left-0 w-[55%] pointer-events-none">
+            <div className="absolute inset-y-0 left-0 w-[80%] h-full pointer-events-none">
               <Image
-                src="/STR/Str-2b.png"
+                src="/IdCard/str-idcard-3.jpg"
                 alt="STR Background"
                 fill
-                className="object-contain object-left opacity-70 scale-110"
+                className="object-cover object-left opacity-70 scale-[100%]"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-950/80 to-neutral-950" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-950/50 to-neutral-950 w-full" />
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-br from-[#C6A85E]/10 via-transparent to-transparent" />
@@ -154,8 +154,8 @@ export default function MemberIdCard({ data }: Props) {
               </div>
             </div>
 
-            <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 pointer-events-none w-full z-0">
-              <Image src={'/logo/logo.png'} alt="" width={600} height={600} className=" opacity-20  -rotate-6 w-[70%] mx-auto" />
+            <div className="absolute bottom-4 right-6 text-[70px] sm:text-[90px] font-black text-white/5 tracking-widest pointer-events-none">
+              STR
             </div>
           </>
         ) : (
