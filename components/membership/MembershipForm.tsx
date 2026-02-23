@@ -187,7 +187,7 @@ const MembershipForm = ({ showPopup, onClose }: MembershipFormProps) => {
       newErrors.email = "Invalid email address";
 
     if (!/^[6-9]\d{9}$/.test(formData.phone || ""))
-      newErrors.phone = "Invalid Indian phone number";
+      newErrors.phone = "Invalid phone number";
 
     if (!formData.address) newErrors.address = "Address required";
 
