@@ -114,7 +114,7 @@ export const SongsList = [
     duration: "4:54",
     year: "2022",
     coverImage: "/album_covers/Vendhu_Thanindhathu_Kaadu_Cover.jpg",
-    music: "/music/Kaalathukum_Nee_Venum.mp3"
+    music: "/music/Kaalathukkum_Nee_Venum.mp3"
   },
   {
     trackNo: "14",
@@ -132,7 +132,7 @@ export const SongsList = [
     duration: "6:03",
     year: "2003",
     coverImage: "/album_covers/dum_cover.jpeg",
-    music: "/music/kalakkuven_kalakkuven.mp3"
+    music: "/music/kalakkuven.mp3"
   },
   {
     trackNo: "16",
@@ -150,7 +150,7 @@ export const SongsList = [
     duration: "6:51",
     year: "2006",
     coverImage: "/album_covers/vallavan_cover.jpeg",
-    music: "/music/loose_penne.mp3"
+    music: "/music/loosu_penne.mp3"
   },
   {
     trackNo: "18",
@@ -258,7 +258,7 @@ export const SongsList = [
     duration: "4:18",
     year: "2002",
     coverImage: "/album_covers/april_manadhil_cover.jpg",
-    music: "/music/Sight-Adippom.mp3"
+    music: "/music/Sight-Adipom.mp3"
   },
   {
     trackNo: "30",
@@ -276,7 +276,7 @@ export const SongsList = [
     duration: "4:29",
     year: "2008",
     coverImage: "/album_covers/yennai_theriyuma_cover.jpeg",
-    music: "/music/Thanni-Kuruthirichi.mp3"
+    music: "/music/Thanni-Karuthirichi.mp3"
   },
   {
     trackNo: "32",
@@ -366,7 +366,7 @@ export const SongsList = [
     duration: "4:58",
     year: "2021",
     coverImage: "/album_covers/sulthan_cover.jpg",
-    music: "/music/Yaaraiyum-Ivalo-Azhaga.mp3"
+    music: "/music/Yaaraiyum-Ivlo-Azhaga.mp3"
   },
   {
     trackNo: "42",
