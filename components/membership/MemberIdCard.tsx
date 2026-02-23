@@ -40,16 +40,15 @@ export default function MemberIdCard({ data }: Props) {
 
   return (
     <section className="w-full flex flex-col items-center gap-6">
-      
-      {/* CARD CONTAINER */}
+
       <div
         ref={cardRef}
-        className="relative w-full max-w-[520px] aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl border border-white/10 text-white bg-neutral-950"
+        className="relative w-full max-w-[520px] h-[30dvh] md:h-[40dvh] aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl border border-white/10 text-white bg-neutral-950"
       >
-        {/* TOGGLE */}
         {!showBack ? (
           <>
-            {/* ================= FRONT ================= */}
+            {/* FRONT SIDE */}
+
             <div className="absolute inset-y-0 left-0 w-[55%] pointer-events-none">
               <Image
                 src="/STR/Str-2b.png"
@@ -61,15 +60,27 @@ export default function MemberIdCard({ data }: Props) {
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-950/80 to-neutral-950" />
             </div>
 
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#C6A85E]/10 via-transparent to-transparent" />
 
             <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-8">
+
+              {/* Header */}
               <div className="flex justify-between items-start text-start">
                 <div>
-                  <h3 className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-400">
+                  <h3 className="
+                    text-[10px] sm:text-xs uppercase tracking-[0.3em]
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">
                     STR OFFICIAL MEMBERSHIP
                   </h3>
-                  <h2 className="text-lg sm:text-2xl font-semibold mt-2 tracking-wide">
+
+                  <h2 className="
+                    text-lg sm:text-2xl font-semibold mt-2 tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                    drop-shadow-[0_0_6px_rgba(230,200,120,0.3)]
+                  ">
                     {data.fullName}
                   </h2>
                 </div>
@@ -78,36 +89,55 @@ export default function MemberIdCard({ data }: Props) {
                   <p className="text-[9px] sm:text-[10px] text-neutral-500">
                     Member Since
                   </p>
-                  <p className="text-xs sm:text-sm font-medium">
+                  <p className="text-xs sm:text-sm font-medium bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent">
                     {data.membershipYear}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm mt-2">
+              {/* Details */}
+              <div className="space-y-2 text-xs sm:text-sm mt-2">
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">Member ID</span>
-                  <span className="font-medium tracking-wide">
+                  <span className="text-neutral-200">Member ID</span>
+                  <span className="
+                    font-medium tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">
                     {data.membershipId}
                   </span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">Zone</span>
-                  <span>{data.zone}</span>
+                  <span className="text-neutral-200">Zone</span>
+                  <span className="
+                    font-medium tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">{data.zone}</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">District</span>
-                  <span>{data.district}</span>
+                  <span className="text-neutral-200">District</span>
+                  <span className="
+                    font-medium tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">{data.district}</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">State</span>
-                  <span>{data.state}</span>
+                  <span className="text-neutral-200">State</span>
+                  <span className="
+                    font-medium tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">{data.state}</span>
                 </div>
               </div>
 
+              {/* Footer */}
               <div className="flex justify-between items-center pt-3 border-t border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
@@ -124,33 +154,33 @@ export default function MemberIdCard({ data }: Props) {
               </div>
             </div>
 
-            <div className="absolute bottom-4 right-6 text-[60px] sm:text-[90px] font-black text-white/5 tracking-widest pointer-events-none">
-              STR
+            <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 pointer-events-none w-full z-0">
+              <Image src={'/logo/logo.png'} alt="" width={600} height={600} className=" opacity-20  -rotate-6 w-[70%] mx-auto" />
             </div>
           </>
         ) : (
           <>
-            {/* ================= BACK  ================= */}
+            {/* BACK SIDE */}
 
-            {/* Background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black" />
-
-            {/* Subtle pattern overlay */}
             <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_1px_1px,_white_1px,_transparent_0)] bg-[size:20px_20px]" />
 
             <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-8">
 
-              {/* Header */}
               <div className="text-center space-y-2">
-                <h3 className="text-xs uppercase tracking-[0.4em] text-neutral-400">
+                <h3 className="
+                  text-xs uppercase tracking-[0.4em]
+                  bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                  bg-clip-text text-transparent
+                ">
                   DIGITAL VERIFICATION
                 </h3>
+
                 <p className="text-xs text-neutral-500">
                   Scan QR to verify authenticity of this membership card
                 </p>
               </div>
 
-              {/* QR Section */}
               <div className="flex flex-col items-center gap-4 py-2">
                 <div className="bg-white p-3 rounded-lg shadow-xl">
                   <QRCodeCanvas
@@ -165,14 +195,7 @@ export default function MemberIdCard({ data }: Props) {
                 </p>
               </div>
 
-              {/* Footer */}
               <div className="text-center border-t border-white/10 pt-4 space-y-2">
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  <span className="text-xs text-emerald-400 font-semibold">
-                    OFFICIAL MEMBERS IDENTIFICATOR
-                  </span>
-                </div>
 
                 <p className="text-[10px] text-neutral-500">
                   If QR does not validate, this card is not legitimate.
