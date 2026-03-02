@@ -24,7 +24,7 @@ const STRAbout = () => {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=240%",
+          end: "+=140%",
           scrub: true,
           pin: true,
           anticipatePin: 1,

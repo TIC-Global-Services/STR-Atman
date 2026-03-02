@@ -32,20 +32,23 @@ const Timeline = () => {
           trigger: sectionRef.current,
           start: "top top",
           end: `+=${totalPanels * 100}%`,
-          scrub: true,
+          scrub: 0.5, // smooth but controlled
           pin: true,
+          snap: {
+            snapTo: 1 / (totalPanels - 1),
+            duration: { min: 0.2, max: 0.4 },
+            ease: "power2.out",
+          },
           onUpdate: (self) => {
             const step = 1 / (totalPanels - 1);
             const activeIndex = Math.round(self.progress / step);
 
-            /* ---------- Desktop progress ---------- */
             if (progressLine) {
               gsap.set(progressLine, {
                 width: `${self.progress * 100}%`,
               });
             }
 
-            /* ---------- Mobile progress ---------- */
             const mobileLine = document.getElementById("mobile-progress-line");
             if (mobileLine) {
               gsap.set(mobileLine, {
@@ -53,7 +56,6 @@ const Timeline = () => {
               });
             }
 
-            /* ---------- Desktop year highlight ---------- */
             yearsRef.current.forEach((year, i) => {
               if (!year) return;
 
@@ -64,7 +66,6 @@ const Timeline = () => {
               });
             });
 
-            /* ---------- Mobile year highlight (NO BG) ---------- */
             mobileYearsRef.current.forEach((year, i) => {
               if (!year) return;
 
@@ -79,7 +80,6 @@ const Timeline = () => {
               });
             });
 
-            /* ---------- Auto-center active mobile year ---------- */
             mobileYearsRef.current[activeIndex]?.scrollIntoView({
               behavior: "smooth",
               inline: "center",
@@ -223,8 +223,8 @@ const Timeline = () => {
             {item.title}
           </h1>
 
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-            <Image src={item.strImg} alt="" width={600} height={500} priority />
+          <div className="absolute bottom-[-15%] left-1/2 -translate-x-1/2 w-full h-dvh">
+            <Image src={item.strImg} alt="STR"  priority width={600} height={600} className=" w-1/2 mx-auto" />
           </div>
 
           <p

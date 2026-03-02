@@ -82,3 +82,20 @@ body {
 .animate-spin-slow {
   animation: spinSlow 5s linear infinite;
 }
+
+
+.input {
+  @apply w-full px-4 py-3 rounded-xl bg-gray-100 text-sm outline-none focus:ring-2 focus:ring-black transition-all;
+}
+
+.btn-primary {
+  @apply px-6 py-3 bg-black text-white rounded-xl text-sm hover:bg-neutral-800 transition-all;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-gray-200 rounded-xl text-sm hover:bg-gray-300 transition-all;
+}
+
+.question {
+  @apply flex items-center gap-3 text-sm font-medium;
+}

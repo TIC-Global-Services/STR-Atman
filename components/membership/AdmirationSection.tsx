@@ -67,18 +67,9 @@ const AdmirationSection = () => {
           </div>
         </div>
 
-        {/* <PrimaryButton
-          onClick={() => setShowPopup(true)}
-          title="Join the Club"
-          className="mx-auto"
-        /> */}
       </div>
 
-      {/* Membership Popup Modal */}
-      <MembershipForm
-        showPopup={showPopup}
-        onClose={() => setShowPopup(false)}
-      />
+    
     </section>
   );
 };

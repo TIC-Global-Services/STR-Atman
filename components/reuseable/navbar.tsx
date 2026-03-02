@@ -34,18 +34,9 @@ const Navbar = () => {
 
   const pathname = usePathname();
 
-  const openMembershipFromMenu = () => {
-    if (!menuBtnRef.current) return;
+  const [scrolled, setScrolled] = useState(false);
 
-    // Close menu first
-    toggleMenu();
-
-    // Open popup AFTER menu close animation
-    setTimeout(() => {
-      setShowPopup(true);
-    }, 700); // match your GSAP close duration
-  };
-
+ 
   useEffect(() => {
     const handleGlobalAudio = (e: any) => {
       // If someone else (like music-cta) plays, pause Navbar audio
@@ -92,7 +83,7 @@ const Navbar = () => {
     { title: "Merch Store", slug: "/store" },
     { title: "Membership", slug: "/membership" },
     { title: "Musical Journey", slug: "/music-journey" },
-    { title: "Contact", slug: "#" },
+    { title: "Contact", slug: "/membership/apply" },
   ];
 
   const menuImages = [
@@ -304,68 +295,83 @@ const Navbar = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!navRef.current) return;
+ useEffect(() => {
+  if (!navRef.current) return;
 
-    const showNav = () => {
-      navTween.current?.kill();
-      navTween.current = gsap.to(navRef.current, {
-        y: 0,
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    };
+  const showNav = () => {
+    navTween.current?.kill();
+    navTween.current = gsap.to(navRef.current, {
+      y: 0,
+      duration: 0.4,
+      ease: "power3.out",
+    });
+  };
 
-    const hideNav = () => {
-      navTween.current?.kill();
-      navTween.current = gsap.to(navRef.current, {
-        y: "-110%",
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    };
+  const hideNav = () => {
+    navTween.current?.kill();
+    navTween.current = gsap.to(navRef.current, {
+      y: "-110%",
+      duration: 0.4,
+      ease: "power3.out",
+    });
+  };
 
-    const onScroll = () => {
-      if (menuOpen) return; // Don't auto-hide when menu is open
+  const onScroll = () => {
+    if (menuOpen) return;
 
-      const currentScrollY = window.scrollY;
+    const currentScrollY = window.scrollY;
 
-      // Always show at top
-      if (currentScrollY <= 10) {
-        showNav();
-        lastScrollY.current = currentScrollY;
-        return;
-      }
+    // 🔥 NEW: glass toggle
+    if (currentScrollY > 20) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
 
-      if (currentScrollY > lastScrollY.current) {
-        // scrolling down
-        hideNav();
-      } else {
-        // scrolling up
-        showNav();
-      }
-
+    if (currentScrollY <= 10) {
+      showNav();
       lastScrollY.current = currentScrollY;
-    };
+      return;
+    }
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    if (currentScrollY > lastScrollY.current) {
+      hideNav();
+    } else {
+      showNav();
+    }
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [menuOpen]);
+    lastScrollY.current = currentScrollY;
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  return () => {
+    window.removeEventListener("scroll", onScroll);
+  };
+}, [menuOpen]);
 
   return (
     <>
       {/* NAVBAR */}
       <nav
-        ref={navRef}
-        className="fixed top-0 left-0 right-0 z-50 px-2 md:px-6 py-4 flex justify-between items-center overflow-x-hidden w-full will-change-transform"
-      >
+  ref={navRef}
+  className={`
+    fixed top-0 left-0 right-0 z-50
+    px-2 md:px-6 py-4
+    flex justify-between items-center
+    overflow-x-hidden w-[97%] mx-auto will-change-transform
+    transition-all duration-500
+    ${
+     scrolled
+  ? "backdrop-blur-2xl bg-white/5 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-b-2xl mx-4 mt-2"
+  : "bg-transparent"
+    }
+  `}
+>
         <Link
           href="/"
           className={`
-              font-velcan text-2xl md:text-3xl
+              font-velcan text-[26px] md:text-4xl
               transition-all duration-300 px-3
               ${isLightSection ? "invert-0" : "invert"}
             `}
@@ -436,10 +442,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <MembershipForm
-        showPopup={showPopup}
-        onClose={() => setShowPopup(false)}
-      />
+     
 
       {/* OVERLAY */}
       <div
@@ -497,14 +500,7 @@ const Navbar = () => {
                 <li key={i}>
                   <Link
                     href={item.slug}
-                    onClick={(e) => {
-                      if (item.title === "Contact") {
-                        e.preventDefault();
-                        openMembershipFromMenu();
-                      } else {
-                        toggleMenu();
-                      }
-                    }}
+                    onClick={(e) => toggleMenu()}
                     className="relative inline-block overflow-hidden group uppercase"
                   >
                     <span className="block transition-transform duration-300 group-hover:-translate-y-full">

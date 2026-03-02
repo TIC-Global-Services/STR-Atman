@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import PrimaryButton from "../reuseable/PrimaryButton";
 import MembershipForm from "./MembershipForm";
 import Link from "next/link";
+import PrimaryLinkButton from "../reuseable/PrimaryLinkButton";
 
 const BecomeAMember = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -25,8 +26,8 @@ const BecomeAMember = () => {
         />
 
         <div className=" space-y-4 py-4">
-          <PrimaryButton
-            onClick={() => setShowPopup(true)}
+          <PrimaryLinkButton
+            href="/membership/apply"
             title="Apply for Membership"
             className="mx-auto"
           />
@@ -34,10 +35,7 @@ const BecomeAMember = () => {
           <p>Already applied? <Link href={'/membership#track'} className=" text-primary hover:underline">Track your application →</Link></p>
         </div>
       </div>
-      <MembershipForm
-        showPopup={showPopup}
-        onClose={() => setShowPopup(false)}
-      />
+     
     </section>
   );
 };
