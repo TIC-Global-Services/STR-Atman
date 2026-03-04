@@ -7,9 +7,8 @@ const page = () => {
       <ContourBackground
         background="#ffffff"
         lineColor="#7a825c"
-        speed={0.03}
-        resolution={20}
-        levels={9}
+        resolution={10}
+        levels={50}
       >
         <ComingSoon />
       </ContourBackground>

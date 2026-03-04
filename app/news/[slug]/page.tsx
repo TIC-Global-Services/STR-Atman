@@ -50,9 +50,8 @@ export default async function NewsArticle({ params }: Props) {
     <ContourBackground
       background="#ffffff"
       lineColor="#7a825c"
-      speed={0.03}
-      resolution={20}
-      levels={9}
+      resolution={10}
+      levels={50}
     >
       <section className="light max-w-4xl mx-auto px-6 py-20">
         {/* BACK LINK */}
