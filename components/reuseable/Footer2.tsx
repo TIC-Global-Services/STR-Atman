@@ -37,9 +37,8 @@ const Footer = () => {
           {/* PATTERN */}
           <ContourBackground
             lineColor="rgba(0,0,0,0.35)"
-            speed={0.05}
-            resolution={9}
-            levels={8}
+            resolution={10}
+            levels={50}
             lineWidth={1}
           />
         </div>
