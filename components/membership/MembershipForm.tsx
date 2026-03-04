@@ -6,59 +6,71 @@ import toast from "react-hot-toast";
 import { Country, State, City } from "country-state-city";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { membershipApi } from "@/lib/membershipApi";
 
 /* ═══════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════ */
 
 const COUNTRY_CODES = [
-  { code: "+91",  flag: "🇮🇳", name: "India" },
-  { code: "+1",   flag: "🇺🇸", name: "USA" },
-  { code: "+44",  flag: "🇬🇧", name: "UK" },
+  { code: "+91", flag: "🇮🇳", name: "India" },
+  { code: "+1", flag: "🇺🇸", name: "USA" },
+  { code: "+44", flag: "🇬🇧", name: "UK" },
   { code: "+971", flag: "🇦🇪", name: "UAE" },
-  { code: "+65",  flag: "🇸🇬", name: "Singapore" },
-  { code: "+60",  flag: "🇲🇾", name: "Malaysia" },
-  { code: "+61",  flag: "🇦🇺", name: "Australia" },
-  { code: "+1",   flag: "🇨🇦", name: "Canada" },
-  { code: "+49",  flag: "🇩🇪", name: "Germany" },
-  { code: "+33",  flag: "🇫🇷", name: "France" },
-  { code: "+81",  flag: "🇯🇵", name: "Japan" },
-  { code: "+82",  flag: "🇰🇷", name: "South Korea" },
-  { code: "+86",  flag: "🇨🇳", name: "China" },
-  { code: "+94",  flag: "🇱🇰", name: "Sri Lanka" },
-  { code: "+92",  flag: "🇵🇰", name: "Pakistan" },
+  { code: "+65", flag: "🇸🇬", name: "Singapore" },
+  { code: "+60", flag: "🇲🇾", name: "Malaysia" },
+  { code: "+61", flag: "🇦🇺", name: "Australia" },
+  { code: "+1", flag: "🇨🇦", name: "Canada" },
+  { code: "+49", flag: "🇩🇪", name: "Germany" },
+  { code: "+33", flag: "🇫🇷", name: "France" },
+  { code: "+81", flag: "🇯🇵", name: "Japan" },
+  { code: "+82", flag: "🇰🇷", name: "South Korea" },
+  { code: "+86", flag: "🇨🇳", name: "China" },
+  { code: "+94", flag: "🇱🇰", name: "Sri Lanka" },
+  { code: "+92", flag: "🇵🇰", name: "Pakistan" },
   { code: "+880", flag: "🇧🇩", name: "Bangladesh" },
   { code: "+977", flag: "🇳🇵", name: "Nepal" },
-  { code: "+27",  flag: "🇿🇦", name: "South Africa" },
-  { code: "+55",  flag: "🇧🇷", name: "Brazil" },
-  { code: "+52",  flag: "🇲🇽", name: "Mexico" },
+  { code: "+27", flag: "🇿🇦", name: "South Africa" },
+  { code: "+55", flag: "🇧🇷", name: "Brazil" },
+  { code: "+52", flag: "🇲🇽", name: "Mexico" },
   { code: "+966", flag: "🇸🇦", name: "Saudi Arabia" },
   { code: "+974", flag: "🇶🇦", name: "Qatar" },
   { code: "+973", flag: "🇧🇭", name: "Bahrain" },
   { code: "+968", flag: "🇴🇲", name: "Oman" },
-  { code: "+31",  flag: "🇳🇱", name: "Netherlands" },
-  { code: "+46",  flag: "🇸🇪", name: "Sweden" },
-  { code: "+41",  flag: "🇨🇭", name: "Switzerland" },
+  { code: "+31", flag: "🇳🇱", name: "Netherlands" },
+  { code: "+46", flag: "🇸🇪", name: "Sweden" },
+  { code: "+41", flag: "🇨🇭", name: "Switzerland" },
 ];
 
 const BLOOD_GROUPS = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−"];
 
 const TIER_INFO: Record<string, { icon: string; perks: string }> = {
-  Free:     { icon: "⭐", perks: "Digital card · Newsletter" },
-  Silver:   { icon: "🥈", perks: "Free + Priority updates · Forum access" },
-  Gold:     { icon: "🥇", perks: "Silver + Exclusive merch · Early tickets" },
+  Free: { icon: "⭐", perks: "Digital card · Newsletter" },
+  Silver: { icon: "🥈", perks: "Free + Priority updates · Forum access" },
+  Gold: { icon: "🥇", perks: "Silver + Exclusive merch · Early tickets" },
   Platinum: { icon: "💎", perks: "Gold + Meet & greet · VIP events" },
 };
 
 const READABLE: Record<string, string> = {
-  fullName: "Full Name", dob: "Date of Birth", country: "Country",
-  state: "State", city: "City", bloodGroup: "Blood Group",
-  aadhaar: "Aadhaar / ID", phone: "Phone", email: "Email",
-  existingClub: "Fan Club Member", fanClubName: "Club Name",
-  chapterLocation: "Chapter Location", willingToJoin: "Join Chapter",
-  chapterLead: "Chapter Lead", fanDuration: "Fan Since",
-  favoriteMovie: "Fav Movie", favoriteSong: "Fav Song",
-  socialHandle: "Social Handle", tshirtSize: "T-Shirt Size",
+  fullName: "Full Name",
+  dob: "Date of Birth",
+  country: "Country",
+  state: "State",
+  city: "City",
+  bloodGroup: "Blood Group",
+  aadhaar: "Aadhaar / ID",
+  phone: "Phone",
+  email: "Email",
+  existingClub: "Fan Club Member",
+  fanClubName: "Club Name",
+  chapterLocation: "Chapter Location",
+  willingToJoin: "Join Chapter",
+  chapterLead: "Chapter Lead",
+  fanDuration: "Fan Since",
+  favoriteMovie: "Fav Movie",
+  favoriteSong: "Fav Song",
+  socialHandle: "Social Handle",
+  tshirtSize: "T-Shirt Size",
   membershipType: "Membership Tier",
 };
 
@@ -67,9 +79,19 @@ const READABLE: Record<string, string> = {
 ═══════════════════════════════════════ */
 
 type FieldKind =
-  | "text" | "email" | "dob" | "phone" | "aadhaar"
-  | "dropdown" | "cascadeCountry" | "cascadeState" | "cascadeCity"
-  | "bloodGroup" | "radio" | "otp" | "review";
+  | "text"
+  | "email"
+  | "dob"
+  | "phone"
+  | "aadhaar"
+  | "dropdown"
+  | "cascadeCountry"
+  | "cascadeState"
+  | "cascadeCity"
+  | "bloodGroup"
+  | "radio"
+  | "otp"
+  | "review";
 
 interface FieldDef {
   kind: FieldKind;
@@ -85,52 +107,130 @@ interface FieldDef {
 ═══════════════════════════════════════ */
 
 const ALL_FIELDS: FieldDef[] = [
-  { kind: "text",           name: "fullName",        label: "What's your full name?",                    placeholder: "e.g. Arjun Kumar" },
-  { kind: "dob",            name: "dob",             label: "When were you born?" },
-  { kind: "cascadeCountry", name: "country",         label: "Which country are you from?" },
-  { kind: "cascadeState",   name: "state",           label: "Which state / province / emirate?" },
-  { kind: "cascadeCity",    name: "city",            label: "And your city?" },
-  { kind: "bloodGroup",     name: "bloodGroup",      label: "What's your blood group?" },
-  { kind: "aadhaar",        name: "aadhaar",         label: "Aadhaar / National ID number",             placeholder: "12-digit Aadhaar or passport no." },
-  { kind: "phone",          name: "phone",           label: "Your phone number" },
-  { kind: "email",          name: "email",           label: "Your email address",                       placeholder: "you@example.com" },
-  { kind: "otp",            name: "otp",             label: "Verify your email" },
   {
-    kind: "radio", name: "existingClub", label: "Are you part of an existing STR fan club?",
-    options: ["yes|🎭|Yes, I'm already in a club", "no|🌟|No, I'm a free agent"],
+    kind: "text",
+    name: "fullName",
+    label: "What's your full name?",
+    placeholder: "e.g. Arjun Kumar",
   },
-  { kind: "text",  name: "fanClubName",      label: "Fan club name?",          placeholder: "e.g. STR Fans Mumbai" },
-  { kind: "text",  name: "chapterLocation",  label: "Chapter location?",       placeholder: "e.g. Mumbai" },
+  { kind: "dob", name: "dob", label: "When were you born?" },
   {
-    kind: "radio", name: "willingToJoin", label: "Willing to join a local chapter near you?",
+    kind: "cascadeCountry",
+    name: "country",
+    label: "Which country are you from?",
+  },
+  {
+    kind: "cascadeState",
+    name: "state",
+    label: "Which state / province / emirate?",
+  },
+  { kind: "cascadeCity", name: "city", label: "And your city?" },
+  { kind: "bloodGroup", name: "bloodGroup", label: "What's your blood group?" },
+  {
+    kind: "aadhaar",
+    name: "aadhaar",
+    label: "Aadhaar / National ID number",
+    placeholder: "12-digit Aadhaar or passport no.",
+  },
+  { kind: "phone", name: "phone", label: "Your phone number" },
+  {
+    kind: "email",
+    name: "email",
+    label: "Your email address",
+    placeholder: "you@example.com",
+  },
+  { kind: "otp", name: "otp", label: "Verify your email" },
+  {
+    kind: "radio",
+    name: "existingClub",
+    label: "Are you part of an existing STR fan club?",
+    options: [
+      "yes|🎭|Yes, I'm already in a club",
+      "no|🌟|No, I'm not in club",
+    ],
+  },
+  {
+    kind: "text",
+    name: "fanClubName",
+    label: "Fan club name?",
+    placeholder: "e.g. STR Fans Mumbai",
+  },
+  {
+    kind: "text",
+    name: "chapterLocation",
+    label: "Chapter location?",
+    placeholder: "e.g. Mumbai",
+  },
+  {
+    kind: "radio",
+    name: "willingToJoin",
+    label: "Willing to join a local chapter near you?",
     options: ["yes|🙌|Yes, sign me up!", "no|🙏|Maybe later"],
   },
   {
-    kind: "radio", name: "chapterLead", label: "Interested in becoming a Chapter Lead?",
+    kind: "radio",
+    name: "chapterLead",
+    label: "Interested in becoming a Chapter Lead?",
     options: ["yes|⚡|Yes, I'd love to lead!", "no|👀|Not for now"],
   },
   {
-    kind: "dropdown", name: "fanDuration", label: "How long have you been an STR fan?",
+    kind: "dropdown",
+    name: "fanDuration",
+    label: "How long have you been an STR fan?",
     options: ["Less than 1 year", "1–5 years", "5–10 years", "10+ years"],
   },
-  { kind: "text",     name: "favoriteMovie", label: "Favorite STR movie?",    placeholder: "e.g. Manmadhan, Vinnaithaandi...", optional: true },
-  { kind: "text",     name: "favoriteSong",  label: "Favorite STR song?",     placeholder: "e.g. Venmathi...",                optional: true },
-  { kind: "text",     name: "socialHandle",  label: "Instagram / X handle",   placeholder: "@yourhandle",                     optional: true },
   {
-    kind: "dropdown", name: "tshirtSize", label: "T-shirt size for merch?",
+    kind: "text",
+    name: "favoriteMovie",
+    label: "Favorite STR movie?",
+    placeholder: "e.g. Manmadhan, Vinnaithaandi...",
+    optional: true,
+  },
+  {
+    kind: "text",
+    name: "favoriteSong",
+    label: "Favorite STR song?",
+    placeholder: "e.g. Loosu Penne...",
+    optional: true,
+  },
+  {
+    kind: "text",
+    name: "socialHandle",
+    label: "Instagram / X handle",
+    placeholder: "@yourhandle",
+    optional: true,
+  },
+  {
+    kind: "dropdown",
+    name: "tshirtSize",
+    label: "T-shirt size for merch?",
     options: ["XS", "S", "M", "L", "XL", "XXL"],
     optional: true,
   },
   {
-    kind: "dropdown", name: "membershipType", label: "Choose your membership tier",
+    kind: "dropdown",
+    name: "membershipType",
+    label: "Choose your membership tier",
     options: ["Free", "Silver", "Gold", "Platinum"],
   },
   { kind: "review", name: "review", label: "" },
 ];
 
 const MANDATORY = new Set([
-  "fullName","dob","country","state","city","bloodGroup","aadhaar",
-  "phone","email","existingClub","willingToJoin","chapterLead","fanDuration","membershipType",
+  "fullName",
+  "dob",
+  "country",
+  "state",
+  "city",
+  "bloodGroup",
+  "aadhaar",
+  "phone",
+  "email",
+  "existingClub",
+  "willingToJoin",
+  "chapterLead",
+  "fanDuration",
+  "membershipType",
 ]);
 
 /* ═══════════════════════════════════════
@@ -139,10 +239,12 @@ const MANDATORY = new Set([
 
 const shouldShow = (f: FieldDef, d: Record<string, any>): boolean => {
   if (f.kind === "review") return true;
-  if (f.name === "fanClubName" || f.name === "chapterLocation") return d.existingClub === "yes";
-  if (f.name === "willingToJoin" || f.name === "chapterLead")   return d.existingClub === "no";
+  if (f.name === "fanClubName" || f.name === "chapterLocation")
+    return d.existingClub === "yes";
+  if (f.name === "willingToJoin" || f.name === "chapterLead")
+    return d.existingClub === "no";
   if (f.name === "state") return !!d.country && !!d.countryISO;
-  if (f.name === "city")  return !!d.state;
+  if (f.name === "city") return !!d.state;
   return true;
 };
 
@@ -151,8 +253,12 @@ const shouldShow = (f: FieldDef, d: Record<string, any>): boolean => {
 ═══════════════════════════════════════ */
 
 const OkButton = ({
-  onClick, label = "OK",
-}: { onClick: () => void; label?: string }) => (
+  onClick,
+  label = "OK",
+}: {
+  onClick: () => void;
+  label?: string;
+}) => (
   <motion.button
     whileHover={{ scale: 1.03 }}
     whileTap={{ scale: 0.97 }}
@@ -161,16 +267,26 @@ const OkButton = ({
     style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
   >
     {label}
-    <span style={{ color: "#0de65a" }} className="font-black text-base leading-none">↵</span>
+    <span
+      style={{ color: "#0de65a" }}
+      className="font-black text-base leading-none"
+    >
+      ↵
+    </span>
   </motion.button>
 );
 
 /* Reusable searchable list for country/state/city */
 const SearchList = ({
-  items, selected, onSelect, placeholder = "Search...",
+  items,
+  selected,
+  onSelect,
+  placeholder = "Search...",
 }: {
-  items: string[]; selected?: string;
-  onSelect: (v: string) => void; placeholder?: string;
+  items: string[];
+  selected?: string;
+  onSelect: (v: string) => void;
+  placeholder?: string;
 }) => {
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -181,28 +297,34 @@ const SearchList = ({
     return () => clearTimeout(t);
   }, []);
 
-  const filtered = items.filter(i => i.toLowerCase().includes(q.toLowerCase()));
+  const filtered = items.filter((i) =>
+    i.toLowerCase().includes(q.toLowerCase()),
+  );
 
   return (
     <div className="flex flex-col gap-2">
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+          🔍
+        </span>
         <input
           ref={inputRef}
           value={q}
-          onChange={e => setQ(e.target.value)}
+          onChange={(e) => setQ(e.target.value)}
           placeholder={placeholder}
           className="w-full border-2 border-gray-200 rounded-xl pl-9 pr-4 py-3 text-sm font-medium outline-none transition-colors"
           style={{ caretColor: "#0de65a" }}
-          onFocus={e => (e.currentTarget.style.borderColor = "#0de65a")}
-          onBlur={e => (e.currentTarget.style.borderColor = "#e5e7eb")}
+          onFocus={(e) => (e.currentTarget.style.borderColor = "#0de65a")}
+          onBlur={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
         />
       </div>
       <div className="max-h-[220px] overflow-y-auto flex flex-col gap-1.5 pr-0.5 custom-scroll">
         {filtered.length === 0 && (
-          <p className="text-xs text-gray-400 text-center py-6">No results for "{q}"</p>
+          <p className="text-xs text-gray-400 text-center py-6">
+            No results for "{q}"
+          </p>
         )}
-        {filtered.map(item => (
+        {filtered.map((item) => (
           <motion.button
             key={item}
             whileHover={{ x: 3 }}
@@ -213,10 +335,13 @@ const SearchList = ({
             <span className="text-sm font-medium flex-1 text-left">{item}</span>
             {selected === item && (
               <motion.span
-                initial={{ scale: 0 }} animate={{ scale: 1 }}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
                 className="text-xs font-black ml-2 flex-shrink-0"
                 style={{ color: "#0de65a" }}
-              >✓</motion.span>
+              >
+                ✓
+              </motion.span>
             )}
           </motion.button>
         ))}
@@ -230,28 +355,39 @@ const SearchList = ({
 ═══════════════════════════════════════ */
 
 const MembershipForm = () => {
-  const [data, setData]     = useState<Record<string, any>>({ countryCode: "+91", countryFlag: "🇮🇳" });
+  const [data, setData] = useState<Record<string, any>>({
+    countryCode: "+91",
+    countryFlag: "🇮🇳",
+  });
   const [fieldIndex, setFieldIndex] = useState(0);
-  const [direction, setDirection]   = useState(1);
-  const [loading, setLoading]       = useState(false);
-  const [submitted, setSubmitted]   = useState(false);
+  const [direction, setDirection] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   /* OTP – stored as array of 6 digits for reliable controlled input */
-  const [otpDigits, setOtpDigits]         = useState<string[]>(["","","","","",""]);
-  const [otpSent, setOtpSent]             = useState(false);
+  const [otpDigits, setOtpDigits] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
+  const [otpSent, setOtpSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
-  const [timer, setTimer]                 = useState(0);
+  const [timer, setTimer] = useState(0);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   /* Country code picker */
-  const [ccOpen, setCcOpen]   = useState(false);
+  const [ccOpen, setCcOpen] = useState(false);
   const [ccSearch, setCcSearch] = useState("");
   const ccRef = useRef<HTMLDivElement>(null);
 
   /* Close CC picker on outside click */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ccRef.current && !ccRef.current.contains(e.target as Node)) setCcOpen(false);
+      if (ccRef.current && !ccRef.current.contains(e.target as Node))
+        setCcOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -260,25 +396,35 @@ const MembershipForm = () => {
   /* OTP countdown */
   useEffect(() => {
     if (timer <= 0) return;
-    const id = setInterval(() => setTimer(t => t - 1), 1000);
+    const id = setInterval(() => setTimer((t) => t - 1), 1000);
     return () => clearInterval(id);
   }, [timer]);
 
   /* ── Helpers ── */
-  const set = (k: string, v: any) => setData(prev => ({ ...prev, [k]: v }));
+  const set = (k: string, v: any) => setData((prev) => ({ ...prev, [k]: v }));
 
-  const visibleFields = ALL_FIELDS.filter(f => shouldShow(f, data));
-  const current  = visibleFields[fieldIndex];
-  const totalQ   = visibleFields.length - 1; // exclude review
+  const visibleFields = ALL_FIELDS.filter((f) => shouldShow(f, data));
+  const current = visibleFields[fieldIndex];
+  const totalQ = visibleFields.length - 1; // exclude review
   const progress = Math.round((fieldIndex / (visibleFields.length - 1)) * 100);
 
-  const goNext = () => { setDirection(1);  setFieldIndex(i => Math.min(i + 1, visibleFields.length - 1)); };
-  const goPrev = () => { setDirection(-1); setFieldIndex(i => Math.max(i - 1, 0)); };
+  const goNext = () => {
+    setDirection(1);
+    setFieldIndex((i) => Math.min(i + 1, visibleFields.length - 1));
+  };
+  const goPrev = () => {
+    setDirection(-1);
+    setFieldIndex((i) => Math.max(i - 1, 0));
+  };
 
   const advance = () => {
     if (current.kind === "otp") {
-      if (!emailVerified) { toast.error("Please verify your OTP first"); return; }
-      goNext(); return;
+      if (!emailVerified) {
+        toast.error("Please verify your OTP first");
+        return;
+      }
+      goNext();
+      return;
     }
     if (MANDATORY.has(current.name) && !data[current.name]) {
       toast.error("This field is required");
@@ -287,16 +433,31 @@ const MembershipForm = () => {
     goNext();
   };
 
-  const sendOtp = () => {
-    if (!data.email) { toast.error("Enter email first"); return; }
-    toast.success("OTP sent! (demo mode)");
-    setOtpSent(true); setTimer(60);
+  const sendOtp = async () => {
+    if (!data.email) {
+      toast.error("Enter email first");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await membershipApi.sendOtp(data.email);
+
+      toast.success("OTP sent to your email ✉️");
+      setOtpSent(true);
+      setTimer(60);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleOtpInput = (val: string, idx: number) => {
     // Strip non-digits, take last char so replacing a filled box works correctly
     const digit = val.replace(/\D/g, "").slice(-1);
-    setOtpDigits(prev => {
+    setOtpDigits((prev) => {
       const next = [...prev];
       next[idx] = digit;
       return next;
@@ -307,14 +468,25 @@ const MembershipForm = () => {
     }
   };
 
-  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number) => {
+  const handleOtpKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    idx: number,
+  ) => {
     if (e.key === "Backspace") {
       if (otpDigits[idx]) {
         // Clear current box first
-        setOtpDigits(prev => { const n = [...prev]; n[idx] = ""; return n; });
+        setOtpDigits((prev) => {
+          const n = [...prev];
+          n[idx] = "";
+          return n;
+        });
       } else if (idx > 0) {
         // Move to previous box and clear it
-        setOtpDigits(prev => { const n = [...prev]; n[idx - 1] = ""; return n; });
+        setOtpDigits((prev) => {
+          const n = [...prev];
+          n[idx - 1] = "";
+          return n;
+        });
         setTimeout(() => otpRefs.current[idx - 1]?.focus(), 0);
       }
       e.preventDefault();
@@ -327,31 +499,95 @@ const MembershipForm = () => {
 
   const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     if (!pasted) return;
-    const next = ["","","","","",""];
-    pasted.split("").forEach((ch, i) => { next[i] = ch; });
+    const next = ["", "", "", "", "", ""];
+    pasted.split("").forEach((ch, i) => {
+      next[i] = ch;
+    });
     setOtpDigits(next);
     // Focus the box after the last pasted digit (or last box)
     const focusIdx = Math.min(pasted.length, 5);
     setTimeout(() => otpRefs.current[focusIdx]?.focus(), 0);
   };
 
-  const verifyOtp = () => {
+  const verifyOtp = async () => {
     const code = otpDigits.join("");
-    if (code.length < 6) { toast.error("Enter the full 6-digit code"); return; }
-    setEmailVerified(true);
-    toast.success("Email verified ✓");
-    setTimeout(goNext, 700);
+
+    if (code.length < 6) {
+      toast.error("Enter the full 6-digit code");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await membershipApi.verifyOtp(data.email, code);
+
+      setEmailVerified(true);
+      toast.success("Email verified successfully ✓");
+
+      setTimeout(goNext, 700);
+    } catch (err: any) {
+      toast.error(err.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!data.agreeTerms || !data.ageConfirm) {
       toast.error("Please accept both declarations to submit");
       return;
     }
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1800);
+
+    if (!emailVerified) {
+      toast.error("Email verification required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        fullName: data.fullName,
+        dob: data.dob,
+        bloodGroup: data.bloodGroup,
+        aadhaarNumber: data.aadhaar,
+        email: data.email,
+        phone: `${data.countryCode}${data.phone}`,
+        country: data.country,
+        state: data.state,
+        city: data.city,
+        existingClub: data.existingClub,
+        fanClubName: data.fanClubName,
+        chapterLocation: data.chapterLocation,
+        willingToJoin: data.willingToJoin,
+        chapterLead: data.chapterLead,
+        fanDuration: data.fanDuration,
+        favoriteMovie: data.favoriteMovie,
+        favoriteSong: data.favoriteSong,
+        socialHandle: data.socialHandle,
+        tshirtSize: data.tshirtSize,
+        membershipType: data.membershipType,
+        agreeTerms: data.agreeTerms,
+        ageConfirm: data.ageConfirm,
+      };
+
+      const response = await membershipApi.apply(payload);
+
+      toast.success("Application submitted successfully 🎉");
+      setSubmitted(true);
+
+      console.log("Membership ID:", response.membershipId);
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ═══════════════════════════════════════
@@ -368,14 +604,24 @@ const MembershipForm = () => {
         <motion.div
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.15 }}
+          transition={{
+            type: "spring",
+            stiffness: 260,
+            damping: 16,
+            delay: 0.15,
+          }}
           className="text-8xl select-none"
-        >🎉</motion.div>
+        >
+          🎉
+        </motion.div>
 
         <div>
-          <h2 className="text-3xl font-black tracking-tight mb-2">Welcome to the family!</h2>
+          <h2 className="text-3xl font-black tracking-tight mb-2">
+            Welcome to the family!
+          </h2>
           <p className="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
-            Your application has been received. Check your inbox for confirmation and next steps.
+            Your application has been received. Check your inbox for
+            confirmation and next steps.
           </p>
         </div>
 
@@ -388,7 +634,9 @@ const MembershipForm = () => {
 
         {data.membershipType && (
           <motion.div
-            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
             className="flex items-center gap-2 text-sm font-semibold text-gray-500"
           >
             <span>{TIER_INFO[data.membershipType]?.icon}</span>
@@ -404,7 +652,6 @@ const MembershipForm = () => {
   ═══════════════════════════════════════ */
   const renderField = (f: FieldDef) => {
     switch (f.kind) {
-
       /* ── Text / Email / Aadhaar ── */
       case "text":
       case "email":
@@ -416,11 +663,14 @@ const MembershipForm = () => {
               type={f.kind === "email" ? "email" : "text"}
               placeholder={f.placeholder}
               value={data[f.name] || ""}
-              onChange={e => set(f.name, e.target.value)}
-              onKeyDown={e => e.key === "Enter" && advance()}
+              onChange={(e) => set(f.name, e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && advance()}
               className="typeform-input"
             />
-            <OkButton onClick={advance} label={f.optional ? "OK / Skip" : "OK"} />
+            <OkButton
+              onClick={advance}
+              label={f.optional ? "OK / Skip" : "OK"}
+            />
           </div>
         );
 
@@ -458,13 +708,16 @@ const MembershipForm = () => {
 
             {data.dob && (
               <motion.p
-                initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
                 className="text-xs font-semibold flex items-center gap-1.5"
                 style={{ color: "#0de65a" }}
               >
                 <span className="text-base">✓</span>
                 {new Date(data.dob + "T00:00:00").toLocaleDateString("en-IN", {
-                  day: "numeric", month: "long", year: "numeric",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
                 })}
               </motion.p>
             )}
@@ -476,35 +729,50 @@ const MembershipForm = () => {
 
       /* ── Phone + Country Code ── */
       case "phone": {
-        const selectedCc = COUNTRY_CODES.find(
-          c => c.code === data.countryCode && c.flag === data.countryFlag
-        ) || COUNTRY_CODES[0];
+        const selectedCc =
+          COUNTRY_CODES.find(
+            (c) => c.code === data.countryCode && c.flag === data.countryFlag,
+          ) || COUNTRY_CODES[0];
 
-        const filteredCc = COUNTRY_CODES.filter(c =>
-          c.name.toLowerCase().includes(ccSearch.toLowerCase()) ||
-          c.code.includes(ccSearch)
+        const filteredCc = COUNTRY_CODES.filter(
+          (c) =>
+            c.name.toLowerCase().includes(ccSearch.toLowerCase()) ||
+            c.code.includes(ccSearch),
         );
 
         return (
           <div className="flex flex-col gap-4">
             <div className="flex gap-2.5 items-center">
-
               {/* Country Code Trigger */}
               <div ref={ccRef} className="relative flex-shrink-0">
                 <motion.button
                   whileHover={{ backgroundColor: "#f9fafb" }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => { setCcOpen(v => !v); setCcSearch(""); }}
+                  onClick={() => {
+                    setCcOpen((v) => !v);
+                    setCcSearch("");
+                  }}
                   className="flex items-center gap-1.5 px-3 h-[50px] rounded-xl border-2 text-sm font-bold select-none"
                   style={{ borderColor: ccOpen ? "#0de65a" : "#e5e7eb" }}
                 >
-                  <span className="text-xl leading-none">{selectedCc.flag}</span>
-                  <span className="text-gray-800 tracking-tight">{selectedCc.code}</span>
+                  <span className="text-xl leading-none">
+                    {selectedCc.flag}
+                  </span>
+                  <span className="text-gray-800 tracking-tight">
+                    {selectedCc.code}
+                  </span>
                   <svg
                     className="w-3 h-3 text-gray-400 transition-transform"
-                    style={{ transform: ccOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                  ><polyline points="6 9 12 15 18 9"/></svg>
+                    style={{
+                      transform: ccOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </motion.button>
 
                 <AnimatePresence>
@@ -521,7 +789,7 @@ const MembershipForm = () => {
                         <input
                           autoFocus
                           value={ccSearch}
-                          onChange={e => setCcSearch(e.target.value)}
+                          onChange={(e) => setCcSearch(e.target.value)}
                           placeholder="Search country or code..."
                           className="w-full text-sm rounded-lg px-3 py-2 outline-none bg-gray-50"
                           style={{ caretColor: "#0de65a" }}
@@ -529,7 +797,9 @@ const MembershipForm = () => {
                       </div>
                       <div className="max-h-56 overflow-y-auto custom-scroll">
                         {filteredCc.map((c, i) => {
-                          const isActive = c.code === data.countryCode && c.flag === data.countryFlag;
+                          const isActive =
+                            c.code === data.countryCode &&
+                            c.flag === data.countryFlag;
                           return (
                             <motion.button
                               key={i}
@@ -540,17 +810,34 @@ const MembershipForm = () => {
                                 setCcOpen(false);
                               }}
                               className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors"
-                              style={{ background: isActive ? "#f0fff6" : undefined }}
+                              style={{
+                                background: isActive ? "#f0fff6" : undefined,
+                              }}
                             >
-                              <span className="text-xl leading-none">{c.flag}</span>
-                              <span className="font-medium flex-1 text-gray-800">{c.name}</span>
-                              <span className="text-gray-400 font-mono text-xs tabular-nums">{c.code}</span>
-                              {isActive && <span className="text-xs font-black" style={{ color: "#0de65a" }}>✓</span>}
+                              <span className="text-xl leading-none">
+                                {c.flag}
+                              </span>
+                              <span className="font-medium flex-1 text-gray-800">
+                                {c.name}
+                              </span>
+                              <span className="text-gray-400 font-mono text-xs tabular-nums">
+                                {c.code}
+                              </span>
+                              {isActive && (
+                                <span
+                                  className="text-xs font-black"
+                                  style={{ color: "#0de65a" }}
+                                >
+                                  ✓
+                                </span>
+                              )}
                             </motion.button>
                           );
                         })}
                         {filteredCc.length === 0 && (
-                          <p className="text-xs text-gray-400 px-4 py-4 text-center">No results</p>
+                          <p className="text-xs text-gray-400 px-4 py-4 text-center">
+                            No results
+                          </p>
                         )}
                       </div>
                     </motion.div>
@@ -563,8 +850,10 @@ const MembershipForm = () => {
                 type="tel"
                 placeholder="XXXXX XXXXX"
                 value={data.phone || ""}
-                onChange={e => set("phone", e.target.value.replace(/\D/g, "").slice(0, 13))}
-                onKeyDown={e => e.key === "Enter" && advance()}
+                onChange={(e) =>
+                  set("phone", e.target.value.replace(/\D/g, "").slice(0, 13))
+                }
+                onKeyDown={(e) => e.key === "Enter" && advance()}
                 className="typeform-input flex-1"
               />
             </div>
@@ -577,18 +866,24 @@ const MembershipForm = () => {
       case "bloodGroup":
         return (
           <div className="grid grid-cols-4 gap-3">
-            {BLOOD_GROUPS.map(bg => (
+            {BLOOD_GROUPS.map((bg) => (
               <motion.button
                 key={bg}
                 whileHover={{ scale: 1.06, y: -2 }}
                 whileTap={{ scale: 0.94 }}
-                onClick={() => { set("bloodGroup", bg); setTimeout(goNext, 300); }}
+                onClick={() => {
+                  set("bloodGroup", bg);
+                  setTimeout(goNext, 300);
+                }}
                 className="flex flex-col items-center justify-center py-5 rounded-2xl border-2 font-black text-base select-none transition-all"
                 style={{
                   borderColor: data.bloodGroup === bg ? "#0de65a" : "#e5e7eb",
-                  background:  data.bloodGroup === bg ? "#f0fff6"  : "white",
-                  color:       data.bloodGroup === bg ? "#111"      : "#374151",
-                  boxShadow:   data.bloodGroup === bg ? "0 4px 20px rgba(13,230,90,0.2)" : "none",
+                  background: data.bloodGroup === bg ? "#f0fff6" : "white",
+                  color: data.bloodGroup === bg ? "#111" : "#374151",
+                  boxShadow:
+                    data.bloodGroup === bg
+                      ? "0 4px 20px rgba(13,230,90,0.2)"
+                      : "none",
                 }}
               >
                 {bg}
@@ -602,16 +897,16 @@ const MembershipForm = () => {
         const countries = Country.getAllCountries();
         return (
           <SearchList
-            items={countries.map(c => c.name)}
+            items={countries.map((c) => c.name)}
             selected={data.country}
             placeholder="Search country..."
-            onSelect={name => {
-              const found = countries.find(c => c.name === name);
-              set("country",    name);
+            onSelect={(name) => {
+              const found = countries.find((c) => c.name === name);
+              set("country", name);
               set("countryISO", found?.isoCode ?? "");
-              set("state",    "");
+              set("state", "");
               set("stateISO", "");
-              set("city",     "");
+              set("city", "");
               setTimeout(goNext, 350);
             }}
           />
@@ -620,25 +915,29 @@ const MembershipForm = () => {
 
       /* ── Cascade State ── */
       case "cascadeState": {
-        const states = data.countryISO ? State.getStatesOfCountry(data.countryISO) : [];
+        const states = data.countryISO
+          ? State.getStatesOfCountry(data.countryISO)
+          : [];
         if (states.length === 0) {
           return (
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-gray-400 italic">No states found for {data.country}. You can skip this.</p>
+              <p className="text-sm text-gray-400 italic">
+                No states found for {data.country}. You can skip this.
+              </p>
               <OkButton onClick={goNext} label="Skip" />
             </div>
           );
         }
         return (
           <SearchList
-            items={states.map(s => s.name)}
+            items={states.map((s) => s.name)}
             selected={data.state}
             placeholder="Search state / province..."
-            onSelect={name => {
-              const found = states.find(s => s.name === name);
-              set("state",    name);
+            onSelect={(name) => {
+              const found = states.find((s) => s.name === name);
+              set("state", name);
               set("stateISO", found?.isoCode ?? "");
-              set("city",     "");
+              set("city", "");
               setTimeout(goNext, 350);
             }}
           />
@@ -647,9 +946,10 @@ const MembershipForm = () => {
 
       /* ── Cascade City ── */
       case "cascadeCity": {
-        const cities = (data.countryISO && data.stateISO)
-          ? City.getCitiesOfState(data.countryISO, data.stateISO)
-          : [];
+        const cities =
+          data.countryISO && data.stateISO
+            ? City.getCitiesOfState(data.countryISO, data.stateISO)
+            : [];
         if (cities.length === 0) {
           return (
             <div className="flex flex-col gap-4">
@@ -657,8 +957,8 @@ const MembershipForm = () => {
                 autoFocus
                 placeholder="Type your city name"
                 value={data.city || ""}
-                onChange={e => set("city", e.target.value)}
-                onKeyDown={e => e.key === "Enter" && advance()}
+                onChange={(e) => set("city", e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && advance()}
                 className="typeform-input"
               />
               <OkButton onClick={advance} />
@@ -667,10 +967,10 @@ const MembershipForm = () => {
         }
         return (
           <SearchList
-            items={cities.map(c => c.name)}
+            items={cities.map((c) => c.name)}
             selected={data.city}
             placeholder="Search city..."
-            onSelect={name => {
+            onSelect={(name) => {
               set("city", name);
               setTimeout(goNext, 350);
             }}
@@ -682,7 +982,7 @@ const MembershipForm = () => {
       case "radio":
         return (
           <div className="flex flex-col gap-3">
-            {(f.options || []).map(raw => {
+            {(f.options || []).map((raw) => {
               const [value, icon, label] = raw.split("|");
               const isSelected = data[f.name] === value;
               return (
@@ -690,17 +990,27 @@ const MembershipForm = () => {
                   key={value}
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => { set(f.name, value); setTimeout(goNext, 360); }}
+                  onClick={() => {
+                    set(f.name, value);
+                    setTimeout(goNext, 360);
+                  }}
                   className={`choice-card ${isSelected ? "choice-card--selected" : ""}`}
                 >
-                  <span className="text-xl leading-none select-none">{icon}</span>
-                  <span className="font-semibold text-sm flex-1 text-left">{label}</span>
+                  <span className="text-xl leading-none select-none">
+                    {icon}
+                  </span>
+                  <span className="font-semibold text-sm flex-1 text-left">
+                    {label}
+                  </span>
                   {isSelected && (
                     <motion.span
-                      initial={{ scale: 0 }} animate={{ scale: 1 }}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
                       className="text-xs font-black ml-auto flex-shrink-0"
                       style={{ color: "#0de65a" }}
-                    >✓</motion.span>
+                    >
+                      ✓
+                    </motion.span>
                   )}
                 </motion.button>
               );
@@ -712,7 +1022,7 @@ const MembershipForm = () => {
       case "dropdown":
         return (
           <div className="flex flex-col gap-2 max-h-[240px] overflow-y-auto custom-scroll pr-0.5">
-            {(f.options || []).map(opt => {
+            {(f.options || []).map((opt) => {
               const isSelected = data[f.name] === opt;
               const tier = TIER_INFO[opt];
               return (
@@ -720,20 +1030,34 @@ const MembershipForm = () => {
                   key={opt}
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => { set(f.name, opt); setTimeout(goNext, 320); }}
+                  onClick={() => {
+                    set(f.name, opt);
+                    setTimeout(goNext, 320);
+                  }}
                   className={`choice-card ${isSelected ? "choice-card--selected" : ""}`}
                 >
-                  {tier && <span className="text-xl leading-none select-none">{tier.icon}</span>}
+                  {tier && (
+                    <span className="text-xl leading-none select-none">
+                      {tier.icon}
+                    </span>
+                  )}
                   <div className="flex flex-col items-start flex-1">
                     <span className="font-semibold text-sm">{opt}</span>
-                    {tier && <span className="text-xs text-gray-400 mt-0.5 leading-tight">{tier.perks}</span>}
+                    {tier && (
+                      <span className="text-xs text-gray-400 mt-0.5 leading-tight">
+                        {tier.perks}
+                      </span>
+                    )}
                   </div>
                   {isSelected && (
                     <motion.span
-                      initial={{ scale: 0 }} animate={{ scale: 1 }}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
                       className="text-xs font-black ml-2 flex-shrink-0"
                       style={{ color: "#0de65a" }}
-                    >✓</motion.span>
+                    >
+                      ✓
+                    </motion.span>
                   )}
                 </motion.button>
               );
@@ -749,10 +1073,13 @@ const MembershipForm = () => {
               <div className="flex flex-col gap-3">
                 <p className="text-sm text-gray-500 leading-relaxed">
                   We'll send a 6-digit code to{" "}
-                  <strong className="text-gray-800 font-semibold">{data.email}</strong>
+                  <strong className="text-gray-800 font-semibold">
+                    {data.email}
+                  </strong>
                 </p>
                 <motion.button
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={sendOtp}
                   className="self-start bg-black text-white px-7 py-3 rounded-2xl text-sm font-semibold"
                   style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.16)" }}
@@ -764,19 +1091,23 @@ const MembershipForm = () => {
 
             {otpSent && !emailVerified && (
               <div className="flex flex-col gap-4">
-                <p className="text-xs text-gray-500">Enter the 6-digit code sent to your email</p>
+                <p className="text-xs text-gray-500">
+                  Enter the 6-digit code sent to your email
+                </p>
                 <div className="flex gap-2.5">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <input
                       key={i}
-                      ref={el => { otpRefs.current[i] = el; }}
+                      ref={(el) => {
+                        otpRefs.current[i] = el;
+                      }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
                       value={otpDigits[i]}
                       autoFocus={i === 0}
-                      onChange={e => handleOtpInput(e.target.value, i)}
-                      onKeyDown={e => handleOtpKeyDown(e, i)}
+                      onChange={(e) => handleOtpInput(e.target.value, i)}
+                      onKeyDown={(e) => handleOtpKeyDown(e, i)}
                       onPaste={handleOtpPaste}
                       className="otp-box"
                     />
@@ -784,14 +1115,17 @@ const MembershipForm = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   <motion.button
-                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={verifyOtp}
                     className="bg-black text-white px-7 py-3 rounded-2xl text-sm font-semibold"
                   >
                     Verify OTP
                   </motion.button>
                   {timer > 0 ? (
-                    <span className="text-xs text-gray-400 tabular-nums">Resend in {timer}s</span>
+                    <span className="text-xs text-gray-400 tabular-nums">
+                      Resend in {timer}s
+                    </span>
                   ) : (
                     <button
                       onClick={sendOtp}
@@ -806,7 +1140,8 @@ const MembershipForm = () => {
 
             {emailVerified && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2.5 text-sm font-semibold"
                 style={{ color: "#0de65a" }}
               >
@@ -834,9 +1169,13 @@ const MembershipForm = () => {
                     className="flex justify-between items-center px-4 py-3 text-sm"
                     style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}
                   >
-                    <span className="text-gray-400 font-medium flex-shrink-0">{READABLE[key]}</span>
+                    <span className="text-gray-400 font-medium flex-shrink-0">
+                      {READABLE[key]}
+                    </span>
                     <span className="font-semibold text-right ml-4 max-w-[55%] truncate">
-                      {key === "phone" ? `${data.countryCode} ${val}` : String(val)}
+                      {key === "phone"
+                        ? `${data.countryCode} ${val}`
+                        : String(val)}
                     </span>
                   </motion.div>
                 ))}
@@ -845,9 +1184,15 @@ const MembershipForm = () => {
             {/* Consent checkboxes */}
             <div className="flex flex-col gap-2">
               {[
-                { name: "agreeTerms", label: "I agree to STR Global Fan Club Terms & Conditions" },
-                { name: "ageConfirm", label: "I confirm I am 18+ or have parental consent" },
-              ].map(item => (
+                {
+                  name: "agreeTerms",
+                  label: "I agree to STR Global Fan Club Terms & Conditions",
+                },
+                {
+                  name: "ageConfirm",
+                  label: "I confirm I am 18+ or have parental consent",
+                },
+              ].map((item) => (
                 <motion.button
                   key={item.name}
                   whileTap={{ scale: 0.99 }}
@@ -858,16 +1203,24 @@ const MembershipForm = () => {
                     className="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all"
                     style={{
                       borderColor: data[item.name] ? "#0de65a" : "#d1d5db",
-                      background:  data[item.name] ? "#0de65a" : "transparent",
+                      background: data[item.name] ? "#0de65a" : "transparent",
                     }}
                   >
                     {data[item.name] && (
                       <svg className="w-3 h-3" viewBox="0 0 12 10" fill="none">
-                        <polyline points="1 5 4.5 8.5 11 1" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <polyline
+                          points="1 5 4.5 8.5 11 1"
+                          stroke="black"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     )}
                   </div>
-                  <span className="text-xs font-medium text-left leading-snug">{item.label}</span>
+                  <span className="text-xs font-medium text-left leading-snug">
+                    {item.label}
+                  </span>
                 </motion.button>
               ))}
             </div>
@@ -887,8 +1240,19 @@ const MembershipForm = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="30 70"/>
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeDasharray="30 70"
+                    />
                   </svg>
                   Submitting your application...
                 </span>
@@ -914,13 +1278,14 @@ const MembershipForm = () => {
 
   return (
     <div className="w-full" data-lenis-prevent>
-
       {/* ── Progress Bar ── */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2.5">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">
-              {current.kind !== "review" ? `${questionNumber} / ${totalQ}` : "Review"}
+              {current.kind !== "review"
+                ? `${questionNumber} / ${totalQ}`
+                : "Review"}
             </span>
             {isOptional && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 font-semibold">
@@ -936,7 +1301,10 @@ const MembershipForm = () => {
               </span>
             )}
           </div>
-          <span className="text-xs font-black tabular-nums" style={{ color: "#0de65a" }}>
+          <span
+            className="text-xs font-black tabular-nums"
+            style={{ color: "#0de65a" }}
+          >
             {progress}%
           </span>
         </div>
@@ -960,7 +1328,7 @@ const MembershipForm = () => {
           variants={{
             enter: (d: number) => ({ opacity: 0, y: d > 0 ? 44 : -44 }),
             center: { opacity: 1, y: 0 },
-            exit:  (d: number) => ({ opacity: 0, y: d > 0 ? -44 : 44 }),
+            exit: (d: number) => ({ opacity: 0, y: d > 0 ? -44 : 44 }),
           }}
           initial="enter"
           animate="center"
@@ -983,7 +1351,9 @@ const MembershipForm = () => {
                 </h3>
               </div>
               {isOptional && (
-                <p className="text-xs text-gray-400 mt-1.5 ml-7">Press OK to skip</p>
+                <p className="text-xs text-gray-400 mt-1.5 ml-7">
+                  Press OK to skip
+                </p>
               )}
             </div>
           )}
@@ -991,8 +1361,12 @@ const MembershipForm = () => {
           {/* Review heading */}
           {current.kind === "review" && (
             <div className="mb-5">
-              <h3 className="text-xl font-black tracking-tight">Almost done! ✨</h3>
-              <p className="text-xs text-gray-400 mt-1">Review your details before submitting.</p>
+              <h3 className="text-xl font-black tracking-tight">
+                Almost done! ✨
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Review your details before submitting.
+              </p>
             </div>
           )}
 
@@ -1019,8 +1393,8 @@ const MembershipForm = () => {
               key={i}
               className="rounded-full flex-shrink-0 transition-all duration-300"
               style={{
-                width:      i === fieldIndex ? 18 : 6,
-                height:     6,
+                width: i === fieldIndex ? 18 : 6,
+                height: 6,
                 background: i <= fieldIndex ? "#0de65a" : "#e5e7eb",
               }}
             />
@@ -1029,7 +1403,8 @@ const MembershipForm = () => {
 
         {isOptional && current.kind === "text" ? (
           <motion.button
-            whileHover={{ x: 2 }} whileTap={{ scale: 0.97 }}
+            whileHover={{ x: 2 }}
+            whileTap={{ scale: 0.97 }}
             onClick={goNext}
             className="text-xs font-semibold text-gray-400 select-none"
           >

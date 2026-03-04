@@ -16,131 +16,204 @@ const Timeline = () => {
   const yearsRef = useRef<HTMLSpanElement[]>([]);
   const mobileYearsRef = useRef<HTMLSpanElement[]>([]);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-      const panels = isDesktop
-        ? desktopPanelsRef.current
-        : mobilePanelsRef.current;
+ useLayoutEffect(() => {
+  const ctx = gsap.context(() => {
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 
-      const totalPanels = panels.length;
-      const progressLine = document.getElementById("progress-line");
+    const panels = isDesktop
+      ? desktopPanelsRef.current
+      : mobilePanelsRef.current;
 
-      /* ---------------- SCROLL TIMELINE ---------------- */
+    const totalPanels = panels.length;
+
+    const progressLine = document.getElementById("progress-line");
+    const mobileLine = document.getElementById("mobile-progress-line");
+
+    let currentIndex = 0;
+    let isAnimating = false;
+    let observer: any;
+
+    /* ---------------- INITIAL STATE ---------------- */
+
+    gsap.set(panels, {
+      opacity: 0,
+      filter: "blur(16px)",
+    });
+
+    gsap.set(panels[0], {
+      opacity: 1,
+      filter: "blur(0px)",
+    });
+
+    /* ---------------- PANEL CHANGE ---------------- */
+
+    const showPanel = (nextIndex: number) => {
+      if (nextIndex === currentIndex) return;
+      if (nextIndex < 0 || nextIndex >= totalPanels) return;
+
+      const currentPanel = panels[currentIndex];
+      const nextPanel = panels[nextIndex];
+
+      isAnimating = true;
+
       const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: `+=${totalPanels * 100}%`,
-          scrub: 0.5, // smooth but controlled
-          pin: true,
-          snap: {
-            snapTo: 1 / (totalPanels - 1),
-            duration: { min: 0.2, max: 0.4 },
-            ease: "power2.out",
-          },
-          onUpdate: (self) => {
-            const step = 1 / (totalPanels - 1);
-            const activeIndex = Math.round(self.progress / step);
-
-            if (progressLine) {
-              gsap.set(progressLine, {
-                width: `${self.progress * 100}%`,
-              });
-            }
-
-            const mobileLine = document.getElementById("mobile-progress-line");
-            if (mobileLine) {
-              gsap.set(mobileLine, {
-                width: `${self.progress * 100}%`,
-              });
-            }
-
-            yearsRef.current.forEach((year, i) => {
-              if (!year) return;
-
-              gsap.to(year, {
-                opacity: i === activeIndex ? 1 : 0.4,
-                color: i === activeIndex ? "#fff" : "#999",
-                duration: 0.2,
-              });
-            });
-
-            mobileYearsRef.current.forEach((year, i) => {
-              if (!year) return;
-
-              const isActive = i === activeIndex;
-
-              gsap.to(year, {
-                opacity: isActive ? 1 : 0.45,
-                scale: isActive ? 1.05 : 1,
-                letterSpacing: isActive ? "0.04em" : "0.02em",
-                duration: 0.25,
-                ease: "power2.out",
-              });
-            });
-
-            mobileYearsRef.current[activeIndex]?.scrollIntoView({
-              behavior: "smooth",
-              inline: "center",
-              block: "nearest",
-            });
-          },
+        onComplete: () => {
+          currentIndex = nextIndex;
+          isAnimating = false;
         },
       });
 
-      panels.forEach((panel, index) => {
-        tl.to(panel, { opacity: 1, filter: "blur(0px)", duration: 0.6 }, index);
-
-        if (index > 0) {
-          tl.to(
-            panels[index - 1],
-            { opacity: 0, filter: "blur(16px)", duration: 0.6 },
-            index,
-          );
-        }
+      tl.to(currentPanel, {
+        opacity: 0,
+        filter: "blur(16px)",
+        duration: 0.6,
+        ease: "power2.out",
       });
 
-      /* ---------------- DESKTOP PARALLAX ---------------- */
-      const handleMouseMove = (e: MouseEvent) => {
-        if (!sectionRef.current || !isDesktop) return;
+      tl.fromTo(
+        nextPanel,
+        {
+          opacity: 0,
+          filter: "blur(16px)",
+        },
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        "<"
+      );
 
-        const rect = sectionRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
-        const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+      /* -------- progress bar -------- */
 
-        desktopPanelsRef.current.forEach((panel) => {
-          if (!panel || panel.style.opacity === "0") return;
+      const step = 1 / (totalPanels - 1);
 
-          gsap.to(panel.querySelector(".p-bg"), {
-            x: x * 30,
-            y: y * 20,
-            duration: 0.3,
-          });
-
-          gsap.to(panel.querySelector(".p-title"), {
-            x: x * 50,
-            y: y * 40,
-            duration: 0.6,
-          });
-
-          gsap.to(panel.querySelector(".p-desc"), {
-            x: x * 40,
-            y: y * 30,
-            duration: 0.6,
-          });
+      if (progressLine) {
+        gsap.to(progressLine, {
+          width: `${nextIndex * step * 100}%`,
+          duration: 0.3,
         });
-      };
+      }
 
-      sectionRef.current?.addEventListener("mousemove", handleMouseMove);
+      if (mobileLine) {
+        gsap.to(mobileLine, {
+          width: `${nextIndex * step * 100}%`,
+          duration: 0.3,
+        });
+      }
 
-      return () => {
-        sectionRef.current?.removeEventListener("mousemove", handleMouseMove);
-      };
-    }, sectionRef);
+      /* -------- year highlight -------- */
 
-    return () => ctx.revert();
-  }, []);
+      yearsRef.current.forEach((year, i) => {
+        if (!year) return;
+
+        gsap.to(year, {
+          opacity: i === nextIndex ? 1 : 0.4,
+          color: i === nextIndex ? "#fff" : "#999",
+          duration: 0.2,
+        });
+      });
+
+      mobileYearsRef.current.forEach((year, i) => {
+        if (!year) return;
+
+        gsap.to(year, {
+          opacity: i === nextIndex ? 1 : 0.45,
+          scale: i === nextIndex ? 1.05 : 1,
+          duration: 0.25,
+        });
+      });
+    };
+
+    /* ---------------- ENABLE SCROLL CONTROL ---------------- */
+
+    const enableScroll = () => {
+      if (observer) return;
+
+      observer = ScrollTrigger.observe({
+        target: window,
+        type: "wheel,touch,pointer",
+        wheelSpeed: 1,
+        tolerance: 10,
+        preventDefault: true,
+
+        onDown: () => {
+          if (isAnimating) return;
+          showPanel(currentIndex + 1);
+        },
+
+        onUp: () => {
+          if (isAnimating) return;
+          showPanel(currentIndex - 1);
+        },
+      });
+    };
+
+    const disableScroll = () => {
+      observer?.kill();
+      observer = null;
+    };
+
+    /* ---------------- PIN SECTION ---------------- */
+
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top top",
+      end: "+=200%",
+      pin: true,
+      pinSpacing: true,
+
+      onEnter: () => enableScroll(),
+      onEnterBack: () => enableScroll(),
+
+      onLeave: () => disableScroll(),
+      onLeaveBack: () => disableScroll(),
+    });
+
+    /* ---------------- DESKTOP PARALLAX ---------------- */
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!sectionRef.current || !isDesktop) return;
+
+      const rect = sectionRef.current.getBoundingClientRect();
+
+      const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+
+      const activePanel = panels[currentIndex];
+
+      if (!activePanel) return;
+
+      gsap.to(activePanel.querySelector(".p-bg"), {
+        x: x * 30,
+        y: y * 20,
+        duration: 0.3,
+      });
+
+      gsap.to(activePanel.querySelector(".p-title"), {
+        x: x * 50,
+        y: y * 40,
+        duration: 0.6,
+      });
+
+      gsap.to(activePanel.querySelector(".p-desc"), {
+        x: x * 40,
+        y: y * 30,
+        duration: 0.6,
+      });
+    };
+
+    sectionRef.current?.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      observer?.kill();
+      sectionRef.current?.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, sectionRef);
+
+  return () => ctx.revert();
+}, []);
 
   return (
     <section
@@ -224,7 +297,14 @@ const Timeline = () => {
           </h1>
 
           <div className="absolute bottom-[-15%] left-1/2 -translate-x-1/2 w-full h-dvh">
-            <Image src={item.strImg} alt="STR"  priority width={600} height={600} className=" w-1/2 mx-auto" />
+            <Image
+              src={item.strImg}
+              alt="STR"
+              priority
+              width={600}
+              height={600}
+              className=" w-1/2 mx-auto"
+            />
           </div>
 
           <p

@@ -1,230 +1,237 @@
 "use client";
 import { useEffect, useRef, ReactNode } from "react";
 
+// ─── Singleton time source ─────────────────────────────────────────────────────
+// All instances share one RAF-driven clock so only ONE rAF runs total.
+// Each instance owns its own small canvas but reads from the shared clock.
+
+type TickCallback = (t: number) => void;
+
+let _tickListeners = new Map<number, TickCallback>();
+let _rafId: number | null = null;
+let _t = 0;
+let _lastFrame = 0;
+let _nextId = 0;
+
+const TARGET_FPS = 16;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
+// Very slow drift — calm, topographic feel
+const SPEED = 0.02;
+
+function tickLoop(timestamp: number) {
+  _rafId = requestAnimationFrame(tickLoop);
+  if (_tickListeners.size === 0) return;
+
+  const elapsed = timestamp - _lastFrame;
+  if (elapsed < FRAME_INTERVAL) return;
+  _lastFrame = timestamp - (elapsed % FRAME_INTERVAL);
+
+  _t += SPEED * (elapsed / 1000) * 60;
+  _tickListeners.forEach((cb) => cb(_t));
+}
+
+function startTicker() {
+  if (_rafId !== null) return;
+  _lastFrame = performance.now();
+  _rafId = requestAnimationFrame(tickLoop);
+}
+
+function stopTicker() {
+  if (_rafId !== null) {
+    cancelAnimationFrame(_rafId);
+    _rafId = null;
+  }
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopTicker();
+    else if (_tickListeners.size > 0) startTicker();
+  });
+}
+
+// ─── Component ─────────────────────────────────────────────────────────────────
+
 interface ContourBackgroundProps {
   children?: ReactNode;
   background?: string;
   lineColor?: string;
-  speed?: number;
   resolution?: number;
   levels?: number;
   lineWidth?: number;
   className?: string;
+  /** Opacity of the contour lines (default 0.18) */
+  opacity?: number;
 }
 
 export default function ContourBackground({
   children,
-  background = "#eef1e4",
-  lineColor = "rgba(120,130,90,0.22)",
-  speed = 0.001,
-  resolution = 16,
-  levels = 5,
+  background = "#ffffff",
+  lineColor = "#7a825c",
+  resolution = 24,
+  levels = 8,
   lineWidth = 1,
   className = "",
+  opacity = 0.18,
 }: ContourBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number | null>(null);
+  const idRef = useRef<number>(-1);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const ctx = canvas.getContext("2d", { 
-      alpha: false,
-      desynchronized: true 
-    })!;
-    
-    let w = 0;
-    let h = 0;
-    let cols = 0;
-    let rows = 0;
-    let field: Float32Array;
-    let t = 0;
-    let lastFrame = 0;
-    const targetFPS = 24;
-    const frameInterval = 1000 / targetFPS;
+    if (idRef.current === -1) idRef.current = _nextId++;
+    const id = idRef.current;
+
+    const ctx = canvas.getContext("2d", { alpha: true })!;
+
+    // Render at ~35% of display res — purely decorative, upscaling looks soft/natural
+    const SCALE = 0.35;
+    let W = 0, H = 0;
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
-      w = rect.width;
-      h = rect.height;
-      
-      canvas.width = w;
-      canvas.height = h;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-
-      cols = Math.ceil(w / resolution);
-      rows = Math.ceil(h / resolution);
-      field = new Float32Array((rows + 1) * (cols + 1));
+      W = Math.ceil(rect.width * SCALE);
+      H = Math.ceil(rect.height * SCALE);
+      canvas.width = W;
+      canvas.height = H;
     };
 
     resize();
-    window.addEventListener("resize", resize);
+    const ro = new ResizeObserver(resize);
+    ro.observe(container);
 
-    // Optimized noise function
-    const noise = (x: number, y: number, t: number) => {
-      const x015 = x * 0.015;
-      const y02 = y * 0.02;
-      const t8 = t * 0.8;
-      const t6 = t * 0.6;
-      return Math.sin(x015 + t) + Math.sin(y02 - t8) + Math.sin((x + y) * 0.01 + t6);
-    };
+    // Smooth noise from 3 overlapping sine waves
+    const noise = (x: number, y: number, t: number) =>
+      Math.sin(x * 0.012 + t) +
+      Math.sin(y * 0.016 - t * 0.7) +
+      Math.sin((x + y) * 0.009 + t * 0.5);
 
-    const draw = (timestamp: number) => {
-      rafRef.current = requestAnimationFrame(draw);
-      
-      const elapsed = timestamp - lastFrame;
-      if (elapsed < frameInterval) return;
-      
-      lastFrame = timestamp - (elapsed % frameInterval);
+    const draw = (t: number) => {
+      if (W === 0 || H === 0) return;
+      ctx.clearRect(0, 0, W, H);
 
-      // Clear canvas
-      ctx.fillStyle = background;
-      ctx.fillRect(0, 0, w, h);
+      const cols = Math.ceil(W / resolution);
+      const rows = Math.ceil(H / resolution);
+      const field = new Float32Array((rows + 1) * (cols + 1));
 
-      // Update field
       let idx = 0;
       for (let y = 0; y <= rows; y++) {
-        const yRes = y * resolution;
+        const yr = y * resolution;
         for (let x = 0; x <= cols; x++) {
-          field[idx++] = noise(x * resolution, yRes, t);
+          field[idx++] = noise(x * resolution, yr, t);
         }
       }
 
-      // Setup stroke style once
       ctx.strokeStyle = lineColor;
       ctx.lineWidth = lineWidth;
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
 
-      // Draw contours
       for (let l = 0; l < levels; l++) {
-        const level = -2 + (4 * l / levels);
-        
+        const level = -2 + (4 * l) / levels;
         ctx.beginPath();
 
         for (let y = 0; y < rows; y++) {
           const y0 = y * (cols + 1);
-          const y1 = y0 + (cols + 1);
+          const y1 = y0 + cols + 1;
           const py = y * resolution;
-          const pyNext = py + resolution;
+          const pyN = py + resolution;
 
           for (let x = 0; x < cols; x++) {
-            const idx0 = y0 + x;
-            const idx1 = idx0 + 1;
-            const idx2 = y1 + x + 1;
-            const idx3 = y1 + x;
+            const i0 = y0 + x;
+            const a = field[i0], b = field[i0 + 1];
+            const c = field[y1 + x + 1], d = field[y1 + x];
 
-            const a = field[idx0];
-            const b = field[idx1];
-            const c = field[idx2];
-            const d = field[idx3];
+            if (
+              (a < level && b < level && c < level && d < level) ||
+              (a > level && b > level && c > level && d > level)
+            ) continue;
 
-            // Quick bounds check
-            if ((a < level && b < level && c < level && d < level) ||
-                (a > level && b > level && c > level && d > level)) {
-              continue;
-            }
-
-            const px = x * resolution;
-            const pxNext = px + resolution;
-
+            const px = x * resolution, pxN = px + resolution;
             const state =
-              (a > level ? 8 : 0) |
-              (b > level ? 4 : 0) |
-              (c > level ? 2 : 0) |
-              (d > level ? 1 : 0);
-
+              (a > level ? 8 : 0) | (b > level ? 4 : 0) |
+              (c > level ? 2 : 0) | (d > level ? 1 : 0);
             if (state === 0 || state === 15) continue;
 
-            // Interpolation helper
-            const lerp = (p0: number, p1: number, v0: number, v1: number) => 
+            const lerp = (p0: number, p1: number, v0: number, v1: number) =>
               p0 + (p1 - p0) * ((level - v0) / (v1 - v0));
 
             switch (state) {
-              case 1:
-              case 14:
-                ctx.moveTo(px, lerp(py, pyNext, a, d));
-                ctx.lineTo(lerp(px, pxNext, d, c), pyNext);
-                break;
-              case 2:
-              case 13:
-                ctx.moveTo(lerp(px, pxNext, d, c), pyNext);
-                ctx.lineTo(pxNext, lerp(py, pyNext, b, c));
-                break;
-              case 3:
-              case 12:
-                ctx.moveTo(px, lerp(py, pyNext, a, d));
-                ctx.lineTo(pxNext, lerp(py, pyNext, b, c));
-                break;
-              case 4:
-              case 11:
-                ctx.moveTo(lerp(px, pxNext, a, b), py);
-                ctx.lineTo(pxNext, lerp(py, pyNext, b, c));
-                break;
-              case 6:
-              case 9:
-                ctx.moveTo(lerp(px, pxNext, a, b), py);
-                ctx.lineTo(lerp(px, pxNext, d, c), pyNext);
-                break;
-              case 7:
-              case 8:
-                ctx.moveTo(px, lerp(py, pyNext, a, d));
-                ctx.lineTo(lerp(px, pxNext, a, b), py);
-                break;
+              case 1: case 14:
+                ctx.moveTo(px, lerp(py, pyN, a, d));
+                ctx.lineTo(lerp(px, pxN, d, c), pyN); break;
+              case 2: case 13:
+                ctx.moveTo(lerp(px, pxN, d, c), pyN);
+                ctx.lineTo(pxN, lerp(py, pyN, b, c)); break;
+              case 3: case 12:
+                ctx.moveTo(px, lerp(py, pyN, a, d));
+                ctx.lineTo(pxN, lerp(py, pyN, b, c)); break;
+              case 4: case 11:
+                ctx.moveTo(lerp(px, pxN, a, b), py);
+                ctx.lineTo(pxN, lerp(py, pyN, b, c)); break;
+              case 6: case 9:
+                ctx.moveTo(lerp(px, pxN, a, b), py);
+                ctx.lineTo(lerp(px, pxN, d, c), pyN); break;
+              case 7: case 8:
+                ctx.moveTo(px, lerp(py, pyN, a, d));
+                ctx.lineTo(lerp(px, pxN, a, b), py); break;
               case 5:
-                ctx.moveTo(px, lerp(py, pyNext, a, d));
-                ctx.lineTo(lerp(px, pxNext, a, b), py);
-                ctx.moveTo(pxNext, lerp(py, pyNext, b, c));
-                ctx.lineTo(lerp(px, pxNext, d, c), pyNext);
-                break;
+                ctx.moveTo(px, lerp(py, pyN, a, d));
+                ctx.lineTo(lerp(px, pxN, a, b), py);
+                ctx.moveTo(pxN, lerp(py, pyN, b, c));
+                ctx.lineTo(lerp(px, pxN, d, c), pyN); break;
               case 10:
-                ctx.moveTo(lerp(px, pxNext, a, b), py);
-                ctx.lineTo(pxNext, lerp(py, pyNext, b, c));
-                ctx.moveTo(px, lerp(py, pyNext, a, d));
-                ctx.lineTo(lerp(px, pxNext, d, c), pyNext);
-                break;
+                ctx.moveTo(lerp(px, pxN, a, b), py);
+                ctx.lineTo(pxN, lerp(py, pyN, b, c));
+                ctx.moveTo(px, lerp(py, pyN, a, d));
+                ctx.lineTo(lerp(px, pxN, d, c), pyN); break;
             }
           }
         }
-        
         ctx.stroke();
       }
-
-      t += speed;
     };
 
-    rafRef.current = requestAnimationFrame(draw);
-
-    const onVisibility = () => {
-      if (document.hidden) {
-        if (rafRef.current) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
-      } else if (!rafRef.current) {
-        lastFrame = performance.now();
-        rafRef.current = requestAnimationFrame(draw);
-      }
-    };
-
-    document.addEventListener("visibilitychange", onVisibility);
+    _tickListeners.set(id, draw);
+    startTicker();
 
     return () => {
-      window.removeEventListener("resize", resize);
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      _tickListeners.delete(id);
+      ro.disconnect();
+      if (_tickListeners.size === 0) stopTicker();
     };
-  }, [background, lineColor, speed, resolution, levels, lineWidth]);
+  }, [lineColor, resolution, levels, lineWidth]);
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden w-full h-full ${className}`}>
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden w-full h-full ${className}`}
+      style={{ backgroundColor: background }}
+    >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 z-0 pointer-events-none opacity-20"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          opacity,
+          pointerEvents: "none",
+          zIndex: 0,
+          // Low-res upscale naturally softens lines — no sharp pixel edges
+          imageRendering: "auto",
+          // Radial vignette fades the contours out toward all 4 edges,
+          // so adjacent page sections never show a hard cut line
+          WebkitMaskImage:
+            "radial-gradient(ellipse 92% 88% at 50% 50%, black 35%, transparent 100%)",
+          maskImage:
+            "radial-gradient(ellipse 92% 88% at 50% 50%, black 35%, transparent 100%)",
+        }}
       />
       <div className="relative z-10 w-full h-full">{children}</div>
     </div>

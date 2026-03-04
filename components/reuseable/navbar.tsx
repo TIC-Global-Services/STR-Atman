@@ -363,7 +363,7 @@ const Navbar = () => {
     transition-all duration-500
     ${
      scrolled
-  ? "backdrop-blur-2xl bg-white/5 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-b-2xl mx-4 mt-2"
+  ? "backdrop-blur-2xl bg-white/5 border border-white/20 shadow-inner  rounded-2xl mx-4 mt-2"
   : "bg-transparent"
     }
   `}

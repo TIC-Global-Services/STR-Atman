@@ -176,13 +176,11 @@ const HomeHero = () => {
             
           "
         >
-          {/* <ContourBackground
+          <ContourBackground
             lineColor="rgba(0,0,0)"
-            speed={0.06}
-            resolution={150}
-            levels={5}
-            lineWidth={1.4}
-          /> */}
+            resolution={30}
+            levels={50}
+          />
         </div>
       </div>
 
