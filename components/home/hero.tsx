@@ -359,7 +359,6 @@ const Hero = () => {
       <ContourBackground
         background="#ffffff"
         lineColor="#7a825c"
-        speed={0.01}
       >
         <div className="h-screen relative overflow-hidden">
           <canvas
