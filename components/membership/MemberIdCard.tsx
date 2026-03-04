@@ -10,9 +10,9 @@ interface Props {
   data: {
     membershipId?: string;
     fullName?: string;
-    zone?: string;
-    district?: string;
+    city?: string;
     state?: string;
+    country?: string;
     membershipYear?: number;
     verifiedAt?: string;
   };
@@ -49,9 +49,9 @@ export default function MemberIdCard({ data }: Props) {
           <>
             {/* FRONT SIDE */}
 
-            <div className="absolute inset-y-0 left-0 w-[80%] h-full pointer-events-none">
+            <div className="absolute inset-y-0 left-0 w-[60%] h-full pointer-events-none">
               <Image
-                src="/IdCard/str-idcard-3.jpg"
+                src="/STR/Str-2b.png"
                 alt="STR Background"
                 fill
                 className="object-cover object-left opacity-70 scale-[100%]"
@@ -110,21 +110,12 @@ export default function MemberIdCard({ data }: Props) {
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-neutral-200">Zone</span>
+                  <span className="text-neutral-200">City</span>
                   <span className="
                     font-medium tracking-wide
                     bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
                     bg-clip-text text-transparent
-                  ">{data.zone}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-neutral-200">District</span>
-                  <span className="
-                    font-medium tracking-wide
-                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
-                    bg-clip-text text-transparent
-                  ">{data.district}</span>
+                  ">{data.city}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -135,6 +126,16 @@ export default function MemberIdCard({ data }: Props) {
                     bg-clip-text text-transparent
                   ">{data.state}</span>
                 </div>
+
+                 <div className="flex justify-between">
+                  <span className="text-neutral-200">Country</span>
+                  <span className="
+                    font-medium tracking-wide
+                    bg-gradient-to-r from-[#C6A85E] via-[#E6C878] to-[#B88A2E]
+                    bg-clip-text text-transparent
+                  ">{data.country}</span>
+                </div>
+
               </div>
 
               {/* Footer */}
@@ -154,8 +155,15 @@ export default function MemberIdCard({ data }: Props) {
               </div>
             </div>
 
-            <div className="absolute bottom-4 right-6 text-[70px] sm:text-[90px] font-black text-white/5 tracking-widest pointer-events-none">
-              STR
+            <div className="absolute bottom-16 -right-12 w-[80%]  tracking-widest pointer-events-none">
+              
+              <Image
+                src="/logo/logo.png"
+                alt="STR Logo"
+                width={200}
+                height={200}
+                className=" w-[80%] mx-auto opacity-20 -rotate-12"
+              />
             </div>
           </>
         ) : (
@@ -176,9 +184,6 @@ export default function MemberIdCard({ data }: Props) {
                   DIGITAL VERIFICATION
                 </h3>
 
-                <p className="text-xs text-neutral-500">
-                  Scan QR to verify authenticity of this membership card
-                </p>
               </div>
 
               <div className="flex flex-col items-center gap-4 py-2">
@@ -188,8 +193,20 @@ export default function MemberIdCard({ data }: Props) {
                     size={100}
                     level="H"
                   />
+
+                  
                 </div>
 
+ <div className="absolute inset-0 w-full  tracking-widest pointer-events-none">
+              
+              <Image
+                src="/logo/logo.png"
+                alt="STR Logo"
+                width={200}
+                height={200}
+                className=" w-full mx-auto opacity-20 -rotate-12"
+              />
+            </div>
                 <p className="text-[10px] text-neutral-500 break-all text-center">
                   {verificationUrl}
                 </p>

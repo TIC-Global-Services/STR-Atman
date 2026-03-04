@@ -13,8 +13,8 @@ interface VerifyResponse {
   // Approved fields (flat structure)
   membershipId?: string;
   fullName?: string;
-  zone?: string;
-  district?: string;
+  city?: string;
+  country?: string;
   state?: string;
   membershipYear?: number;
   verifiedAt?: string;
